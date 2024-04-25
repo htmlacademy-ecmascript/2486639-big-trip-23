@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Андрей Климов](https://up.htmlacademy.ru/ecmascript/23/user/2486639).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Петров](https://htmlacademy.ru/profile/fyvfyv).
 
 ---
 
