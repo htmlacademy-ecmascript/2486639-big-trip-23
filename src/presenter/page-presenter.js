@@ -9,9 +9,13 @@ import NewEventButtonView from '../view/new-event-button-view.js';
 import ContentView from '../view/content-view.js';
 import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
+import EventItemView from '../view/event-item-view.js';
+import EventFormView from '../view/event-form-view.js';
+import MessageView from '../view/message-view.js';
 //
 const headerTripSelector = 'div.trip-main';
 const tripEventsSectionSelector = 'section.trip-events';
+const EVENT_ITEM_COUNT = 3;
 export default class PagePresenter {
   constructor() {
     //
@@ -22,7 +26,8 @@ export default class PagePresenter {
     this.contentComponent = new ContentView();
     this.contentElement = this.contentComponent.getElement();
     this.tripEventsSectionElement = this.contentElement.querySelector(tripEventsSectionSelector);
-    //
+    this.eventsListComponent = new EventsListView();
+    this.eventsListElement = this.eventsListComponent.getElement();
   }
 
   init() {
@@ -35,10 +40,12 @@ export default class PagePresenter {
     render(this.headerComponent, bodyElement);
     //
     render(new SortingView(), this.tripEventsSectionElement);
-    render(new EventsListView(), this.tripEventsSectionElement);
-    //for (let i = 0; i < 3; i++) {
-    //  render(new TaskView(), this.taskListComponent.getElement());
-    //}
+    render(new EventFormView(), this.eventsListElement);
+    for (let i = 0; i < EVENT_ITEM_COUNT; i++) {
+      render(new EventItemView(), this.eventsListElement);
+    }
+    render(this.eventsListComponent, this.tripEventsSectionElement);
+    render(new MessageView(), this.tripEventsSectionElement);
     render(this.contentComponent, bodyElement);
   }
 }
