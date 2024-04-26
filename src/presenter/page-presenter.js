@@ -7,35 +7,38 @@ import FiltersView from '../view/filters-view.js';
 import NewEventButtonView from '../view/new-event-button-view.js';
 //
 import ContentView from '../view/content-view.js';
+import SortingView from '../view/sorting-view.js';
+import EventsListView from '../view/events-list-view.js';
 //
-const headerMainSelector = 'div.trip-main';
-
+const headerTripSelector = 'div.trip-main';
+const tripEventsSectionSelector = 'section.trip-events';
 export default class PagePresenter {
   constructor() {
     //
     this.headerComponent = new HeaderView();
-    this.headerElement = this.headerComponent.getElement();
-    //!! this.headerMainSectionElement понадобится в других методах?
-    this.headerMainSectionElement = this.headerElement.querySelector(headerMainSelector);
+    this.headerElement = this.headerComponent.getElement().firstElementChild;
+    this.headerTripElement = this.headerElement.querySelector(headerTripSelector);
     //
     this.contentComponent = new ContentView();
-    //!! this.contentElement понадобится в других методах?
     this.contentElement = this.contentComponent.getElement();
+    this.tripEventsSectionElement = this.contentElement.querySelector(tripEventsSectionSelector);
+    //
   }
 
   init() {
     const bodyElement = document.body;
     bodyElement.innerHTML = '';
-
-    render(new InfoView(), this.headerMainSectionElement);
-    render(new FiltersView(), this.headerMainSectionElement);
-    render(new NewEventButtonView(), this.headerMainSectionElement);
-
+    //
+    render(new InfoView(), this.headerTripElement);
+    render(new FiltersView(), this.headerTripElement);
+    render(new NewEventButtonView(), this.headerTripElement);
     render(this.headerComponent, bodyElement);
-    render(this.contentComponent, bodyElement);
-
+    //
+    render(new SortingView(), this.tripEventsSectionElement);
+    render(new EventsListView(), this.tripEventsSectionElement);
     //for (let i = 0; i < 3; i++) {
     //  render(new TaskView(), this.taskListComponent.getElement());
     //}
+    render(this.contentComponent, bodyElement);
   }
 }
