@@ -6,8 +6,6 @@ import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
 
-const EVENT_ITEM_COUNT = 3;
-
 export default class ContentPresenter {
   constructor({ containerElement, eventsModel }) {
     this.eventsListComponent = new EventsListView();
@@ -17,13 +15,18 @@ export default class ContentPresenter {
 
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
+    const events = [...this.eventsModel.getEvents()];
+
+    this.events = events;
 
     render(new SortingView(), this.containerElement);
-    render(new EventFormView(), eventsListElement);
-    for (let i = 0; i < EVENT_ITEM_COUNT; i++) {
-      render(new EventItemView(), eventsListElement);
+
+    render(new EventFormView(events[0]), eventsListElement);
+    for (let i = 1; i < events.length; i++) {
+      render(new EventItemView(events[i]), eventsListElement);
     }
     render(this.eventsListComponent, this.containerElement);
+
     render(new MessageView(), this.containerElement);
   }
 }

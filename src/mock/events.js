@@ -1,4 +1,4 @@
-const COUNT = 3;
+const COUNT = 4;
 
 const getEvents = () => Array.from({ length: COUNT }, (_, index) => (index + 1) * 1000);
 

@@ -1,6 +1,6 @@
 import { createElement } from '../render.js';
 
-const createEventItemTemplate = () => `<li class="trip-events__item">
+const createEventItemTemplate = (num) => `<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="2019-03-18">MAR 18</time>
     <div class="event__type">
@@ -16,7 +16,7 @@ const createEventItemTemplate = () => `<li class="trip-events__item">
       <p class="event__duration">30M</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">20</span>
+      €&nbsp;<span class="event__price-value">${num}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
@@ -39,8 +39,12 @@ const createEventItemTemplate = () => `<li class="trip-events__item">
 </li>`;
 
 export default class EventItemView {
+  constructor(num) {
+    this.num = num;
+  }
+
   getTemplate() {
-    return createEventItemTemplate();
+    return createEventItemTemplate(this.num);
   }
 
   getElement() {
