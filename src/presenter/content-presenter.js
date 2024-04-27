@@ -9,20 +9,20 @@ import MessageView from '../view/message-view.js';
 const EVENT_ITEM_COUNT = 3;
 
 export default class PagePresenter {
-  constructor({ contentElement }) {
+  constructor({ containerElement }) {
     this.eventsListComponent = new EventsListView();
-    this.contentElement = contentElement;
+    this.containerElement = containerElement;
   }
 
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
 
-    render(new SortingView(), this.contentElement);
+    render(new SortingView(), this.containerElement);
     render(new EventFormView(), eventsListElement);
     for (let i = 0; i < EVENT_ITEM_COUNT; i++) {
       render(new EventItemView(), eventsListElement);
     }
-    render(this.eventsListComponent, this.contentElement);
-    render(new MessageView(), this.contentElement);
+    render(this.eventsListComponent, this.containerElement);
+    render(new MessageView(), this.containerElement);
   }
 }
