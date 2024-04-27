@@ -1,6 +1,9 @@
 import { createElement } from '../render.js';
 
-const createEventFormTemplate = (num) => `<li class="trip-events__item">
+const createEventFormTemplate = (event) => {
+  const { id, type, price } = event;
+
+  return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -87,7 +90,7 @@ const createEventFormTemplate = (num) => `<li class="trip-events__item">
         <span class="visually-hidden">Price</span>
         €
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${num}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -162,14 +165,15 @@ const createEventFormTemplate = (num) => `<li class="trip-events__item">
   </section>
 </form>
 <li>`;
+};
 
 export default class EventFormView {
-  constructor(num) {
-    this.num = num;
+  constructor(event) {
+    this.event = event;
   }
 
   getTemplate() {
-    return createEventFormTemplate(this.num);
+    return createEventFormTemplate(this.event);
   }
 
   getElement() {

@@ -17,16 +17,18 @@ export default class ContentPresenter {
     const eventsListElement = this.eventsListComponent.getElement();
     const events = [...this.eventsModel.getEvents()];
 
-    this.events = events;
+    this.events = events; //!! временно
 
     render(new SortingView(), this.containerElement);
 
+    //!! временно
     render(new EventFormView(events[0]), eventsListElement);
     for (let i = 1; i < events.length; i++) {
       render(new EventItemView(events[i]), eventsListElement);
     }
     render(this.eventsListComponent, this.containerElement);
+    //
 
-    render(new MessageView(), this.containerElement);
+    render(new MessageView(), this.containerElement); //!! временно
   }
 }
