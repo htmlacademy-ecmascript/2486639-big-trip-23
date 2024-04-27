@@ -13,7 +13,6 @@ const getRandomNumber = (minNumber = 0, maxNumber = 0) => {
   return Math.floor(result);
 };
 
-/*
 const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   const previousValues = [];
 
@@ -21,7 +20,6 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
     let currentValue = getRandomNumber(minNumber, maxNumber);
 
     if (previousValues.length >= (maxNumber - minNumber + 1)) {
-      //console.error('Перебраны все числа из диапазона от ' + minNumber + ' до ' + maxNumber);
       return null;
     }
 
@@ -37,23 +35,23 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
 const getRandomArrayElement = (elements) => (elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
 const getRandomArrayElements = (elements = [], maxCount = 1) => {
-  if ((elements.length === 0) || (maxCount < 1)) {
+  const { length } = elements;
+
+  if ((length === 0) || (maxCount < 1)) {
     return null;
   }
-
   if (maxCount === 1) {
     return [getRandomArrayElement(elements)];
   }
 
-  if (maxCount >= elements.length) {
+  if (maxCount >= length) {
     return structuredClone(elements);
   }
 
-  const generateElemetIndex = createIdGenerator(1, elements.length);
+  const generateElemetIndex = createIdGenerator(0, length - 1);
 
   return Array.from({ length: getRandomNumber(1, maxCount) }, () => elements[generateElemetIndex()]);
 };
-*/
 
 const getRandomNumbers = (firstNumber, lastNumber) => {
   const count = lastNumber - firstNumber;
@@ -67,9 +65,9 @@ const createElementsTemplate =
 
 export {
   getRandomNumber,
-  //!!createIdGenerator,
-  //!!getRandomArrayElement,
-  //!!getRandomArrayElements,
+  createIdGenerator,
+  getRandomArrayElement,
+  getRandomArrayElements,
   getRandomNumbers,
   createElementsTemplate
 };

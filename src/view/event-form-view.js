@@ -4,7 +4,11 @@ import { createElementsTemplate } from '../utils.js';
 const createPhotosTemplate = ({ url, title }) => `<img class="event__photo" src="${url}" alt="${title}">`;
 
 const createEventFormTemplate = (event) => {
-  const { /*id, type,*/ photos, price } = event;
+  const { /*id, type,*/ destination, price } = event;
+  const {
+    photos,
+    description
+  } = destination;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -153,7 +157,7 @@ const createEventFormTemplate = (event) => {
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+      <p class="event__destination-description">${description}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
