@@ -1,10 +1,16 @@
 import { getRandomNumbers } from '../utils.js';
 
 const EVENT_COUNT = 4;
+const PHOTOS_MAX_COUNT = 5;
 
 const createEvent = (id, type, price) => {
-  const randomNumbers = getRandomNumbers(0, 5);
-  const photos = (randomNumbers) ? randomNumbers.map((number) => ({ url: `img/photos/${number}.jpg`, title: `title - ${number}` })) : null;
+  const randomNumbers = getRandomNumbers(0, PHOTOS_MAX_COUNT);
+  const photos = (randomNumbers)
+    ? randomNumbers.map((number) => ({
+      url: `img/photos/${number}.jpg`,
+      title: `title - ${number}`
+    }))
+    : null;
 
   return {
     id,
