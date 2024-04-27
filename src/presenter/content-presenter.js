@@ -8,7 +8,7 @@ import MessageView from '../view/message-view.js';
 
 const EVENT_ITEM_COUNT = 3;
 
-export default class PagePresenter {
+export default class ContentPresenter {
   constructor({ containerElement }) {
     this.eventsListComponent = new EventsListView();
     this.containerElement = containerElement;
