@@ -1,4 +1,4 @@
-function getRandomNumber(minNumber = 0, maxNumber = 0) {
+const getRandomNumber = (minNumber = 0, maxNumber = 0) => {
   const absMinNumber = Math.abs(minNumber);
   const absMaxNumber = Math.abs(maxNumber);
 
@@ -11,7 +11,7 @@ function getRandomNumber(minNumber = 0, maxNumber = 0) {
   const result = Math.random() * (endNumber - startNumber + 1) + startNumber;
 
   return Math.floor(result);
-}
+};
 
 /*
 const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
@@ -62,4 +62,14 @@ const getRandomNumbers = (firstNumber, lastNumber) => {
   return (length > 0) ? Array.from({ length }, () => getRandomNumber(firstNumber, lastNumber)) : null;
 };
 
-export { getRandomNumber,/* createIdGenerator, getRandomArrayElement,*/ getRandomNumbers, /*getRandomArrayElements*/ };
+const createElementsTemplate =
+  (elements, createElementTemplate) => (elements) ? elements.map((element) => createElementTemplate(element)).join(' ') : '';
+
+export {
+  getRandomNumber,
+  //!!createIdGenerator,
+  //!!getRandomArrayElement,
+  //!!getRandomArrayElements,
+  getRandomNumbers,
+  createElementsTemplate
+};

@@ -1,7 +1,10 @@
 import { createElement } from '../render.js';
+import { createElementsTemplate } from '../utils.js';
+
+const createPhotosTemplate = ({ url, title }) => `<img class="event__photo" src="${url}" alt="${title}">`;
 
 const createEventFormTemplate = (event) => {
-  const { id, type, photos, price } = event;
+  const { /*id, type,*/ photos, price } = event;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -154,12 +157,7 @@ const createEventFormTemplate = (event) => {
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${photos}
-          <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-          <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+          ${createElementsTemplate(photos, createPhotosTemplate)}
         </div>
       </div>
     </section>

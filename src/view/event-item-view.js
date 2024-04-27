@@ -1,7 +1,7 @@
 import { createElement } from '../render.js';
 
 const createEventItemTemplate = (event) => {
-  const { id, type, price } = event;
+  const { /*id, type,*/ price } = event;
 
   return `<li class="trip-events__item">
   <div class="event">

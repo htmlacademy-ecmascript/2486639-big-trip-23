@@ -1,4 +1,5 @@
 import { createElement } from '../render.js';
+import { createElementsTemplate } from '../utils.js';
 
 const SORTING_TYPES = ['day', 'event', 'time', 'price', 'offers'];
 
@@ -8,7 +9,7 @@ const createSortingItemTemplate = (type) => `<div class="trip-sort__item  trip-s
 </div>`;
 
 const createSortingTemplate = () => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-${SORTING_TYPES.map((type) => createSortingItemTemplate(type)).join(' ')}
+  ${createElementsTemplate(SORTING_TYPES, createSortingItemTemplate)}
 </form>`;
 
 export default class SortingView {

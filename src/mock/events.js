@@ -1,23 +1,23 @@
 import { getRandomNumbers } from '../utils.js';
 
 const EVENT_COUNT = 4;
-const PHOTOS_MAX_COUNT = 5;
+const PhotoId = { MIN: 1, MAX: 5 };
 
 const createEvent = (id, type, price) => {
-  const randomNumbers = getRandomNumbers(0, PHOTOS_MAX_COUNT);
-  const photos = (randomNumbers)
-    ? randomNumbers.map((number) => ({
+  const randomNumbers = getRandomNumbers(PhotoId.MIN, PhotoId.MAX);
+  const photos = (randomNumbers) ?
+    randomNumbers.map((number) => ({
       url: `img/photos/${number}.jpg`,
       title: `title - ${number}`
-    }))
-    : null;
+    })) :
+    null;
 
   return {
     id,
     type,
     photos,
     price//!! временно
-  }
+  };
 };
 
 const getEvents = () => Array.from({ length: EVENT_COUNT }, (_, index) => createEvent(index + 1, 'type', (index + 1) * 1000));

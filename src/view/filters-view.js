@@ -1,4 +1,5 @@
 import { createElement } from '../render.js';
+import { createElementsTemplate } from '../utils.js';
 
 const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
 
@@ -8,7 +9,7 @@ const createFilterItemTemplate = (type) => `<div class="trip-filters__filter">
 </div>`;
 
 const createFiltersTemplate = () => `<form class="trip-filters" action="#" method="get">
-  ${FILTER_TYPES.map((type) => createFilterItemTemplate(type)).join(' ')}
+  ${createElementsTemplate(FILTER_TYPES, createFilterItemTemplate)}
 </form>`;
 
 export default class FiltersView {
