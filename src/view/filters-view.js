@@ -7,16 +7,9 @@ const createFilterItemTemplate = (type) => `<div class="trip-filters__filter">
   <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
 </div>`;
 
-const createFiltersTemplate = () => `<div class="trip-main__trip-controls  trip-controls">
-<div class="trip-controls__filters">
-  <h2 class="visually-hidden">Filter events</h2>
-  <form class="trip-filters" action="#" method="get">
-
-${FILTER_TYPES.map((type) => createFilterItemTemplate(type)).join(' ')}
-<div class="trip-filters__filter">
-</form>
-</div>
-</div>`;
+const createFiltersTemplate = () => `<form class="trip-filters" action="#" method="get">
+  ${FILTER_TYPES.map((type) => createFilterItemTemplate(type)).join(' ')}
+</form>`;
 
 export default class FiltersView {
   getTemplate() {
