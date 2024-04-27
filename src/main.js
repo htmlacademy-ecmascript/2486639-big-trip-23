@@ -7,11 +7,11 @@ const headerContainerElement = bodyElement.querySelector('div.page-body__contain
 const headerMainElement = headerContainerElement.querySelector('div.trip-main');
 const headerFiltersElement = headerContainerElement.querySelector('div.trip-controls__filters');
 //
-const eventsSectionElement = bodyElement.querySelector('section.trip-events');
+const contentElement = bodyElement.querySelector('section.trip-events');
 
 //
-const headerPresenter = new HeaderPresenter();
-const contentPresenter = new ContentPresenter();
+const headerPresenter = new HeaderPresenter({ headerMainElement, headerFiltersElement });
+const contentPresenter = new ContentPresenter({ contentElement });
 
-headerPresenter.init({ mainElement: headerMainElement, filtersElement: headerFiltersElement });
-contentPresenter.init({ eventsSectionElement });
+headerPresenter.init();
+contentPresenter.init();
