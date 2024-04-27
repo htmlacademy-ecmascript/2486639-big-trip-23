@@ -14,4 +14,4 @@ const headerPresenter = new HeaderPresenter();
 const contentPresenter = new ContentPresenter();
 
 headerPresenter.init({ mainElement: headerMainElement, filtersElement: headerFiltersElement });
-contentPresenter.init({ containerElement: bodyElement, tripEventsSectionElement: eventsSectionElement });
+contentPresenter.init({ eventsSectionElement });
