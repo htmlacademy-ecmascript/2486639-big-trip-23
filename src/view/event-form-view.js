@@ -13,10 +13,10 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class
 
 const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createEventFormTemplate = (event) => {
-  const { /*id, type,*/ offers, /*destination,*/ basePrice } = event;
-  const destination = { pictures: [], description: '' };
+const createEventFormTemplate = (event, types, offers, destinations) => {
+  const { /*id,*/ type, eventOffers, /*destination,*/ basePrice } = event;
 
+  const destination = { pictures: [], description: '' };
   const {
     pictures,
     description //!! без описание нужно убрать весь блок!!
@@ -140,12 +140,17 @@ const createEventFormTemplate = (event) => {
 };
 
 export default class EventFormView {
-  constructor(event) {
+  constructor(event, types, offers, destinations) {
     this.event = event;
+    this.types = types;
+    this.offers = offers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createEventFormTemplate(this.event);
+    const { event, types, offers, destinations } = this;
+
+    return createEventFormTemplate(event, types, offers, destinations);
   }
 
   getElement() {

@@ -18,8 +18,23 @@ export default class EventsModel {
     //
   }
 
-  getDestination(id) {
-    return getById(this.destinations, id);
+  getTypes() {
+    return this.types;
+  }
+
+  getOffers() {
+    return this.offers;
+  }
+
+  //!!
+  /*
+  getOffersByType(type) {
+    return getById(this.offers, type, 'type');
+  }
+  */
+
+  getDestinations() {
+    return this.destinations;
   }
 
   getEvents() {

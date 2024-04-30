@@ -16,14 +16,21 @@ export default class ContentPresenter {
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
 
+    //
+    const types = this.eventsModel.getTypes();
+    const offers = this.eventsModel.getOffers();
+    const destinations = this.eventsModel.getDestinations();
+    //
     const events = [...this.eventsModel.getEvents()];
 
     this.events = events; //!! временно
 
+
     render(new SortingView(), this.containerElement);
 
     //!! временно
-    render(new EventFormView(events[0]), eventsListElement);
+    render(new EventFormView(events[0], types, offers, destinations), eventsListElement);
+    //
     for (let i = 1; i < events.length; i++) {
       render(new EventItemView(events[i]), eventsListElement);
     }
