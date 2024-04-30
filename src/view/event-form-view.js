@@ -1,6 +1,7 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
 
+//!! без оферов нужно убрать блок блок!!
 const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
   <label class="event__offer-label" for="${id}">
@@ -16,7 +17,7 @@ const createEventFormTemplate = (event) => {
   const { /*id, type,*/ offers, destination, price } = event;
   const {
     photos,
-    description
+    description //!! без описание нужно убрать весь блок!!
   } = destination;
 
   return `<li class="trip-events__item">

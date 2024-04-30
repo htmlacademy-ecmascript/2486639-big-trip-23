@@ -15,6 +15,7 @@ export default class ContentPresenter {
 
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
+
     const events = [...this.eventsModel.getEvents()];
 
     this.events = events; //!! временно
@@ -26,6 +27,7 @@ export default class ContentPresenter {
     for (let i = 1; i < events.length; i++) {
       render(new EventItemView(events[i]), eventsListElement);
     }
+    //!! с пустым списком нужно убрать весь блок и вывести сообщение!! должен подойти MessageView <p class="trip-events__msg">Click New Event to create your first point</p>
     render(this.eventsListComponent, this.containerElement);
     //
 
