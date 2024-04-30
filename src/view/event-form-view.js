@@ -11,10 +11,10 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class
   </label>
 </div>`;
 
-const createPhotoTemplate = ({ url, title }) => `<img class="event__photo" src="${url}" alt="${title}">`;
+const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
 const createEventFormTemplate = (event) => {
-  const { /*id, type,*/ offers, destination, price } = event;
+  const { /*id, type,*/ offers, destination, basePrice } = event;
   const {
     photos,
     description //!! без описание нужно убрать весь блок!!
@@ -107,7 +107,7 @@ const createEventFormTemplate = (event) => {
         <span class="visually-hidden">Price</span>
         €
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

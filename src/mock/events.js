@@ -1,39 +1,50 @@
-import { getRandomArrayElements, getRandomNumber, getRandomNumbers } from '../utils.js';
+import { getRandomNumber, getRandomBoolean, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description } from './const.js';
 
 let currentOffers = [];
 let currentEvents = [];
 
-const createEvent = (id, type, price) => {
-  const randomOfferNumbers = getRandomNumbers(0, (Offer.TITLES.length - 1) / 2);
-  const offers = (randomOfferNumbers)
-    ? randomOfferNumbers.map(
-      (offerNumber) => ({
-        id: `offer-${offerNumber}-1`, //!! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
-        name: `offer-${offerNumber}`,
-        title: Offer.TITLES[offerNumber],
-        price: Offer.PRICES[offerNumber]
-      }))
-    : null;
+const getTypes = () => Event.TYPES;
 
+const getDestinations = () => DESTINATIONS;
+
+const getOffers = () => currentOffers;
+
+const getOfferIdsByType = (type) => {
+  const typeOffers = currentOffers.filter((offer) => offer.type === type);
+  const { offers } = typeOffers[0];
+
+  return (offers) ? offers.map((offer) => offer.id) : null;
+};
+
+const getEvents = () => currentEvents;
+
+const createEvent = (id) => {
+  const type = getRandomArrayElement(Event.TYPES);
+  const basePrice = id * 1000;
+  const offerIds = getOfferIdsByType(type);
+  const offers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : null;
   const description = getRandomArrayElements(Description.DESCRIPTIONS, Description.MAX_COUNT).join(' ');
   const randomNumbers = getRandomNumbers(PhotoNumber.MIN, PhotoNumber.MAX);
   const photos = (randomNumbers) ?
     randomNumbers.map((number) => ({
-      url: `img/photos/${number}.jpg`,
-      title: `title - ${number}`
+      src: `img/photos/${number}.jpg`,
+      description: `title - ${number}`
     })) :
     null;
 
   return {
     id,
     type,
+    basePrice,
+    dateFrom: '11/22/33',
+    dateTo: '22/33/44',
+    isFavorite: getRandomBoolean(),
     offers,
-    destination: {
+    destination: {//!!позже перенести в отдельный destinations {id, description, name, pictures[{src,description}]} - getDestinations = () => DESTINATIONS;
       photos,
       description
-    },
-    price//!! временно
+    }
   };
 };
 
@@ -56,15 +67,7 @@ const initMockData = () => {
       return { type, offers };
     });
 
-  currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1, 'type', (index + 1) * 1000));
+  currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1));
 };
-
-const getTypes = () => Event.TYPES;
-
-const getDestinations = () => DESTINATIONS;
-
-const getOffers = () => currentOffers;
-
-const getEvents = () => currentEvents;
 
 export { initMockData, getTypes, getDestinations, getOffers, getEvents };

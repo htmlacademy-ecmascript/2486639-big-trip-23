@@ -13,6 +13,12 @@ const getRandomNumber = (minNumber = 0, maxNumber = 0) => {
   return Math.floor(result);
 };
 
+const getRandomBoolean = () => {
+  const randomNumber = getRandomNumber(0, 1);
+
+  return Boolean(randomNumber);
+};
+
 const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   const previousValues = [];
 
@@ -35,11 +41,16 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
 const getRandomArrayElement = (elements) => (elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
 const getRandomArrayElements = (elements = [], maxCount = 1) => {
+  if (!elements) {
+    return null;
+  }
+
   const { length } = elements;
 
   if ((length === 0) || (maxCount < 1)) {
     return null;
   }
+
   if (maxCount === 1) {
     return [getRandomArrayElement(elements)];
   }
@@ -65,6 +76,7 @@ const createElementsTemplate =
 
 export {
   getRandomNumber,
+  getRandomBoolean,
   createIdGenerator,
   getRandomArrayElement,
   getRandomArrayElements,

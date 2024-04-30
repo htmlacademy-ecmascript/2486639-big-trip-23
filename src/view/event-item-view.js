@@ -1,7 +1,7 @@
 import { createElement } from '../render.js';
 
 const createEventItemTemplate = (event) => {
-  const { /*id, type,*/ price } = event;
+  const { /*id, type,*/ basePrice } = event;
 
   return `<li class="trip-events__item">
   <div class="event">
@@ -19,7 +19,7 @@ const createEventItemTemplate = (event) => {
       <p class="event__duration">30M</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">${price}</span>
+      €&nbsp;<span class="event__price-value">${basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

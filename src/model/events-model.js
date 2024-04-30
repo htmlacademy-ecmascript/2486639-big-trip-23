@@ -14,7 +14,6 @@ export default class EventsModel {
     this.destinations = getDestinations();
     this.offers = getOffers();
     this.events = getEvents();
-    console.log(this.events);//!!
     //
   }
 
