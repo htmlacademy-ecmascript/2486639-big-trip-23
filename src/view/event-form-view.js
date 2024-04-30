@@ -1,9 +1,9 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
 
-const createOfferTemplate = ({ title, price }) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked="">
-  <label class="event__offer-label" for="event-offer-luggage-1">
+const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
+  <label class="event__offer-label" for="${id}">
     <span class="event__offer-title">${title}</span>
       +€&nbsp;
     <span class="event__offer-price">${price}</span>

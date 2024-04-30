@@ -1,16 +1,24 @@
 import { getRandomArrayElements, getRandomNumbers } from '../utils.js';
 import {
   EVENT_COUNT,
-  OFFERS,
+  Offer,
   PhotoNumber,
-  Description,
-  DESCRIPTIONS
+  Description
 } from './const.js';
 
 const createEvent = (id, type, price) => {
-  const offers = getRandomArrayElements(OFFERS, OFFERS.length / 2);
+  const randomOfferNumbers = getRandomNumbers(0, (Offer.TITLES.length - 1) / 2);
+  const offers = (randomOfferNumbers)
+    ? randomOfferNumbers.map(
+      (offerNumber) => ({
+        id: `offer-${offerNumber}`,
+        name: `offer-${offerNumber}`,
+        title: Offer.TITLES[offerNumber],
+        price: Offer.PRICES[offerNumber]
+      }))
+    : null;
 
-  const description = getRandomArrayElements(DESCRIPTIONS, Description.MAX_COUNT).join(' ');
+  const description = getRandomArrayElements(Description.DESCRIPTIONS, Description.MAX_COUNT).join(' ');
   const randomNumbers = getRandomNumbers(PhotoNumber.MIN, PhotoNumber.MAX);
   const photos = (randomNumbers) ?
     randomNumbers.map((number) => ({
