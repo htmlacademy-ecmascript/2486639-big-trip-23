@@ -14,9 +14,11 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class
 const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
 const createEventFormTemplate = (event) => {
-  const { /*id, type,*/ offers, destination, basePrice } = event;
+  const { /*id, type,*/ offers, /*destination,*/ basePrice } = event;
+  const destination = { pictures: [], description: '' };
+
   const {
-    photos,
+    pictures,
     description //!! без описание нужно убрать весь блок!!
   } = destination;
 
@@ -128,7 +130,7 @@ const createEventFormTemplate = (event) => {
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${createElementsTemplate(photos, createPhotoTemplate)}
+          ${createElementsTemplate(pictures, createPhotoTemplate)}
         </div>
       </div>
     </section>

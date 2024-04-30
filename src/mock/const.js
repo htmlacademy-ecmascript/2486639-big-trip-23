@@ -3,7 +3,7 @@ const Event = {
   COUNT: 4
 };
 
-const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix', 'Moscow', 'Tomsk', '', 'Tokyo', 'New York', 'London'];
+const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix', 'Moscow', 'Tomsk', 'Tokyo', 'New York', 'London'];
 
 const Offer = {
   TITLES: ['Travel by train', 'Choose seats', 'Add meal', 'Switch to comfort class', 'Add luggage', 'Order Uber', 'Rent a car', 'Add breakfast', 'Book tickets', 'Lunch in city'],

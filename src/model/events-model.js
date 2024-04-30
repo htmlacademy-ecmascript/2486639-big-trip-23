@@ -1,3 +1,4 @@
+import { getById } from '../utils.js';
 import { initMockData, getTypes, getDestinations, getOffers, getEvents } from '../mock/events.js';
 
 export default class EventsModel {
@@ -15,6 +16,10 @@ export default class EventsModel {
     this.offers = getOffers();
     this.events = getEvents();
     //
+  }
+
+  getDestination(id) {
+    return getById(this.destinations, id);
   }
 
   getEvents() {
