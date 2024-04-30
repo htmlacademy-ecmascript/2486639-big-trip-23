@@ -1,4 +1,7 @@
-const EVENT_COUNT = 4;
+const Event = {
+  TYPES: ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'],
+  COUNT: 4
+};
 
 const Offer = {
   TITLES: ['Travel by train', 'Choose seats', 'Add meal', 'Switch to comfort class', 'Add luggage', 'Order Uber', 'Rent a car', 'Add breakfast', 'Book tickets', 'Lunch in city'],
@@ -18,7 +21,7 @@ const Description = {
 };
 
 export {
-  EVENT_COUNT,
+  Event,
   Offer,
   PhotoNumber,
   Description

@@ -1,17 +1,32 @@
-import { getRandomArrayElements, getRandomNumbers } from '../utils.js';
-import {
-  EVENT_COUNT,
-  Offer,
-  PhotoNumber,
-  Description
-} from './const.js';
+import { getRandomArrayElements, getRandomNumber, getRandomNumbers } from '../utils.js';
+import { Event, Offer, PhotoNumber, Description } from './const.js';
+
+const currentOffers = Event.TYPES.map(
+  (type) => {
+    const { TITLES: titles } = Offer;
+    const randomOfferTitles = getRandomArrayElements(titles, getRandomNumber(0, titles.length - 1));
+
+    const offers = (randomOfferTitles)
+      ? randomOfferTitles.map((title) => {
+        const index = titles.indexOf(title);
+        const name = `offer-${index}`;
+        const id = `${name}-1`;//!! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
+        const price = Offer.PRICES[index];
+
+        return { id, name, title, price };
+      }) : null;
+
+    return { type, offers };
+  });
+
+console.log(currentOffers);
 
 const createEvent = (id, type, price) => {
   const randomOfferNumbers = getRandomNumbers(0, (Offer.TITLES.length - 1) / 2);
   const offers = (randomOfferNumbers)
     ? randomOfferNumbers.map(
       (offerNumber) => ({
-        id: `offer-${offerNumber}`,
+        id: `offer-${offerNumber}-1`, //!! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
         name: `offer-${offerNumber}`,
         title: Offer.TITLES[offerNumber],
         price: Offer.PRICES[offerNumber]
@@ -39,7 +54,7 @@ const createEvent = (id, type, price) => {
   };
 };
 
-const getEvents = () => Array.from({ length: EVENT_COUNT }, (_, index) => createEvent(index + 1, 'type', (index + 1) * 1000));
+const getEvents = () => Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1, 'type', (index + 1) * 1000));
 
 export { getEvents };
 
