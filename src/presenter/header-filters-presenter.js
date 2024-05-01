@@ -2,7 +2,7 @@ import { render } from '../render.js';
 
 import FiltersView from '../view/filters-view.js';
 
-export default class PagePresenter {
+export default class HeaderFiltersPresenter {
   constructor({ containerElement }) {
     this.containerElement = containerElement;
   }

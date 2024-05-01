@@ -2,7 +2,7 @@ import { render, RenderPosition } from '../render.js';
 
 import InfoView from '../view/info-view.js';
 
-export default class PagePresenter {
+export default class HeadreMainPresenter {
   constructor({ containerElement }) {
     this.containerElement = containerElement;
   }

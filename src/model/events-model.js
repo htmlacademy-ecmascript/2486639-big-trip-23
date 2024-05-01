@@ -26,12 +26,10 @@ export default class EventsModel {
     return this.offers;
   }
 
-  //!!
-  /*
   getOffersByType(type) {
+    //!! проверить
     return getById(this.offers, type, 'type');
   }
-  */
 
   getDestinations() {
     return this.destinations;

@@ -1,10 +1,5 @@
 import { createElement } from '../render.js';
-
-const Info = {
-  TITLE: 'Amsterdam — Chamonix — Geneva',
-  DATES: '18&nbsp;—&nbsp;20 Mar',
-  COST: '12340'
-};
+import { TempInfo } from './const.js';
 
 const createInfoTemplate = (title, dates, cost) => `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
@@ -18,7 +13,8 @@ const createInfoTemplate = (title, dates, cost) => `<section class="trip-main__t
 
 export default class InfoView {
   getTemplate() {
-    return createInfoTemplate(Info.TITLE, Info.DATES, Info.COST);
+    const { TITLE: title, DATES: dates, COST: cost } = TempInfo;
+    return createInfoTemplate(title, dates, cost);
   }
 
   getElement() {

@@ -74,8 +74,9 @@ const getRandomNumbers = (firstNumber, lastNumber) => {
 const createElementsTemplate =
   (elements, createElementTemplate) => (elements) ? elements.map((element) => createElementTemplate(element)).join(' ') : '';
 
-//const getById = (items, id) => items.find((item) => item.id === id);
-//const getByType = (items, id) => items.find((item) => item.id === id);
+//!!const getById = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
+//!!const getByType = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
+//!! getValueOf...
 const getById = (items, id, idName = 'id') => items.find((item) => item[idName] === id);
 
 export {
