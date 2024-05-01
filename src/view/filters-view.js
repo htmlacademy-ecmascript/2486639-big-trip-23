@@ -1,7 +1,7 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
 import { FILTER_TYPES } from './const.js';
-
+//!! random Выбрать!!
 const createFilterItemTemplate = (type) => `<div class="trip-filters__filter">
   <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" checked="">
   <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>

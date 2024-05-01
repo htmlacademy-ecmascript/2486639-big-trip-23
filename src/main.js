@@ -12,7 +12,7 @@ const contentElement = bodyElement.querySelector('section.trip-events');
 
 const eventsModel = new EventsModel();
 
-const headerMainPresenter = new HeaderMainPresenter({ containerElement: headerMainElement }); //!! переименовать в HearedInfoPresenter
+const headerMainPresenter = new HeaderMainPresenter({ containerElement: headerMainElement }); //!! переименовать в InfoPresenter
 const headerFiltersPresenter = new HeaderFiltersPresenter({ containerElement: headerFiltersElement }); //!! убрать т.к. нет данных, отрисовать FiltersView сразу тут
 const contentPresenter = new ContentPresenter({ containerElement: contentElement, eventsModel });
 

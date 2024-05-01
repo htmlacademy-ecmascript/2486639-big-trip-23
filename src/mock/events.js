@@ -5,13 +5,13 @@ let currentDestinations = [];
 let currentOffers = [];
 let currentEvents = [];
 
-const getTypes = () => Event.TYPES;
+const getMockTypes = () => Event.TYPES;
 
-const getDestinations = () => currentDestinations;
+const getMockDestinations = () => currentDestinations;
 
 const getDestinationIds = () => currentDestinations.map((destination) => destination.id);
 
-const getOffers = () => currentOffers;
+const getMockOffers = () => currentOffers;
 
 const getOfferIdsByType = (type) => {
   const typeOffers = currentOffers.filter((offer) => offer.type === type);
@@ -20,7 +20,7 @@ const getOfferIdsByType = (type) => {
   return (offers) ? offers.map((offer) => offer.id) : null;
 };
 
-const getEvents = () => currentEvents;
+const getMockEvents = () => currentEvents;
 
 const createEvent = (id) => {
   const type = getRandomArrayElement(Event.TYPES);
@@ -87,4 +87,4 @@ const initMockData = () => {
   currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1));
 };
 
-export { initMockData, getTypes, getDestinations, getOffers, getEvents };
+export { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents };
