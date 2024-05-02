@@ -1,6 +1,6 @@
 import { render } from './render.js';
 import FiltersView from './view/filters-view.js';
-import HeaderMainPresenter from './presenter/header-main-presenter.js';
+import InfoPresenter from './presenter/info-presenter.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import EventsModel from './model/events-model.js';
 
@@ -13,11 +13,10 @@ const contentElement = bodyElement.querySelector('section.trip-events');
 
 const eventsModel = new EventsModel();
 
-const headerMainPresenter = new HeaderMainPresenter({ containerElement: headerMainElement }); //!! переименовать в InfoPresenter
+const infoPresenter = new InfoPresenter({ containerElement: headerMainElement });
 const contentPresenter = new ContentPresenter({ containerElement: contentElement, eventsModel });
 
 render(new FiltersView(), headerFiltersElement);
 
-headerMainPresenter.init();
-//headerFiltersPresenter.init();
+infoPresenter.init();
 contentPresenter.init();
