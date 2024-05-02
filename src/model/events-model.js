@@ -1,5 +1,5 @@
 import { getById } from '../utils.js';
-import { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents } from '../mock/events.js';
+import { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
   //!!events = getEvents();
@@ -7,6 +7,7 @@ export default class EventsModel {
   destinations = [];
   offers = [];
   events = [];
+  info = {}; //!! может делать ли отдельную модель для info?
 
   constructor() {
     //!! временно
@@ -15,7 +16,7 @@ export default class EventsModel {
     this.destinations = getMockDestinations();
     this.offers = getMockOffers();
     this.events = getMockEvents();
-    //
+    this.info = getMockInfo();
   }
 
   getTypes() {
@@ -37,5 +38,9 @@ export default class EventsModel {
 
   getEvents() {
     return this.events;
+  }
+
+  getInfo() {
+    return this.info;
   }
 }

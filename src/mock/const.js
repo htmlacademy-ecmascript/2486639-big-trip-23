@@ -22,10 +22,22 @@ const Description = {
   MAX_COUNT: 5
 };
 
+const Info = {
+  DESTINATIONS_COUNT: 3,
+  DATE_MAX: 30
+};
+
+const Cost = {
+  MIN: 10000,
+  MAX: 20000
+};
+
 export {
   Event,
   DESTINATIONS,
   Offer,
   PhotoNumber,
-  Description
+  Description,
+  Info,
+  Cost
 };

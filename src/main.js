@@ -13,7 +13,7 @@ const contentElement = bodyElement.querySelector('section.trip-events');
 
 const eventsModel = new EventsModel();
 
-const infoPresenter = new InfoPresenter({ containerElement: headerMainElement });
+const infoPresenter = new InfoPresenter({ containerElement: headerMainElement, eventsModel }); //? может нужна отдельная модель?
 const contentPresenter = new ContentPresenter({ containerElement: contentElement, eventsModel });
 
 render(new FiltersView(), headerFiltersElement);

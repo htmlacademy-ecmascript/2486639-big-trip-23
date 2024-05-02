@@ -38,16 +38,16 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   };
 };
 
-const getRandomArrayElement = (elements) => (elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
+const getRandomArrayElement = (elements) => (!elements || elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
-const getRandomArrayElements = (elements = [], maxCount = 1) => {
+const getRandomArrayElements = (elements = [], maxCount = 1, minCount = 1) => {
   if (!elements) {
     return null;
   }
 
   const { length } = elements;
 
-  if ((length === 0) || (maxCount < 1)) {
+  if ((length === 0) || (maxCount < 1) || (minCount < 0)) {
     return null;
   }
 
@@ -61,7 +61,7 @@ const getRandomArrayElements = (elements = [], maxCount = 1) => {
 
   const generateElemetIndex = createIdGenerator(0, length - 1);
 
-  return Array.from({ length: getRandomNumber(1, maxCount) }, () => elements[generateElemetIndex()]);
+  return Array.from({ length: getRandomNumber(minCount, maxCount) }, () => elements[generateElemetIndex()]);
 };
 
 const getRandomNumbers = (firstNumber, lastNumber) => {

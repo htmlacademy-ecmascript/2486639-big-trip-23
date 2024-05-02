@@ -1,5 +1,5 @@
 import { getRandomNumber, getRandomBoolean, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
-import { Event, DESTINATIONS, Offer, PhotoNumber, Description } from './const.js';
+import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
 let currentDestinations = [];
 let currentOffers = [];
@@ -87,4 +87,14 @@ const initMockData = () => {
   currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1));
 };
 
-export { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents };
+const getMockInfo = () => {
+  const { DESTINATIONS_COUNT: destinationsCount, DATE_MAX: DateMax } = Info;
+  const destinations = getRandomArrayElements(currentDestinations, destinationsCount, destinationsCount);
+  const title = destinations.map((destination) => destination.name).join(' — ');
+  const dates = `${getRandomNumber(1, DateMax)}&nbsp;—&nbsp;${getRandomNumber(1, DateMax)} Mar`;
+  const cost = getRandomNumber(Cost.MIN, Cost.MAX);
+
+  return { title, dates, cost };
+};
+
+export { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo };

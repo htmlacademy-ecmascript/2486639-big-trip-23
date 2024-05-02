@@ -7,8 +7,9 @@ import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
 
 export default class ContentPresenter {
+  eventsListComponent = new EventsListView();
+
   constructor({ containerElement, eventsModel }) {
-    this.eventsListComponent = new EventsListView();
     this.containerElement = containerElement;
     this.eventsModel = eventsModel;
   }

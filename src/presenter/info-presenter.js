@@ -3,11 +3,14 @@ import { render, RenderPosition } from '../render.js';
 import InfoView from '../view/info-view.js';
 
 export default class InfoPresenter {
-  constructor({ containerElement }) {
+  constructor({ containerElement, eventsModel }) {
     this.containerElement = containerElement;
+    this.eventsModel = eventsModel;
   }
 
   init() {
-    render(new InfoView(), this.containerElement, RenderPosition.AFTERBEGIN);
+    const info = this.eventsModel.getInfo(); //!! временно
+
+    render(new InfoView(info), this.containerElement, RenderPosition.AFTERBEGIN);
   }
 }
