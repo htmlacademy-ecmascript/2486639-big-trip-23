@@ -6,7 +6,7 @@ const createTypeTemplate = ({ id, type }) => `<div class="event__type-item">
   <label class="event__type-label  event__type-label--${type}" for="${id}">${capitalizeFirstLetter(type)}</label>
 </div>`;
 
-//!! без оферов нужно убрать блок блок!!
+//! без оферов нужно убрать блок блок!
 const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
     <label class="event__offer-label" for="${id}">
@@ -24,7 +24,7 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
   //const destination = { pictures: [], description: '' };
   const {
     pictures,
-    description //!! без описание нужно убрать весь блок!!
+    description //! без описание нужно убрать весь блок!
   } = destination;
 
   return `< li class="trip-events__item" >

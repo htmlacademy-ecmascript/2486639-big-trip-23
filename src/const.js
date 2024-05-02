@@ -1,5 +1,6 @@
-const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
+const FILTERS = ['everything', 'future', 'present', 'past'];
 
-const SORTING_TYPES = ['day', 'event', 'time', 'price', 'offers'];
+const SORTINGS = ['day', 'event', 'time', 'price', 'offers'];
+const DISABLED_SORTINGS = [SORTINGS[1]];
 
-export { FILTER_TYPES, SORTING_TYPES };
+export { FILTERS, SORTINGS, DISABLED_SORTINGS };

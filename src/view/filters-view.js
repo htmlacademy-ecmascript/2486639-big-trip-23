@@ -14,6 +14,7 @@ const createFiltersTemplate = (filters) => `<form class="trip-filters" action="#
   ${createElementsTemplate(filters, createFilterItemTemplate)}
 </form>`;
 
+//! очень похожи с SortingView
 export default class FiltersView {
   constructor(filters, activeFilter) {
     this.filters = filters.map((filter) => ({ filter, isActive: (filter === activeFilter) }));

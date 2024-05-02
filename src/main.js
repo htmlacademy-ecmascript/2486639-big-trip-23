@@ -5,7 +5,7 @@ import InfoPresenter from './presenter/info-presenter.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import EventsModel from './model/events-model.js';
 import { getRandomArrayElement } from './utils.js';
-import { FILTER_TYPES, SORTING_TYPES } from './const.js';
+import { FILTERS, SORTINGS, DISABLED_SORTINGS } from './const.js';
 
 const bodyElement = document.body;
 
@@ -19,13 +19,13 @@ const eventsModel = new EventsModel();
 const infoPresenter = new InfoPresenter({ containerElement: headerMainElement, eventsModel }); //? может нужна отдельная модель?
 const contentPresenter = new ContentPresenter({ containerElement: contentElement, eventsModel });
 
-//? есть ли смысл добавить FILTER_TYPES и SORTING_TYPES и выбранные типы в модель?
-const activeFilter = getRandomArrayElement(FILTER_TYPES);
-render(new FiltersView(FILTER_TYPES, activeFilter), headerFiltersElement);
+//? есть ли смысл добавить FILTERS и SORTINGS и активные типы в модель?
+const activeFilter = getRandomArrayElement(FILTERS);
+render(new FiltersView(FILTERS, activeFilter), headerFiltersElement);
 
-//!! очень похожи с FiltersView
-const activeSorting = getRandomArrayElement(SORTING_TYPES);
-render(new SortingView(SORTING_TYPES, activeSorting), contentElement);
+//! очень похожи FiltersView и SortingView, после наследования передалать
+const activeSorting = getRandomArrayElement(SORTINGS.filter((item) => !DISABLED_SORTINGS.includes(item)));
+render(new SortingView(SORTINGS, activeSorting, DISABLED_SORTINGS), contentElement);
 
 infoPresenter.init();
 contentPresenter.init();

@@ -76,7 +76,7 @@ const initMockData = () => {
           offers = randomOfferTitles.map((title) => {
             const index = titles.indexOf(title);
             const name = `offer-${index}`;
-            const id = `${name}-1`;//!! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
+            const id = `${name}-1`;//! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
             const price = Offer.PRICES[index];
 
             return { id, name, title, price };

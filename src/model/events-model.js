@@ -2,15 +2,8 @@ import { getById } from '../utils.js';
 import { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
-  //!!events = getEvents();
-  types = [];
-  destinations = [];
-  offers = [];
-  events = [];
-  info = {}; //!! может делать ли отдельную модель для info?
-
   constructor() {
-    //!! временно
+    //! временно
     initMockData();
     this.types = getMockTypes();
     this.destinations = getMockDestinations();
@@ -28,7 +21,7 @@ export default class EventsModel {
   }
 
   getOffersByType(type) {
-    //!! проверить
+    //! проверить
     return getById(this.offers, type, 'type');
   }
 
