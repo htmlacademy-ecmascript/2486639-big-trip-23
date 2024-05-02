@@ -41,13 +41,13 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
 const getRandomArrayElement = (elements) => (!elements || elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
 const getRandomArrayElements = (elements = [], maxCount = 1, minCount = 1) => {
-  if (!elements) {
+  if (!elements || (maxCount < 1) || (minCount < 0)) {
     return null;
   }
 
   const { length } = elements;
 
-  if ((length === 0) || (maxCount < 1) || (minCount < 0)) {
+  if ((length === 0)) {
     return null;
   }
 
@@ -79,6 +79,8 @@ const createElementsTemplate =
 //!! getValueOf...
 const getById = (items, id, idName = 'id') => items.find((item) => item[idName] === id);
 
+const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
 export {
   getRandomNumber,
   getRandomBoolean,
@@ -87,5 +89,6 @@ export {
   getRandomArrayElements,
   getRandomNumbers,
   createElementsTemplate,
-  getById
+  getById,
+  capitalizeFirstLetter
 };

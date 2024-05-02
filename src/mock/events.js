@@ -1,11 +1,12 @@
 import { getRandomNumber, getRandomBoolean, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
+let currentTypes = [];
 let currentDestinations = [];
 let currentOffers = [];
 let currentEvents = [];
 
-const getMockTypes = () => Event.TYPES;
+const getMockTypes = () => currentTypes;
 
 const getMockDestinations = () => currentDestinations;
 
@@ -41,6 +42,8 @@ const createEvent = (id) => {
 };
 
 const initMockData = () => {
+  currentTypes = Event.TYPES.map((type) => ({ id: `type-${type}-1`, type }));
+
   currentDestinations = DESTINATIONS.map((destination, index) => {
     let description = '';
     let pictures = [];
