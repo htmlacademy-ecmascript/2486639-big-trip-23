@@ -1,19 +1,27 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
-import { SORTING_TYPES } from './const.js';
-//!! random Выбрать!!
-const createSortingItemTemplate = (type) => `<div class="trip-sort__item  trip-sort__item--${type}">
-  <input id="sort-${type}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${type}" checked="">
-  <label class="trip-sort__btn" for="sort-${type}">${type}</label>
-</div>`;
 
-const createSortingTemplate = () => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-  ${createElementsTemplate(SORTING_TYPES, createSortingItemTemplate)}
+const createSortingItemTemplate = ({ sorting, isActive }) => {
+  const checked = (isActive) ? 'checked' : '';
+
+  return `<div class="trip-sort__item  trip-sort__item--${sorting}">
+  <input id="sort-${sorting}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorting}" ${checked}>
+  <label class="trip-sort__btn" for="sort-${sorting}">${sorting}</label>
+</div>`;
+};
+
+const createSortingTemplate = (sortings) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  ${createElementsTemplate(sortings, createSortingItemTemplate)}
 </form>`;
 
+//!! очень похожи с FiltersView
 export default class SortingView {
+  constructor(sortings, activeFilter) {
+    this.sortings = sortings.map((sorting) => ({ sorting, isActive: (sorting === activeFilter) }));
+  }
+
   getTemplate() {
-    return createSortingTemplate();
+    return createSortingTemplate(this.sortings);
   }
 
   getElement() {

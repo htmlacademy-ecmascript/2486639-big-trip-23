@@ -2,12 +2,12 @@ import { createElement } from '../render.js';
 import { createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
 
 const createTypeTemplate = ({ id, type }) => `<div class="event__type-item">
-<input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-<label class="event__type-label  event__type-label--${type}" for="${id}">${capitalizeFirstLetter(type)}</label>
+  <input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+  <label class="event__type-label  event__type-label--${type}" for="${id}">${capitalizeFirstLetter(type)}</label>
 </div>`;
 
 //!! без оферов нужно убрать блок блок!!
-const createOfferTemplate = ({ id, name, title, price, checked }) => `< div class="event__offer-selector" >
+const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
     <label class="event__offer-label" for="${id}">
       <span class="event__offer-title">${title}</span>
@@ -19,9 +19,9 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `< div clas
 const createPhotoTemplate = ({ src, description }) => `< img class="event__photo" src = "${src}" alt = "${description}" > `;
 
 const createEventFormTemplate = (event, types, offers, destinations) => {
-  const { /*id,*/ type, eventOffers, /*destination,*/ basePrice } = event;
+  const { /*id,*/ type, eventOffers, destination, basePrice } = event;
 
-  const destination = { pictures: [], description: '' };
+  //const destination = { pictures: [], description: '' };
   const {
     pictures,
     description //!! без описание нужно убрать весь блок!!
@@ -33,7 +33,7 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -47,9 +47,9 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          Flight
+          ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>

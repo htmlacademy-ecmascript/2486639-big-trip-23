@@ -1,19 +1,26 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
-import { FILTER_TYPES } from './const.js';
-//!! random Выбрать!!
-const createFilterItemTemplate = (type) => `<div class="trip-filters__filter">
-  <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" checked="">
-  <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
-</div>`;
 
-const createFiltersTemplate = () => `<form class="trip-filters" action="#" method="get">
-  ${createElementsTemplate(FILTER_TYPES, createFilterItemTemplate)}
+const createFilterItemTemplate = ({ filter, isActive }) => {
+  const checked = (isActive) ? 'checked' : '';
+
+  return `<div class="trip-filters__filter">
+  <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${checked}>
+  <label class="trip-filters__filter-label" for="filter-${filter}">${filter}</label>
+</div>`;
+};
+
+const createFiltersTemplate = (filters) => `<form class="trip-filters" action="#" method="get">
+  ${createElementsTemplate(filters, createFilterItemTemplate)}
 </form>`;
 
 export default class FiltersView {
+  constructor(filters, activeFilter) {
+    this.filters = filters.map((filter) => ({ filter, isActive: (filter === activeFilter) }));
+  }
+
   getTemplate() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this.filters);
   }
 
   getElement() {

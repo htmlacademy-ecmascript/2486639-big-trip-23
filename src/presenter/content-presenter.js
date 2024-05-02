@@ -1,6 +1,4 @@
 import { render } from '../render.js';
-
-import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -24,8 +22,6 @@ export default class ContentPresenter {
     const events = [...this.eventsModel.getEvents()];
 
     this.events = events; //!! временно
-
-    render(new SortingView(), this.containerElement);
 
     //!! временно
     render(new EventFormView(events[0], types, offers, destinations), eventsListElement);
