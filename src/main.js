@@ -1,5 +1,6 @@
+import { render } from './render.js';
+import FiltersView from './view/filters-view.js';
 import HeaderMainPresenter from './presenter/header-main-presenter.js';
-import HeaderFiltersPresenter from './presenter/header-filters-presenter.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import EventsModel from './model/events-model.js';
 
@@ -13,9 +14,10 @@ const contentElement = bodyElement.querySelector('section.trip-events');
 const eventsModel = new EventsModel();
 
 const headerMainPresenter = new HeaderMainPresenter({ containerElement: headerMainElement }); //!! переименовать в InfoPresenter
-const headerFiltersPresenter = new HeaderFiltersPresenter({ containerElement: headerFiltersElement }); //!! убрать т.к. нет данных, отрисовать FiltersView сразу тут
 const contentPresenter = new ContentPresenter({ containerElement: contentElement, eventsModel });
 
+render(new FiltersView(), headerFiltersElement);
+
 headerMainPresenter.init();
-headerFiltersPresenter.init();
+//headerFiltersPresenter.init();
 contentPresenter.init();
