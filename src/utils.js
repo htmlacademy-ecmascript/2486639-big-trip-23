@@ -38,7 +38,9 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   };
 };
 
-const getRandomArrayElement = (elements) => (!elements || elements.length === 0) ? null : elements[getRandomNumber(0, elements.length - 1)];
+const isEmptyArray = (items) => (!items || !items.length);
+
+const getRandomArrayElement = (elements) => (isEmptyArray(elements)) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
 const getRandomArrayElements = (elements = [], maxCount = 1, minCount = 1) => {
   if (!elements || (maxCount < 1) || (minCount < 0)) {
@@ -85,6 +87,7 @@ export {
   getRandomNumber,
   getRandomBoolean,
   createIdGenerator,
+  isEmptyArray,
   getRandomArrayElement,
   getRandomArrayElements,
   getRandomNumbers,

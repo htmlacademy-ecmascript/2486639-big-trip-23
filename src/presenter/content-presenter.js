@@ -18,7 +18,6 @@ export default class ContentPresenter {
 
     const types = eventsModel.getTypes();
     const destinationNames = eventsModel.getDestinationNames();
-    //const offers = eventsModel.getOffers();
 
     const events = [...eventsModel.getEvents()];
 

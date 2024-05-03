@@ -1,5 +1,5 @@
 import { createElement } from '../render.js';
-import { createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
+import { isEmptyArray, createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
 
 const createTypeItemTemplate = ({ id, type }) => `<div class="event__type-item">
   <input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
@@ -22,14 +22,14 @@ const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="d
 //! без оферов нужно убрать блок блок!
 const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
-    <label class="event__offer-label" for="${id}">
-      <span class="event__offer-title">${title}</span>
-      +€&nbsp;
-      <span class="event__offer-price">${price}</span>
-    </label>
-  </div>`;
+  <label class="event__offer-label" for="${id}">
+    <span class="event__offer-title">${title}</span>
+    +€&nbsp;
+    <span class="event__offer-price">${price}</span>
+  </label>
+</div>`;
 
-const createSectionOffersTemplate = (offers) => (!offers || !offers.length) ? '' : `<div class="event__offer-selector">
+const createSectionOffersTemplate = (offers) => (isEmptyArray(offers)) ? '' : `<div class="event__offer-selector">
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
@@ -39,15 +39,22 @@ const createSectionOffersTemplate = (offers) => (!offers || !offers.length) ? ''
 
 const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
+const createPhotosContainerTemplate = (pictures) => (isEmptyArray(pictures)) ? '' : `<div class="event__photos-container">
+  <div class="event__photos-tape">
+    ${createElementsTemplate(pictures, createPhotoTemplate)}
+  </div>
+</div>`;
+
+const createSectionDestinationTemplate = ({ description, pictures }) => (!description) ? '' : `<section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">${description}</p>
+  ${createPhotosContainerTemplate(pictures)}
+</section>`;
+
 const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
   const { /*id,*/ type, basePrice } = event; //! от event? мало что педаеться
-  const {
-    name: destinationName,
-    pictures,
-    description //! без описание нужно убрать весь блок!
-  } = destination;
+  const destinationName = destination.name;
 
-  console.log(offers);
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -90,17 +97,7 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
         </header>
         <section class="event__details">
           ${createSectionOffersTemplate(offers)}
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${createElementsTemplate(pictures, createPhotoTemplate)}
-              </div>
-            </div>
-          </section>
+          ${createSectionDestinationTemplate(destination)}
         </section>
       </form>
       <li>`;

@@ -1,4 +1,4 @@
-import { getById } from '../utils.js';
+import { isEmptyArray, getById } from '../utils.js';
 import { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
@@ -35,11 +35,11 @@ export default class EventsModel {
     const currentType = getById(this.offers, type, 'type');
     const typeOffers = currentType?.offers;
 
-    if (!typeOffers || typeOffers.length === 0) {
+    if (isEmptyArray(typeOffers)) {
       return null;
     }
 
-    if (!eventOfferIds || eventOfferIds.length === 0) {
+    if (isEmptyArray(eventOfferIds)) {
       return typeOffers;
     }
 
