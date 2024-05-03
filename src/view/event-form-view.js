@@ -20,7 +20,7 @@ const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="d
 </datalist>`;
 
 //! без оферов нужно убрать блок блок!
-const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
+const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
     <label class="event__offer-label" for="${id}">
       <span class="event__offer-title">${title}</span>
@@ -29,17 +29,25 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class
     </label>
   </div>`;
 
+const createSectionOffersTemplate = (offers) => (!offers || !offers.length) ? '' : `<div class="event__offer-selector">
+  <section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">
+      ${createElementsTemplate(offers, createOfferTemplate)}
+    </div>
+</section>`;
+
 const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createEventFormTemplate = (event, types, destinationNames, offers) => {
-  const { /*id,*/ type, eventOffers, destination, basePrice } = event;
-
-  //const destination = { pictures: [], description: '' };
+const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
+  const { /*id,*/ type, basePrice } = event; //! от event? мало что педаеться
   const {
+    name: destinationName,
     pictures,
     description //! без описание нужно убрать весь блок!
   } = destination;
 
+  console.log(offers);
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -57,7 +65,7 @@ const createEventFormTemplate = (event, types, destinationNames, offers) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
           ${createDestinationDatalistTemplate(destinationNames)}
       </div>
 
@@ -81,13 +89,7 @@ const createEventFormTemplate = (event, types, destinationNames, offers) => {
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${createElementsTemplate(offers, createOfferTemplate)}
-            </div>
-          </section>
+          ${createSectionOffersTemplate(offers)}
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -105,17 +107,18 @@ const createEventFormTemplate = (event, types, destinationNames, offers) => {
 };
 
 export default class EventFormView {
-  constructor(event, types, destinationNames, offers) {
+  constructor(event, types, destinationNames, destination, offers) {
     this.event = event;
     this.types = types;
     this.destinationNames = destinationNames;
+    this.destination = destination;
     this.offers = offers;
   }
 
   getTemplate() {
-    const { event, types, offers, destinationNames } = this;
+    const { event, types, destinationNames, destination, offers } = this;
 
-    return createEventFormTemplate(event, types, destinationNames, offers);
+    return createEventFormTemplate(event, types, destinationNames, destination, offers);
   }
 
   getElement() {

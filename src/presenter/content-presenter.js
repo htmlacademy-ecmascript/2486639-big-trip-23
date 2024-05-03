@@ -14,17 +14,21 @@ export default class ContentPresenter {
 
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
+    const { eventsModel } = this;
 
-    const types = this.eventsModel.getTypes();
-    const destinationNames = this.eventsModel.getDestinationNames();
-    //const offers = this.eventsModel.getOffers();
+    const types = eventsModel.getTypes();
+    const destinationNames = eventsModel.getDestinationNames();
+    //const offers = eventsModel.getOffers();
 
-    const events = [...this.eventsModel.getEvents()];
+    const events = [...eventsModel.getEvents()];
 
     this.events = events; //! временно. сохранить то что будет диспользоваться в других методах.
 
     //! временно выводим форму редактирования и несколько событий
-    render(new EventFormView(events[0], types, destinationNames/*, offers*/), eventsListElement);
+    const event = events[0];
+    const destination = eventsModel.getDestinationById(event.destination);
+    const offers = eventsModel.getAvailableEventOffers(event);
+    render(new EventFormView(event, types, destinationNames, destination, offers), eventsListElement);
     for (let i = 1; i < events.length; i++) {
       render(new EventItemView(events[i]), eventsListElement);
     }

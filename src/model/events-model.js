@@ -27,11 +27,23 @@ export default class EventsModel {
   }
 
   getDestinationById(id) {
-    return getById(this.destinations, id); //! проверить
+    return getById(this.destinations, id);
   }
 
-  getOffersByType(type) {
-    return getById(this.offers, type, 'type'); //! проверить
+  getAvailableEventOffers(event) {
+    const { type, offers: eventOfferIds } = event;
+    const currentType = getById(this.offers, type, 'type');
+    const typeOffers = currentType?.offers;
+
+    if (!typeOffers || typeOffers.length === 0) {
+      return null;
+    }
+
+    if (!eventOfferIds || eventOfferIds.length === 0) {
+      return typeOffers;
+    }
+
+    return typeOffers.map((offer) => ({ ...offer, checked: eventOfferIds.includes(offer.id) }));
   }
 
   getEvents() {
