@@ -19,6 +19,14 @@ const getRandomBoolean = () => {
   return Boolean(randomNumber);
 };
 
+const getRandomDate = (minDate, maxDate) => {
+  const date = new Date();
+  const milliseconds = minDate.getTime() - maxDate.getTime();
+  date.setTime(maxDate.getTime() + Math.random() * milliseconds);
+
+  return date;
+};
+
 const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   const previousValues = [];
 
@@ -87,6 +95,7 @@ export {
   getRandomNumber,
   getRandomBoolean,
   createIdGenerator,
+  getRandomDate,
   isEmptyArray,
   getRandomArrayElement,
   getRandomArrayElements,

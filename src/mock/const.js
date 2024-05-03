@@ -1,5 +1,13 @@
 const Event = {
   TYPES: ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'],
+  Price: { //? так не нарушаю критерий? или сразу отдельно?
+    MIN: 1000,
+    MAX: 5000
+  },
+  Date: { //? так не нарушаю критерий? или сразу отдельно?
+    MIN: new Date(2024, 0, 1),
+    MAX: new Date(2025, 0, 1)
+  },
   COUNT: 4
 };
 

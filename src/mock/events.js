@@ -1,4 +1,4 @@
-import { getRandomNumber, getRandomBoolean, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
+import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
 let currentTypes = [];
@@ -25,16 +25,21 @@ const getMockEvents = () => currentEvents;
 
 const createEvent = (id) => {
   const type = getRandomArrayElement(Event.TYPES);
-  const basePrice = id * 1000;
+  const { MIN: minPrice, MAX: maxPrice } = Event.Price;
+  const basePrice = getRandomNumber(minPrice, maxPrice);
   const offerIds = getOfferIdsByType(type);
   const offers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : null;
+
+  const { MIN: minDate, MAX: maxDate } = Event.Date;
+  const dateFrom = getRandomDate(minDate, maxDate);
+  const dateTo = getRandomDate(dateFrom, maxDate);
 
   return {
     id,
     type,
     basePrice,
-    dateFrom: '11/22/33',
-    dateTo: '22/33/44',
+    dateFrom,
+    dateTo,
     isFavorite: getRandomBoolean(),
     offers,
     destination: getRandomArrayElement(getDestinationIds())
