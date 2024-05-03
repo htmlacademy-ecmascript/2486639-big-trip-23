@@ -1,3 +1,5 @@
+//! разбить на файлы и сложить в папку util
+
 const getRandomNumber = (minNumber = 0, maxNumber = 0) => {
   const absMinNumber = Math.abs(minNumber);
   const absMaxNumber = Math.abs(maxNumber);
@@ -21,8 +23,8 @@ const getRandomBoolean = () => {
 
 const getRandomDate = (minDate, maxDate) => {
   const date = new Date();
-  const milliseconds = minDate.getTime() - maxDate.getTime();
-  date.setTime(maxDate.getTime() + Math.random() * milliseconds);
+  const milliseconds = maxDate.getTime() - minDate.getTime();
+  date.setTime(minDate.getTime() + Math.random() * milliseconds);
 
   return date;
 };

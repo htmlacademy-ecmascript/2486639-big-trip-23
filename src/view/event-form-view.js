@@ -53,7 +53,7 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (!descri
 </section>`;
 
 const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
-  const { /*id,*/ type, dateFrom, dateTo, basePrice } = event; //! от event? мало что педаеться
+  const { /*id, //! пока не используется*/ type, dateFrom, dateTo, basePrice } = event; //! от event? мало что педается
   const destinationName = destination.name;
 
   return `<li class="trip-events__item">

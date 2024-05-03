@@ -46,6 +46,22 @@ export default class EventsModel {
     return typeOffers.map((offer) => ({ ...offer, checked: eventOfferIds.includes(offer.id) }));
   }
 
+  getEventOffers(event) {
+    const { type, offers: eventOfferIds } = event;
+    const currentType = getById(this.offers, type, 'type');
+    const typeOffers = currentType?.offers;
+
+    if (isEmptyArray(typeOffers)) {
+      return null;
+    }
+
+    if (isEmptyArray(eventOfferIds)) {
+      return typeOffers;
+    }
+
+    return typeOffers.filter((offer) => eventOfferIds.includes(offer.id));
+  }
+
   getEvents() {
     return this.events;
   }

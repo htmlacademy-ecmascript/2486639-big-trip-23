@@ -23,13 +23,17 @@ export default class ContentPresenter {
 
     this.events = events; //! временно. сохранить то что будет диспользоваться в других методах.
 
-    //! временно выводим форму редактирования и несколько событий
+    //! временно выводим форму редактирования
     const event = events[0];
     const destination = eventsModel.getDestinationById(event.destination);
     const offers = eventsModel.getAvailableEventOffers(event);
     render(new EventFormView(event, types, destinationNames, destination, offers), eventsListElement);
+    //! временно выводим несколько событий
     for (let i = 1; i < events.length; i++) {
-      render(new EventItemView(events[i]), eventsListElement);
+      const currentEvent = events[i];
+      const { name: destinationName } = eventsModel.getDestinationById(currentEvent.destination);
+      const eventOffers = eventsModel.getEventOffers(currentEvent);
+      render(new EventItemView(currentEvent, destinationName, eventOffers), eventsListElement);
     }
 
     //! с пустым списком нужно убрать весь блок и вывести сообщение! должен подойти MessageView <p class="trip-events__msg">Click New Event to create your first point</p>
