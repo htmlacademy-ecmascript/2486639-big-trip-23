@@ -5,35 +5,36 @@ export default class EventsModel {
   constructor() {
     //! временно
     initMockData();
+    this.info = getMockInfo();
     this.types = getMockTypes();
-    this.destinations = getMockDestinations();
+    const destinations = getMockDestinations();
+    this.destinations = destinations;
+    this.destinationNames = destinations.map((destination) => destination.name);
     this.offers = getMockOffers();
     this.events = getMockEvents();
-    this.info = getMockInfo();
+  }
+
+  getInfo() {
+    return this.info;
   }
 
   getTypes() {
     return this.types;
   }
 
-  getOffers() {
-    return this.offers;
+  getDestinationNames() {
+    return this.destinationNames;
+  }
+
+  getDestinationById(id) {
+    return getById(this.destinations, id); //! проверить
   }
 
   getOffersByType(type) {
-    //! проверить
-    return getById(this.offers, type, 'type');
-  }
-
-  getDestinations() {
-    return this.destinations;
+    return getById(this.offers, type, 'type'); //! проверить
   }
 
   getEvents() {
     return this.events;
-  }
-
-  getInfo() {
-    return this.info;
   }
 }

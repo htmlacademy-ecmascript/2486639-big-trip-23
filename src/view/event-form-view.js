@@ -1,10 +1,23 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
 
-const createTypeTemplate = ({ id, type }) => `<div class="event__type-item">
+const createTypeItemTemplate = ({ id, type }) => `<div class="event__type-item">
   <input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
   <label class="event__type-label  event__type-label--${type}" for="${id}">${capitalizeFirstLetter(type)}</label>
 </div>`;
+
+const createTypeListTemplate = (types) => `<div class="event__type-list">
+  <fieldset class="event__type-group">
+    <legend class="visually-hidden">Event type</legend>
+    ${createElementsTemplate(types, createTypeItemTemplate)}
+  </fieldset>
+</div>`;
+
+const createDestinationOptionTemplate = (destinationName) => `<option value="${destinationName}"></option>`;
+
+const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="destination-list-1">
+    ${createElementsTemplate(destinationNames, createDestinationOptionTemplate)}
+</datalist>`;
 
 //! без оферов нужно убрать блок блок!
 const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class="event__offer-selector">
@@ -16,9 +29,9 @@ const createOfferTemplate = ({ id, name, title, price, checked }) => `<div class
     </label>
   </div>`;
 
-const createPhotoTemplate = ({ src, description }) => `< img class="event__photo" src = "${src}" alt = "${description}" > `;
+const createPhotoTemplate = ({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createEventFormTemplate = (event, types, offers, destinations) => {
+const createEventFormTemplate = (event, types, destinationNames, offers) => {
   const { /*id,*/ type, eventOffers, destination, basePrice } = event;
 
   //const destination = { pictures: [], description: '' };
@@ -27,7 +40,7 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
     description //! без описание нужно убрать весь блок!
   } = destination;
 
-  return `< li class="trip-events__item" >
+  return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
@@ -37,12 +50,7 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-          <div class="event__type-list">
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Event type</legend>
-              ${createElementsTemplate(types, createTypeTemplate)}
-            </fieldset>
-          </div>
+          ${createTypeListTemplate(types)}
       </div>
 
       <div class="event__field-group  event__field-group--destination">
@@ -50,11 +58,7 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
           ${capitalizeFirstLetter(type)}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
-          <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-          </datalist>
+          ${createDestinationDatalistTemplate(destinationNames)}
       </div>
 
       <div class="event__field-group  event__field-group--time">
@@ -101,17 +105,17 @@ const createEventFormTemplate = (event, types, offers, destinations) => {
 };
 
 export default class EventFormView {
-  constructor(event, types, offers, destinations) {
+  constructor(event, types, destinationNames, offers) {
     this.event = event;
     this.types = types;
+    this.destinationNames = destinationNames;
     this.offers = offers;
-    this.destinations = destinations;
   }
 
   getTemplate() {
-    const { event, types, offers, destinations } = this;
+    const { event, types, offers, destinationNames } = this;
 
-    return createEventFormTemplate(event, types, offers, destinations);
+    return createEventFormTemplate(event, types, destinationNames, offers);
   }
 
   getElement() {
