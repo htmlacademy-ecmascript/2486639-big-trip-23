@@ -1,4 +1,5 @@
 import { createElement } from '../render.js';
+import { getStringDate, DateFormat } from '../util/date.js';
 import { isEmptyArray, createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
 
 const createTypeItemTemplate = ({ id, type }) => `<div class="event__type-item">
@@ -52,7 +53,7 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (!descri
 </section>`;
 
 const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
-  const { /*id,*/ type, basePrice } = event; //! от event? мало что педаеться
+  const { /*id,*/ type, dateFrom, dateTo, basePrice } = event; //! от event? мало что педаеться
   const destinationName = destination.name;
 
   return `<li class="trip-events__item">
@@ -78,10 +79,10 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getStringDate(dateFrom, DateFormat.SHORT_DATE_TIME)}">
         —
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getStringDate(dateTo, DateFormat.SHORT_DATE_TIME)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
