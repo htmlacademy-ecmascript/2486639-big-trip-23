@@ -1,6 +1,8 @@
 import { createElement } from '../render.js';
-import { getStringDate, DateFormat } from '../util/date.js';
-import { isEmptyArray, createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
+import { getStringDate, DateFormat } from '../utils/date.js';
+import { createElementsTemplate } from '../utils/dom.js';
+import { isEmptyArray } from '../utils/utils.js';
+import { capitalizeFirstLetter } from '../utils/string.js';
 
 const createTypeItemTemplate = (type) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">

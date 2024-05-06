@@ -1,4 +1,4 @@
-import { isEmptyArray, getById } from '../utils.js';
+import { isEmptyArray, getById } from '../utils/utils.js';
 import { EVENT_TYPES } from '../const.js';
 import { generateMockData, getMockInfo } from '../mock/events.js';
 

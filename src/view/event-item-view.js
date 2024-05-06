@@ -1,6 +1,7 @@
 import { createElement } from '../render.js';
-import { DateFormat, getDurationString, getStringDate } from '../util/date.js';
-import { capitalizeFirstLetter, createElementsTemplate } from '../utils.js';
+import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
+import { createElementsTemplate } from '../utils/dom.js';
+import { capitalizeFirstLetter } from '../utils/string.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
   <span class="event__offer-title">${title}</span>

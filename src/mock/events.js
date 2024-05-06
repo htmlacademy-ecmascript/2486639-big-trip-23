@@ -1,4 +1,4 @@
-import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
+import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
 const getOfferIdsByType = (offers, type) => {

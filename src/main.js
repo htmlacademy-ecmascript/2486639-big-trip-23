@@ -4,7 +4,7 @@ import SortingView from './view/sorting-view.js';
 import InfoPresenter from './presenter/info-presenter.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import EventsModel from './model/events-model.js';
-import { getRandomArrayElement } from './utils.js';
+import { getRandomArrayElement } from './utils/random.js';
 import { FILTERS, SORTINGS } from './const.js';
 
 const bodyElement = document.body;

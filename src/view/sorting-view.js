@@ -1,5 +1,5 @@
 import { createElement } from '../render.js';
-import { createElementsTemplate } from '../utils.js';
+import { createElementsTemplate } from '../utils/dom.js';
 
 const createSortingItemTemplate = ({ name, isEnabled }, activeSorting) => {
   const checked = (name === activeSorting) ? 'checked' : '';
