@@ -1,10 +1,6 @@
-//! const getById = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
-
-//! const getByType = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
-
-//! getValueOf...
-
 //! без оферов нужно убрать блок блок!
+
+//! верменно, выбираем случаную сортировку
 
 //! временно
 
@@ -16,7 +12,7 @@
 
 //! от event? мало что педается
 
-//! очень похожи FiltersView и SortingView, после наследования передалать
+//! очень похожи FiltersView и SortingView, после теории о наследовании передалать
 
 //! очень похожи с FiltersView
 
