@@ -1,28 +1,44 @@
 import { render } from '../render.js';
-
-import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
-
-const EVENT_ITEM_COUNT = 3;
+import { EVENT_TYPES } from '../const.js';
 
 export default class ContentPresenter {
-  constructor({ containerElement }) {
-    this.eventsListComponent = new EventsListView();
+  eventsListComponent = new EventsListView();
+
+  constructor({ containerElement, eventsModel }) {
     this.containerElement = containerElement;
+    this.eventsModel = eventsModel;
   }
 
   init() {
     const eventsListElement = this.eventsListComponent.getElement();
+    const { eventsModel } = this;
 
-    render(new SortingView(), this.containerElement);
-    render(new EventFormView(), eventsListElement);
-    for (let i = 0; i < EVENT_ITEM_COUNT; i++) {
-      render(new EventItemView(), eventsListElement);
+    const destinationNames = eventsModel.getDestinationNames();
+
+    const events = [...eventsModel.getEvents()];
+
+    this.events = events; //! временно. сохранить то что будет диспользоваться в других методах.
+
+    //! временно выводим форму редактирования
+    const event = events[0];
+    const destination = eventsModel.getDestinationById(event.destination);
+    const offers = eventsModel.getAvailableEventOffers(event);
+    render(new EventFormView(event, EVENT_TYPES, destinationNames, destination, offers), eventsListElement);
+    //! временно выводим несколько событий
+    for (let i = 1; i < events.length; i++) {
+      const currentEvent = events[i];
+      const { name: destinationName } = eventsModel.getDestinationById(currentEvent.destination);
+      const eventOffers = eventsModel.getEventOffers(currentEvent);
+      render(new EventItemView(currentEvent, destinationName, eventOffers), eventsListElement);
     }
+
+    //! с пустым списком нужно убрать весь блок и вывести сообщение! должен подойти MessageView <p class="trip-events__msg">Click New Event to create your first point</p>
     render(this.eventsListComponent, this.containerElement);
-    render(new MessageView(), this.containerElement);
+
+    render(new MessageView(), this.containerElement); //! временно
   }
 }
