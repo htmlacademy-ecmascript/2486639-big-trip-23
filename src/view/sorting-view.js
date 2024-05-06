@@ -1,32 +1,29 @@
 import { createElement } from '../render.js';
 import { createElementsTemplate } from '../utils.js';
 
-const createSortingItemTemplate = ({ sorting, isActive, isDisabled }) => {
-  const checked = (isActive) ? 'checked' : '';
-  const disabled = (isDisabled) ? 'disabled' : '';
+const createSortingItemTemplate = ({ name, isEnabled }, activeSorting) => {
+  const checked = (name === activeSorting) ? 'checked' : '';
+  const disabled = (isEnabled) ? '' : 'disabled';
 
-  return `<div class="trip-sort__item  trip-sort__item--${sorting}">
-  <input id="sort-${sorting}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorting}" ${checked} ${disabled}>
-  <label class="trip-sort__btn" for="sort-${sorting}">${sorting}</label>
+  return `<div class="trip-sort__item  trip-sort__item--${name}">
+  <input id="sort-${name}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${name}" ${checked} ${disabled}>
+  <label class="trip-sort__btn" for="sort-${name}">${name}</label>
 </div>`;
 };
 
-const createSortingTemplate = (sortings) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-  ${createElementsTemplate(sortings, createSortingItemTemplate)}
+const createSortingTemplate = (sortings, activeSorting) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  ${createElementsTemplate(sortings, createSortingItemTemplate, activeSorting)}
 </form>`;
 
 //! очень похожи с FiltersView
 export default class SortingView {
-  constructor(sortings, activeSorting, disabledSortings = []) {
-    this.sortings = sortings.map((sorting) => ({
-      sorting,
-      isActive: (sorting === activeSorting),
-      isDisabled: disabledSortings.includes(sorting)
-    }));
+  constructor(sortings, activeSorting) {
+    this.sortings = sortings;
+    this.activeSorting = activeSorting;
   }
 
   getTemplate() {
-    return createSortingTemplate(this.sortings);
+    return createSortingTemplate(this.sortings, this.activeSorting);
   }
 
   getElement() {

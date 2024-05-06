@@ -84,11 +84,8 @@ const getRandomNumbers = (firstNumber, lastNumber) => {
 };
 
 const createElementsTemplate =
-  (elements, createElementTemplate) => (elements) ? elements.map((element) => createElementTemplate(element)).join(' ') : '';
+  (elements, createElementTemplate, ...rest) => (elements) ? elements.map((element) => createElementTemplate(element, ...rest)).join(' ') : '';
 
-//! const getById = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
-//! const getByType = (items, id) => items.find((item) => item.id === id); //? а как по производительности?
-//! getValueOf...
 const getById = (items, id, idName = 'id') => items.find((item) => item[idName] === id);
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
