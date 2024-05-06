@@ -20,8 +20,4 @@
 
 //! очень похожи с SortingView
 
-//! прибрать!
-
-//! разбить на файлы и сложить в папку util
-
 //! с пустым списком нужно убрать весь блок и вывести сообщение! должен подойти MessageView <p class="trip-events__msg">Click New Event to create your first point</p>
