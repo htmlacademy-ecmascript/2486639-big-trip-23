@@ -2,9 +2,9 @@ import { createElement } from '../render.js';
 import { getStringDate, DateFormat } from '../util/date.js';
 import { isEmptyArray, createElementsTemplate, capitalizeFirstLetter } from '../utils.js';
 
-const createTypeItemTemplate = ({ id, type }) => `<div class="event__type-item">
-  <input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-  <label class="event__type-label  event__type-label--${type}" for="${id}">${capitalizeFirstLetter(type)}</label>
+const createTypeItemTemplate = (type) => `<div class="event__type-item">
+  <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+  <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
 </div>`;
 
 const createTypeListTemplate = (types) => `<div class="event__type-list">

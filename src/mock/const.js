@@ -1,5 +1,4 @@
 const Event = {
-  TYPES: ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'],
   Price: { //? так не нарушаю критерий? или сразу отдельно?
     MIN: 1000,
     MAX: 5000

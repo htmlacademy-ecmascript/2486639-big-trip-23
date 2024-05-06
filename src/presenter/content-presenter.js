@@ -3,6 +3,7 @@ import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
+import { EVENT_TYPES } from '../const.js';
 
 export default class ContentPresenter {
   eventsListComponent = new EventsListView();
@@ -16,7 +17,6 @@ export default class ContentPresenter {
     const eventsListElement = this.eventsListComponent.getElement();
     const { eventsModel } = this;
 
-    const types = eventsModel.getTypes();
     const destinationNames = eventsModel.getDestinationNames();
 
     const events = [...eventsModel.getEvents()];
@@ -27,7 +27,7 @@ export default class ContentPresenter {
     const event = events[0];
     const destination = eventsModel.getDestinationById(event.destination);
     const offers = eventsModel.getAvailableEventOffers(event);
-    render(new EventFormView(event, types, destinationNames, destination, offers), eventsListElement);
+    render(new EventFormView(event, EVENT_TYPES, destinationNames, destination, offers), eventsListElement);
     //! временно выводим несколько событий
     for (let i = 1; i < events.length; i++) {
       const currentEvent = events[i];

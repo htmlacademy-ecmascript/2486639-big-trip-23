@@ -1,12 +1,9 @@
 import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
-let currentTypes = [];
 let currentDestinations = [];
 let currentOffers = [];
 let currentEvents = [];
-
-const getMockTypes = () => currentTypes;
 
 const getMockDestinations = () => currentDestinations;
 
@@ -23,8 +20,7 @@ const getOfferIdsByType = (type) => {
 
 const getMockEvents = () => currentEvents;
 
-const createEvent = (id) => {
-  const type = getRandomArrayElement(Event.TYPES);
+const createEvent = (id, type) => {
   const { MIN: minPrice, MAX: maxPrice } = Event.Price;
   const basePrice = getRandomNumber(minPrice, maxPrice);
   const offerIds = getOfferIdsByType(type);
@@ -46,9 +42,7 @@ const createEvent = (id) => {
   };
 };
 
-const initMockData = () => {
-  currentTypes = Event.TYPES.map((type) => ({ id: `type-${type}-1`, type }));
-
+const initMockData = (types) => {
   currentDestinations = DESTINATIONS.map((destination, index) => {
     let description = '';
     let pictures = [];
@@ -71,7 +65,7 @@ const initMockData = () => {
     });
   });
 
-  currentOffers = Event.TYPES.map(
+  currentOffers = types.map(
     (type) => {
       const { TITLES: titles } = Offer;
       let offers = [];
@@ -92,7 +86,7 @@ const initMockData = () => {
       return { type, offers };
     });
 
-  currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1));
+  currentEvents = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1, getRandomArrayElement(types)));
 };
 
 const getMockInfo = () => {
@@ -105,4 +99,4 @@ const getMockInfo = () => {
   return { title, dates, cost };
 };
 
-export { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo };
+export { initMockData, getMockDestinations, getMockOffers, getMockEvents, getMockInfo };

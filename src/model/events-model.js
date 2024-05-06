@@ -1,12 +1,12 @@
 import { isEmptyArray, getById } from '../utils.js';
-import { initMockData, getMockTypes, getMockDestinations, getMockOffers, getMockEvents, getMockInfo } from '../mock/events.js';
+import { EVENT_TYPES } from '../const.js';
+import { initMockData, getMockDestinations, getMockOffers, getMockEvents, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
   constructor() {
     //! временно
-    initMockData();
+    initMockData(EVENT_TYPES);
     this.info = getMockInfo();
-    this.types = getMockTypes();
     const destinations = getMockDestinations();
     this.destinations = destinations;
     this.destinationNames = destinations.map((destination) => destination.name);
@@ -16,10 +16,6 @@ export default class EventsModel {
 
   getInfo() {
     return this.info;
-  }
-
-  getTypes() {
-    return this.types;
   }
 
   getDestinationNames() {
