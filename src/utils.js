@@ -48,19 +48,19 @@ const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   };
 };
 
-const isEmptyArray = (items) => (!items || !items.length);
+const isEmptyArray = (items) => (!Array.isArray(items) || !items.length);
 
 const getRandomArrayElement = (elements) => (isEmptyArray(elements)) ? null : elements[getRandomNumber(0, elements.length - 1)];
 
 const getRandomArrayElements = (elements = [], maxCount = 1, minCount = 1) => {
   if (!elements || (maxCount < 1) || (minCount < 0)) {
-    return null;
+    return [];
   }
 
   const { length } = elements;
 
-  if ((length === 0)) {
-    return null;
+  if (!length) {
+    return [];
   }
 
   if (maxCount === 1) {

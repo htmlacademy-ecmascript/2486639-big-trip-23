@@ -18,7 +18,7 @@ const getOfferIdsByType = (type) => {
   const typeOffers = currentOffers.filter((offer) => offer.type === type);
   const { offers } = typeOffers[0];
 
-  return (offers) ? offers.map((offer) => offer.id) : null;
+  return (offers) ? offers.map((offer) => offer.id) : [];
 };
 
 const getMockEvents = () => currentEvents;
@@ -28,7 +28,7 @@ const createEvent = (id) => {
   const { MIN: minPrice, MAX: maxPrice } = Event.Price;
   const basePrice = getRandomNumber(minPrice, maxPrice);
   const offerIds = getOfferIdsByType(type);
-  const offers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : null;
+  const offers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : [];
 
   const { MIN: minDate, MAX: maxDate } = Event.Date;
   const dateFrom = getRandomDate(minDate, maxDate);

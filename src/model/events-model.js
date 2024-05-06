@@ -36,7 +36,7 @@ export default class EventsModel {
     const typeOffers = currentType?.offers;
 
     if (isEmptyArray(typeOffers)) {
-      return null;
+      return [];
     }
 
     if (isEmptyArray(eventOfferIds)) {
@@ -52,7 +52,7 @@ export default class EventsModel {
     const typeOffers = currentType?.offers;
 
     if (isEmptyArray(typeOffers)) {
-      return null;
+      return [];
     }
 
     if (isEmptyArray(eventOfferIds)) {
