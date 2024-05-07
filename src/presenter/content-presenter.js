@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -14,7 +14,7 @@ export default class ContentPresenter {
   }
 
   init() {
-    const eventsListElement = this.eventsListComponent.getElement();
+    const eventsListElement = this.eventsListComponent.element;
     const { eventsModel } = this;
 
     const destinationNames = eventsModel.getDestinationNames();

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
@@ -114,8 +114,9 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
 <li>`;
 };
 
-export default class EventFormView {
+export default class EventFormView extends AbstractView {
   constructor(event, types, destinationNames, destination, offers) {
+    super();
     this.event = event;
     this.types = types;
     this.destinationNames = destinationNames; //? сортировать ли для вывода?
@@ -123,21 +124,9 @@ export default class EventFormView {
     this.offers = offers; //? сортировать ли для вывода?
   }
 
-  getTemplate() {
+  get template() {
     const { event, types, destinationNames, destination, offers } = this;
 
     return createEventFormTemplate(event, types, destinationNames, destination, offers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

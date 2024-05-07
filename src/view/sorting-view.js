@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
 
 const createSortingItemTemplate = ({ name, isEnabled }, activeSorting) => {
@@ -16,25 +16,14 @@ const createSortingTemplate = (sortings, activeSorting) => `<form class="trip-ev
 </form>`;
 
 //! очень похожи с FiltersView
-export default class SortingView {
+export default class SortingView extends AbstractView {
   constructor(sortings, activeSorting) {
+    super();
     this.sortings = sortings;
     this.activeSorting = activeSorting;
   }
 
-  getTemplate() {
+  get template() {
     return createSortingTemplate(this.sortings, this.activeSorting);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

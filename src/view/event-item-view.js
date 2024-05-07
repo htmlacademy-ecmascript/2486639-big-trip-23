@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
@@ -63,28 +63,17 @@ const createEventItemTemplate = (event, destinationName, offers) => {
 </li>`;
 };
 
-export default class EventItemView {
+export default class EventItemView extends AbstractView {
   constructor(event, destinationName, offers) {
+    super();
     this.event = event;
     this.destinationName = destinationName;
     this.offers = offers;
   }
 
-  getTemplate() {
+  get template() {
     const { event, destinationName } = this;
 
     return createEventItemTemplate(event, destinationName, this.offers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
