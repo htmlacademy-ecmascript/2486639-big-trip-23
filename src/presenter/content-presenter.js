@@ -3,11 +3,13 @@ import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
-import { EVENT_TYPES } from '../const.js';
+import { EVENT_TYPES, Messages } from '../const.js';
 
 export default class ContentPresenter {
   #containerElement = null;
   #eventsModel = null;
+
+  #events = [];
 
   #eventsListComponent = new EventsListView();
 
@@ -17,10 +19,15 @@ export default class ContentPresenter {
   }
 
   init() {
-    const eventsListElement = this.#eventsListComponent.element;
-    const { events, destinationNames } = this.#eventsModel;
+    this.#events = [...this.#eventsModel.events]; //! временно. сохранить то что будет диспользоваться в других методах.
 
-    this.events = [...events]; //! временно. сохранить то что будет диспользоваться в других методах.
+    this.#renderEventsList();
+  }
+
+  #renderEventsList() {
+    const eventsListElement = this.#eventsListComponent.element;
+    const events = this.#events;
+    const { destinationNames } = this.#eventsModel;
 
     //! временно выводим форму редактирования
     const event = events[0];
@@ -29,15 +36,19 @@ export default class ContentPresenter {
     render(new EventFormView(event, EVENT_TYPES, destinationNames, destination, offers), eventsListElement);
     //! временно выводим несколько событий
     for (let i = 1; i < events.length; i++) {
-      const currentEvent = events[i];
-      const { name: destinationName } = this.#eventsModel.getDestinationById(currentEvent.destination);
-      const eventOffers = this.#eventsModel.getEventOffers(currentEvent);
-      render(new EventItemView(currentEvent, destinationName, eventOffers), eventsListElement);
+      this.#renderEventItem(events[i], eventsListElement);
     }
 
-    //! с пустым списком нужно убрать весь блок и вывести сообщение! должен подойти MessageView <p class="trip-events__msg">Click New Event to create your first point</p>
-    render(this.#eventsListComponent, this.#containerElement);
+    if (events.length) {
+      render(this.#eventsListComponent, this.#containerElement);
+    } else {
+      render(new MessageView(Messages.NEW_EVENT), this.#containerElement);
+    }
+  }
 
-    render(new MessageView(), this.#containerElement); //! временно
+  #renderEventItem(event, eventsListElement) {
+    const { name: destinationName } = this.#eventsModel.getDestinationById(event.destination);
+    const eventOffers = this.#eventsModel.getEventOffers(event);
+    render(new EventItemView(event, destinationName, eventOffers), eventsListElement);
   }
 }
