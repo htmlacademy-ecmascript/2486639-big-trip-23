@@ -17,13 +17,16 @@ const createSortingTemplate = (sortings, activeSorting) => `<form class="trip-ev
 
 //! очень похожи с FiltersView
 export default class SortingView extends AbstractView {
+  #sortings = [];
+  #activeSorting = '';
+
   constructor(sortings, activeSorting) {
     super();
-    this.sortings = sortings;
-    this.activeSorting = activeSorting;
+    this.#sortings = sortings;
+    this.#activeSorting = activeSorting;
   }
 
   get template() {
-    return createSortingTemplate(this.sortings, this.activeSorting);
+    return createSortingTemplate(this.#sortings, this.#activeSorting);
   }
 }

@@ -64,16 +64,18 @@ const createEventItemTemplate = (event, destinationName, offers) => {
 };
 
 export default class EventItemView extends AbstractView {
+  #event = null;
+  #destinationName = '';
+  #offers = [];
+
   constructor(event, destinationName, offers) {
     super();
-    this.event = event;
-    this.destinationName = destinationName;
-    this.offers = offers;
+    this.#event = event;
+    this.#destinationName = destinationName;
+    this.#offers = offers;
   }
 
   get template() {
-    const { event, destinationName } = this;
-
-    return createEventItemTemplate(event, destinationName, this.offers);
+    return createEventItemTemplate(this.#event, this.#destinationName, this.#offers);
   }
 }

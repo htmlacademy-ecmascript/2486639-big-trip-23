@@ -115,18 +115,22 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
 };
 
 export default class EventFormView extends AbstractView {
+  #event = null;
+  #types = [];
+  #destinationNames = [];
+  #destination = null;
+  #offers = [];
+
   constructor(event, types, destinationNames, destination, offers) {
     super();
-    this.event = event;
-    this.types = types;
-    this.destinationNames = destinationNames; //? сортировать ли для вывода?
-    this.destination = destination;
-    this.offers = offers; //? сортировать ли для вывода?
+    this.#event = event;
+    this.#types = types;
+    this.#destinationNames = destinationNames; //? сортировать ли для вывода?
+    this.#destination = destination;
+    this.#offers = offers; //? сортировать ли для вывода?
   }
 
   get template() {
-    const { event, types, destinationNames, destination, offers } = this;
-
-    return createEventFormTemplate(event, types, destinationNames, destination, offers);
+    return createEventFormTemplate(this.#event, this.#types, this.#destinationNames, this.#destination, this.#offers);
   }
 }

@@ -16,12 +16,14 @@ const createFiltersTemplate = (filters) => `<form class="trip-filters" action="#
 
 //! очень похожи с SortingView
 export default class FiltersView extends AbstractView {
+  #filters = [];
+
   constructor(filters, activeFilter) {
     super();
-    this.filters = filters.map((filter) => ({ filter, isActive: (filter === activeFilter) }));
+    this.#filters = filters.map((filter) => ({ filter, isActive: (filter === activeFilter) }));
   }
 
   get template() {
-    return createFiltersTemplate(this.filters);
+    return createFiltersTemplate(this.#filters);
   }
 }

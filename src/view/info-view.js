@@ -11,12 +11,14 @@ const createInfoTemplate = ({ title, dates, cost }) => `<section class="trip-mai
 </section>`;
 
 export default class InfoView extends AbstractView {
+  #info = null;
+
   constructor(info) {
     super();
-    this.info = info;
+    this.#info = info;
   }
 
   get template() {
-    return createInfoTemplate(this.info);
+    return createInfoTemplate(this.#info);
   }
 }
