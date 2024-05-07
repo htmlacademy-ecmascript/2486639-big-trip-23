@@ -3,7 +3,7 @@ import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
-import { EVENT_TYPES, Messages } from '../const.js';
+import { EVENT_TYPES, Message } from '../const.js';
 
 export default class ContentPresenter {
   #containerElement = null;
@@ -42,7 +42,7 @@ export default class ContentPresenter {
     if (events.length) {
       render(this.#eventsListComponent, this.#containerElement);
     } else {
-      render(new MessageView(Messages.NEW_EVENT), this.#containerElement);
+      render(new MessageView(Message.NEW_EVENT), this.#containerElement);
     }
   }
 

@@ -25,10 +25,10 @@ const SORTINGS = [
   }
 ];
 
-const Messages = {
+const Message = {
   NEW_EVENT: 'Click New Event to create your first point',
   LOADING: 'Loading...',
   FAILEAD: 'Failed to load latest route information'
 };
 
-export { EVENT_TYPES, FILTERS, SORTINGS, Messages };
+export { EVENT_TYPES, FILTERS, SORTINGS, Message };
