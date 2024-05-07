@@ -3,29 +3,33 @@ import { EVENT_TYPES } from '../const.js';
 import { generateMockData, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
+  #destinations = [];
+  #offers = [];
+  #events = [];
+
   constructor() {
     //! временно - скорее всего сделать init()
     const { destinations, offers, events } = generateMockData(EVENT_TYPES);
-    this.destinations = destinations;
-    this.offers = offers;
-    this.events = events;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#events = events;
   }
 
-  getInfo() {
-    return getMockInfo(this.destinations); //! временно, потом собрать из событий
+  get info() {
+    return getMockInfo(this.#destinations); //! временно, потом собрать из событий
   }
 
-  getDestinationNames() {
-    return this.destinations.map((destination) => destination.name);
+  get destinationNames() {
+    return this.#destinations.map((destination) => destination.name);
   }
 
   getDestinationById(id) {
-    return getById(this.destinations, id);
+    return getById(this.#destinations, id);
   }
 
   getAvailableEventOffers(event) {
     const { type, offers: eventOfferIds } = event;
-    const currentType = getById(this.offers, type, 'type');
+    const currentType = getById(this.#offers, type, 'type');
     const typeOffers = currentType?.offers;
 
     if (isEmptyArray(typeOffers)) {
@@ -41,7 +45,7 @@ export default class EventsModel {
 
   getEventOffers(event) {
     const { type, offers: eventOfferIds } = event;
-    const currentType = getById(this.offers, type, 'type');
+    const currentType = getById(this.#offers, type, 'type');
     const typeOffers = currentType?.offers;
 
     if (isEmptyArray(typeOffers)) {
@@ -55,7 +59,7 @@ export default class EventsModel {
     return typeOffers.filter((offer) => eventOfferIds.includes(offer.id));
   }
 
-  getEvents() {
-    return this.events;
+  get events() {
+    return this.#events;
   }
 }

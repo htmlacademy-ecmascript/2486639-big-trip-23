@@ -8,7 +8,7 @@ export default class InfoPresenter {
   }
 
   init() {
-    const info = this.eventsModel.getInfo(); //! временно
+    const info = this.eventsModel.info; //! временно
 
     render(new InfoView(info), this.containerElement, RenderPosition.AFTERBEGIN);
   }

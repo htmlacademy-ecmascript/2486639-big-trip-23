@@ -17,11 +17,9 @@ export default class ContentPresenter {
     const eventsListElement = this.eventsListComponent.element;
     const { eventsModel } = this;
 
-    const destinationNames = eventsModel.getDestinationNames();
+    const { events, destinationNames } = eventsModel;
 
-    const events = [...eventsModel.getEvents()];
-
-    this.events = events; //! временно. сохранить то что будет диспользоваться в других методах.
+    this.events = [...events]; //! временно. сохранить то что будет диспользоваться в других методах.
 
     //! временно выводим форму редактирования
     const event = events[0];
