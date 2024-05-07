@@ -54,8 +54,19 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (!descri
   ${createPhotosContainerTemplate(pictures)}
 </section>`;
 
+const createSectionDetailsTemplate = (offers, destination) => (isEmptyArray(offers) && !destination.description) ? '' : `<section class="event__details">
+  ${createSectionOffersTemplate(offers)}
+  ${createSectionDestinationTemplate(destination)}
+</section>`;
+
 const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
-  const { /*id, //! пока не используется*/ type, dateFrom, dateTo, basePrice } = event; //! от event? мало что педается
+  //! при добавление, нет кнопки ^, при редактировании есть
+  const {
+    /*id, //! пока не используется, при добавлении нет=0, при редактировании подставить*/
+    type,
+    dateFrom,
+    dateTo,
+    basePrice } = event; //! от event? мало что педается
   const destinationName = destination.name;
 
   return `<li class="trip-events__item">
@@ -98,10 +109,7 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
-    <section class="event__details">
-      ${createSectionOffersTemplate(offers)}
-      ${createSectionDestinationTemplate(destination)}
-    </section>
+    ${createSectionDetailsTemplate(offers, destination)}
   </form>
 <li>`;
 };
@@ -110,9 +118,9 @@ export default class EventFormView {
   constructor(event, types, destinationNames, destination, offers) {
     this.event = event;
     this.types = types;
-    this.destinationNames = destinationNames;
+    this.destinationNames = destinationNames; //? сортировать ли для вывода?
     this.destination = destination;
-    this.offers = offers;
+    this.offers = offers; //? сортировать ли для вывода?
   }
 
   getTemplate() {

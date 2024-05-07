@@ -4,7 +4,7 @@ import { generateMockData, getMockInfo } from '../mock/events.js';
 
 export default class EventsModel {
   constructor() {
-    //! временно
+    //! временно - скорее всего сделать init()
     const { destinations, offers, events } = generateMockData(EVENT_TYPES);
     this.destinations = destinations;
     this.offers = offers;

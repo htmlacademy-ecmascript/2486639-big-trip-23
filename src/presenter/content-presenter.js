@@ -25,7 +25,7 @@ export default class ContentPresenter {
 
     //! временно выводим форму редактирования
     const event = events[0];
-    const destination = eventsModel.getDestinationById(event.destination);
+    const destination = eventsModel.getDestinationById(event.destination); //? где же правильней собирать данные? может во View?
     const offers = eventsModel.getAvailableEventOffers(event);
     render(new EventFormView(event, EVENT_TYPES, destinationNames, destination, offers), eventsListElement);
     //! временно выводим несколько событий
