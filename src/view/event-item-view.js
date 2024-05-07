@@ -14,7 +14,7 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
     ${createElementsTemplate(offers, createOfferTemplate)}
 </ul>`;
 
-const createEventItemTemplate = (event, destinationName, offers) => {
+const createEventItemTemplate = ({ event, destinationName, offers }) => {
   const
     { //id, //! пока не используется
       type,
@@ -64,18 +64,34 @@ const createEventItemTemplate = (event, destinationName, offers) => {
 };
 
 export default class EventItemView extends AbstractView {
-  #event = null;
-  #destinationName = '';
-  #offers = [];
+  #eventInfo = null;
+  #onFavoriteClick = null;
+  #onEditClick = null;
 
-  constructor(event, destinationName, offers) {
+  constructor({ eventInfo, onFavoriteClick, onEditClick }) {
     super();
-    this.#event = event;
-    this.#destinationName = destinationName;
-    this.#offers = offers;
+    this.#eventInfo = eventInfo;
+    this.#onFavoriteClick = onFavoriteClick;
+    this.#onEditClick = onEditClick;
+
+    //? в константы?
+    this.element.querySelector('button.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonClick);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEditButtonClick);
   }
 
   get template() {
-    return createEventItemTemplate(this.#event, this.#destinationName, this.#offers);
+    return createEventItemTemplate(this.#eventInfo);
   }
+
+  #onFavoriteButtonClick = (evt) => {
+    evt.preventDefault();
+    //alert('favoriteClickHandler');
+    this.#onFavoriteClick?.();
+  };
+
+  #onEditButtonClick = (evt) => {
+    evt.preventDefault();
+    //alert('editClickHandler');
+    this.#onEditClick?.();
+  };
 }

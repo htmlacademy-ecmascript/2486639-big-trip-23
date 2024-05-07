@@ -59,7 +59,10 @@ const createSectionDetailsTemplate = (offers, destination) => (isEmptyArray(offe
   ${createSectionDestinationTemplate(destination)}
 </section>`;
 
-const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
+const createEventFormTemplate = ({ event, types, destinationNames, destination, offers }) => {
+  //? destinationNames сортировать ли для вывода?
+  //? offers сортировать ли для вывода?
+
   //! при добавление, нет кнопки ^, при редактировании есть
   const {
     /*id, //! пока не используется, при добавлении нет=0, при редактировании подставить*/
@@ -115,22 +118,14 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
 };
 
 export default class EventFormView extends AbstractView {
-  #event = null;
-  #types = [];
-  #destinationNames = [];
-  #destination = null;
-  #offers = [];
+  #extendedEvent = null;
 
-  constructor(event, types, destinationNames, destination, offers) {
+  constructor({ extendedEvent }) {
     super();
-    this.#event = event;
-    this.#types = types;
-    this.#destinationNames = destinationNames; //? сортировать ли для вывода?
-    this.#destination = destination;
-    this.#offers = offers; //? сортировать ли для вывода?
+    this.#extendedEvent = extendedEvent;
   }
 
   get template() {
-    return createEventFormTemplate(this.#event, this.#types, this.#destinationNames, this.#destination, this.#offers);
+    return createEventFormTemplate(this.#extendedEvent);
   }
 }

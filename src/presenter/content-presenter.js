@@ -29,13 +29,19 @@ export default class ContentPresenter {
     const events = this.#events;
     const { destinationNames } = this.#eventsModel;
 
+    /**/
     //! временно выводим форму редактирования
     const event = events[0];
-    const destination = this.#eventsModel.getDestinationById(event.destination); //? где же правильней собирать данные? может во View?
-    const offers = this.#eventsModel.getAvailableEventOffers(event);
-    render(new EventFormView(event, EVENT_TYPES, destinationNames, destination, offers), eventsListElement);
-    //! временно выводим несколько событий
-    for (let i = 1; i < events.length; i++) {
+    const extendedEvent = {
+      event,
+      types: EVENT_TYPES,
+      destinationNames,
+      destination: this.#eventsModel.getDestinationById(event.destination),//? где же правильней собирать данные? может во View?
+      offers: this.#eventsModel.getAvailableEventOffers(event)
+    };
+    render(new EventFormView({ extendedEvent }), eventsListElement);
+    /**/
+    for (let i = 0; i < events.length; i++) {
       this.#renderEventItem(events[i], eventsListElement);
     }
 
@@ -47,8 +53,11 @@ export default class ContentPresenter {
   }
 
   #renderEventItem(event, eventsListElement) {
-    const { name: destinationName } = this.#eventsModel.getDestinationById(event.destination);
-    const eventOffers = this.#eventsModel.getEventOffers(event);
-    render(new EventItemView(event, destinationName, eventOffers), eventsListElement);
+    const eventInfo = {
+      event,
+      destinationName: this.#eventsModel.getDestinationById(event.destination)?.name,
+      eventOffers: this.#eventsModel.getEventOffers(event)
+    };
+    render(new EventItemView({ eventInfo }), eventsListElement);
   }
 }
