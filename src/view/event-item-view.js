@@ -68,22 +68,29 @@ export default class EventItemView extends AbstractEventView {
   #onFavoriteClick = null;
   #onEditClick = null;
 
-  constructor({ event, eventTypes, destinations, typeOffers, onFavoriteClick, onEditClick }) {
-    super({ event, eventTypes, destinations, typeOffers });
+  constructor({ event, eventTypes, destinations, typesOffers, onFavoriteClick, onEditClick }) {
+    super({ event, eventTypes, destinations, typesOffers });
     this.#onFavoriteClick = onFavoriteClick;
     this.#onEditClick = onEditClick;
 
-    //? в константы?
     this.element.querySelector('button.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonClick);
     this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEditButtonClick);
   }
 
   get template() {
-    return createEventItemTemplate(this._event, this.#destinationName, this._eventOffers);
+    return createEventItemTemplate(this._event, this.#destinationName, this.#eventOffers);
   }
 
   get #destinationName() {
     return getById(this._destinations, this._event.destination)?.name;
+  }
+
+  get #eventOffers() {
+    return this._eventTypeOffers.filter((offer) => this._event.offers.includes(offer.id));
+  }
+
+  get _destinationNames() {
+    return this._destinations.map((destination) => destination.name);
   }
 
   #onFavoriteButtonClick = (evt) => {

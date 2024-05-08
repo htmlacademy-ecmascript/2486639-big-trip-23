@@ -10,7 +10,7 @@ export default class TripEventsPresenter {
   #tripEventsModel = null;
 
   #destinations = [];
-  #typeOffers = [];
+  #typesOffers = [];
   #events = [];
 
   #eventsListComponent = new EventsListView();
@@ -23,7 +23,7 @@ export default class TripEventsPresenter {
   init() {
     //! временно. сохранить то что будет использоваться в других методах.
     this.#destinations = [...this.#tripEventsModel.destinations];
-    this.#typeOffers = [...this.#tripEventsModel.typeOffers];
+    this.#typesOffers = [...this.#tripEventsModel.typesOffers];
     this.#events = [...this.#tripEventsModel.events];
 
     this.#renderEventsList();
@@ -62,7 +62,7 @@ export default class TripEventsPresenter {
       event,
       eventTypes: EVENT_TYPES,
       destinations: this.#destinations,
-      typeOffers: this.#typeOffers
+      typesOffers: this.#typesOffers
     };
 
     const eventItem = {

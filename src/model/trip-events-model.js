@@ -3,14 +3,14 @@ import { generateMockData, getMockInfo } from '../mock/events.js';
 
 export default class TripEventsModel {
   #destinations = [];
-  #typeOffers = [];
+  #typesOffers = [];
   #events = [];
 
   constructor() {
     //! временно - скорее всего нужно сделать init()
-    const { destinations, typeOffers, events } = generateMockData(EVENT_TYPES);
+    const { destinations, typesOffers, events } = generateMockData(EVENT_TYPES);
     this.#destinations = destinations;
-    this.#typeOffers = typeOffers;
+    this.#typesOffers = typesOffers;
     this.#events = events;
   }
 
@@ -18,8 +18,8 @@ export default class TripEventsModel {
     return this.#destinations;
   }
 
-  get typeOffers() {
-    return this.#typeOffers;
+  get typesOffers() {
+    return this.#typesOffers;
   }
 
   get events() {
