@@ -22,7 +22,6 @@ export default class TripFiltersView extends AbstractView {
   #activeTripFilter = '';
 
   #tripDatePeriodChecks = {
-    [TripFilters.EVERYTHING]: null,
     [TripFilters.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
     [TripFilters.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
     [TripFilters.PAST]: (_, dateTo, date) => (dateTo < date),
@@ -39,7 +38,7 @@ export default class TripFiltersView extends AbstractView {
       if (!this.#events.length) {
         return {
           filter,
-          isEnabled: (![TripFilters.EVERYTHING, TripFilters.PRESENT].includes(filter))
+          isEnabled: [TripFilters.EVERYTHING, TripFilters.PRESENT].includes(filter)
         };
       }
 
