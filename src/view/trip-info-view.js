@@ -20,7 +20,7 @@ const createTripInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 
 export default class TripInfoView extends AbstractView {
   #destinations = [];
-  #typesOffers = [];
+  #typesOffers = []; //! возможно нужен для подсчета полной стоимости
   #events = [];
 
   constructor(events, destinations, typesOffers) {

@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
+import { TripFilters } from '../const.js';
 
 const createTripFilterItemTemplate = (filter, activeFilter) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
@@ -14,14 +15,24 @@ const createTripFiltersTemplate = (tripFilters, activeTripFilter) => `<form clas
   ${createElementsTemplate(tripFilters, createTripFilterItemTemplate, activeTripFilter)}
 </form > `;
 
-//! будут похожи с SortingView, когда добавиться isEnabled
+//!!!!!!!Например, фильтры в «Большом путешествии» зависят от данных косвенно — в случае отсутствия данных по фильтру, он блокируется от выбора.
+
 export default class TripFiltersView extends AbstractView {
+  #events = [];
   #tripFilters = [];
   #activeTripFilter = '';
 
-  constructor(tripFilters, activeTripFilter) {
+  #tripDatePeriodChecks = {
+    [TripFilters.EVERYTHING]: null,
+    [TripFilters.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
+    [TripFilters.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo <= date)),
+    [TripFilters.PAST]: (_, dateTo, date) => (dateTo < date),
+  };
+
+  constructor(events, activeTripFilter) {
     super();
-    this.#tripFilters = tripFilters;
+    this.#events = [...events]; //! временно?
+    this.#tripFilters = Object.values(TripFilters);
     this.#activeTripFilter = activeTripFilter;
   }
 

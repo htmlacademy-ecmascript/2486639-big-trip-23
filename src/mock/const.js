@@ -7,7 +7,7 @@ const Event = {
     MIN: new Date(2024, 0, 1),
     MAX: new Date(2024, 5, 1) //(2024, 1, 1) //(2025, 0, 1)
   },
-  COUNT: 4
+  MAX_COUNT: 10
 };
 
 const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix', 'Moscow', 'Tomsk', 'Tokyo', 'New York', 'London'];
