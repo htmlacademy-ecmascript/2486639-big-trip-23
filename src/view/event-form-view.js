@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractEventView from './abstract-event-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
@@ -22,9 +22,8 @@ const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="d
     ${createElementsTemplate(destinationNames, createDestinationOptionTemplate)}
 </datalist>`;
 
-//! без оферов нужно убрать блок блок!
-const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
+const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(eventOffers.includes(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -32,11 +31,11 @@ const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<d
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (offers) => (isEmptyArray(offers)) ? '' : `<div class="event__offer-selector">
+const createSectionOffersTemplate = (typeOffers, eventOffers) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createElementsTemplate(offers, createOfferTemplate)}
+      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOffers)}
     </div>
 </section>`;
 
@@ -54,22 +53,22 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (!descri
   ${createPhotosContainerTemplate(pictures)}
 </section>`;
 
-const createSectionDetailsTemplate = (offers, destination) => (isEmptyArray(offers) && !destination.description) ? '' : `<section class="event__details">
-  ${createSectionOffersTemplate(offers)}
+const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (isEmptyArray(typeOffers) && !destination.description) ? '' : `<section class="event__details">
+  ${createSectionOffersTemplate(typeOffers, eventOffers)}
   ${createSectionDestinationTemplate(destination)}
 </section>`;
 
-const createEventFormTemplate = ({ event, types, destinationNames, destination, offers }) => {
+const createEventFormTemplate = (event, types, destinationNames, destination, typeOffers, eventOffers) => {
   //? destinationNames сортировать ли для вывода?
   //? offers сортировать ли для вывода?
 
   //! при добавление, нет кнопки ^, при редактировании есть
   const {
-    /*id, //! пока не используется, при добавлении нет=0, при редактировании подставить*/
+    /*id, //! пока не используется, при добавлении нет=null?, при редактировании подставить*/
     type,
     dateFrom,
     dateTo,
-    basePrice } = event; //! от event? мало что педается
+    basePrice } = event;
   const destinationName = destination.name;
 
   return `<li class="trip-events__item">
@@ -112,20 +111,32 @@ const createEventFormTemplate = ({ event, types, destinationNames, destination, 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
-    ${createSectionDetailsTemplate(offers, destination)}
+    ${createSectionDetailsTemplate(typeOffers, eventOffers, destination)}
   </form>
 <li>`;
 };
 
-export default class EventFormView extends AbstractView {
-  #extendedEvent = null;
+export default class EventFormView extends AbstractEventView {
+  #onSubmitClick = null;
 
-  constructor({ extendedEvent }) {
-    super();
-    this.#extendedEvent = extendedEvent;
+  constructor({ event, eventTypes, destinations, typesOffers, onSubmitClick }) {
+    super(event, eventTypes, destinations, typesOffers);
+    this.#onSubmitClick = onSubmitClick;
+
+    this.element.querySelector('button.event__save-btn').addEventListener('click', this.#onSubmitButtonClick);
   }
 
   get template() {
-    return createEventFormTemplate(this.#extendedEvent);
+    return createEventFormTemplate(this._event, this._eventTypes, this.#destinationNames, this._eventDestination, this._eventTypeOffers, this._event.offers);
   }
+
+  get #destinationNames() {
+    return this._destinations.map((destination) => destination.name);
+  }
+
+  #onSubmitButtonClick = (evt) => {
+    evt.preventDefault();
+    //alert('onSubmitClick');
+    this.#onSubmitClick?.();
+  };
 }

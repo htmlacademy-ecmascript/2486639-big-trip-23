@@ -34,18 +34,22 @@ export default class TripEventsPresenter {
     const events = this.#events;
     //const { destinationNames } = this.#tripEventsModel;
 
-    /*
+    /* */
     //! временно выводим форму редактирования
-    const event = events[0];
     const extendedEvent = {
-      event,
-      types: EVENT_TYPES,
-      destinationNames,
-      destination: this.#tripEventsModel.getDestinationById(event.destination),//? где же правильней собирать данные? может во View?
-      offers: this.#tripEventsModel.getAvailableEventOffers(event)
+      event: events[0],
+      eventTypes: EVENT_TYPES,
+      destinations: this.#destinations,
+      typesOffers: this.#typesOffers
     };
-    render(new EventFormView({ extendedEvent }), eventsListElement);
-    */
+
+    const eventEdit = {
+      ...extendedEvent,
+      onSubmit: null
+    };
+
+    render(new EventFormView(eventEdit), eventsListElement);
+    /**/
     for (let i = 0; i < events.length; i++) {
       this.#renderEventItem(events[i], eventsListElement);
     }
@@ -70,6 +74,13 @@ export default class TripEventsPresenter {
       onFavoriteClick: null,
       onEditClick: null
     };
+
+    /*
+    const eventEdit = {
+      ...extendedEvent,
+      onSubmit: null
+    };
+    */
 
     render(new EventItemView(eventItem), eventsListElement);
   }

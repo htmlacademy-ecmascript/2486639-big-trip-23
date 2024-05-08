@@ -2,7 +2,6 @@ import AbstractEventView from './abstract-event-view.js';
 import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { getById } from '../utils/utils.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
   <span class="event__offer-title">${title}</span>
@@ -69,7 +68,7 @@ export default class EventItemView extends AbstractEventView {
   #onEditClick = null;
 
   constructor({ event, eventTypes, destinations, typesOffers, onFavoriteClick, onEditClick }) {
-    super({ event, eventTypes, destinations, typesOffers });
+    super(event, eventTypes, destinations, typesOffers);
     this.#onFavoriteClick = onFavoriteClick;
     this.#onEditClick = onEditClick;
 
@@ -78,30 +77,22 @@ export default class EventItemView extends AbstractEventView {
   }
 
   get template() {
-    return createEventItemTemplate(this._event, this.#destinationName, this.#eventOffers);
-  }
-
-  get #destinationName() {
-    return getById(this._destinations, this._event.destination)?.name;
+    return createEventItemTemplate(this._event, this._eventDestination?.name, this.#eventOffers);
   }
 
   get #eventOffers() {
     return this._eventTypeOffers.filter((offer) => this._event.offers.includes(offer.id));
   }
 
-  get _destinationNames() {
-    return this._destinations.map((destination) => destination.name);
-  }
-
   #onFavoriteButtonClick = (evt) => {
     evt.preventDefault();
-    //alert('favoriteClickHandler');
+    //alert('onFavoriteButtonClick');
     this.#onFavoriteClick?.();
   };
 
   #onEditButtonClick = (evt) => {
     evt.preventDefault();
-    //alert('editClickHandler');
+    //alert('onEditButtonClick');
     this.#onEditClick?.();
   };
 }

@@ -1,5 +1,5 @@
-import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
-import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
+import { getRandomNumber, getRandomBoolean, getRandomDatePeriod, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
+import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info } from './const.js';
 
 const getOfferIdsByType = (typesOffers, type) => {
   const typeOffers = typesOffers.filter((offer) => offer.type === type)[0]?.offers;
@@ -13,9 +13,7 @@ const createEvent = (id, type, typesOffers, destinations) => {
   const offerIds = getOfferIdsByType(typesOffers, type);
   const randomOffers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : [];
 
-  const { MIN: minDate, MAX: maxDate } = Event.Date;
-  const dateFrom = getRandomDate(minDate, maxDate);
-  const dateTo = getRandomDate(dateFrom, maxDate);
+  const { dateFrom, dateTo } = getRandomDatePeriod(Event.Date.MIN, Event.Date.MAX);
 
   return {
     id,
@@ -78,15 +76,14 @@ const generateMockData = (types) => {
   return { destinations, typesOffers, events };
 };
 
-//! убрать
 const getMockInfo = (destinations) => {
-  const { DESTINATIONS_COUNT: destinationsCount, DATE_MAX: DateMax } = Info;
+  const { DESTINATIONS_COUNT: destinationsCount, Cost: { MIN: minCost, MAX: maxCost } } = Info;
   const randomDestinations = getRandomArrayElements(destinations, destinationsCount, destinationsCount);
   const title = randomDestinations.map((destination) => destination.name).join(' — ');
-  const dates = `${getRandomNumber(1, DateMax)}&nbsp;—&nbsp;${getRandomNumber(1, DateMax)} Mar`;
-  const cost = getRandomNumber(Cost.MIN, Cost.MAX);
+  const { dateFrom, dateTo } = getRandomDatePeriod(Event.Date.MIN, Event.Date.MAX);
+  const cost = getRandomNumber(minCost, maxCost);
 
-  return { title, dates, cost };
+  return { title, dateFrom, dateTo, cost };
 };
 
 export { generateMockData, getMockInfo };

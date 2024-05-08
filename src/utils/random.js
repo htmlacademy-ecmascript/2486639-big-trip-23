@@ -29,6 +29,12 @@ const getRandomDate = (minDate, maxDate) => {
   return date;
 };
 
+const getRandomDatePeriod = (minDate, maxDate) => {
+  const dateFrom = getRandomDate(minDate, maxDate);
+  const dateTo = getRandomDate(dateFrom, maxDate);
+  return { dateFrom, dateTo };
+};
+
 const createIdGenerator = (minNumber = 0, maxNumber = 0) => {
   const previousValues = [];
 
@@ -86,6 +92,7 @@ export {
   getRandomBoolean,
   createIdGenerator,
   getRandomDate,
+  getRandomDatePeriod,
   getRandomArrayElement,
   getRandomArrayElements,
   getRandomNumbers

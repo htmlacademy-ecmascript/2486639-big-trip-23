@@ -1,5 +1,5 @@
 import { EVENT_TYPES } from '../const.js';
-import { generateMockData, getMockInfo } from '../mock/events.js';
+import { generateMockData } from '../mock/events.js';
 
 export default class TripEventsModel {
   #destinations = [];
@@ -24,10 +24,5 @@ export default class TripEventsModel {
 
   get events() {
     return this.#events;
-  }
-
-  //! вычислить в TripInfoView
-  get info() {
-    return getMockInfo(this.#destinations); //! временно, потом собрать из событий
   }
 }
