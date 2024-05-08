@@ -70,6 +70,8 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
     dateTo,
     basePrice } = event;
   const destinationName = destination.name;
+  const isEditing = true; //! временно
+  const resetButtonCaption = (isEditing) ? 'Delete' : 'Cancel';
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -109,7 +111,8 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Cancel</button>
+      <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
+      ${(isEditing) ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
     </header>
     ${createSectionDetailsTemplate(typeOffers, eventOffers, destination)}
   </form>
@@ -118,12 +121,15 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
 
 export default class EventFormView extends AbstractEventView {
   #onSubmit = null;
+  #onHide = null;
 
-  constructor({ event, eventTypes, destinations, typesOffers, onSubmit }) {
+  constructor({ event, eventTypes, destinations, typesOffers, onSubmit, onHide }) {
     super(event, eventTypes, destinations, typesOffers);
     this.#onSubmit = onSubmit;
+    this.#onHide = onHide;
 
     this.element.querySelector('form.event.event--edit').addEventListener('submit', this.#onFormSubmit);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onHideForm);
   }
 
   get template() {
@@ -138,5 +144,11 @@ export default class EventFormView extends AbstractEventView {
     evt.preventDefault();
     //alert('onSubmitClick');
     this.#onSubmit?.();
+  };
+
+  #onHideForm = (evt) => {
+    evt.preventDefault();
+    //alert('onSubmitClick');
+    this.#onHide?.();
   };
 }

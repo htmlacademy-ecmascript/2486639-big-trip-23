@@ -45,7 +45,6 @@ export default class TripEventsPresenter {
       if (isEscapeKey(evt)) {
         evt.preventDefault();
         replaceFormToItem();
-        document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
@@ -61,7 +60,6 @@ export default class TripEventsPresenter {
       onFavoriteClick: null,
       onEditClick: () => {
         replaceItemToForm();
-        document.addEventListener('keydown', onEscKeyDown);
       }
     };
 
@@ -70,8 +68,11 @@ export default class TripEventsPresenter {
     const eventEdit = {
       ...extendedEvent,
       onSubmit: () => {
+        //! сохранить изменения
         replaceFormToItem();
-        document.removeEventListener('keydown', onEscKeyDown);
+      },
+      onHide: () => {
+        replaceFormToItem();
       }
     };
 
@@ -79,10 +80,12 @@ export default class TripEventsPresenter {
 
     function replaceItemToForm() {
       replace(eventFormComponent, eventItemComponent);
+      document.addEventListener('keydown', onEscKeyDown);
     }
 
     function replaceFormToItem() {
       replace(eventItemComponent, eventFormComponent);
+      document.removeEventListener('keydown', onEscKeyDown);
     }
 
     render(eventItemComponent, eventsListElement);
