@@ -9,6 +9,8 @@ export default class TripEventsPresenter {
   #containerElement = null;
   #tripEventsModel = null;
 
+  #destinations = [];
+  #typeOffers = [];
   #events = [];
 
   #eventsListComponent = new EventsListView();
@@ -19,7 +21,10 @@ export default class TripEventsPresenter {
   }
 
   init() {
-    this.#events = [...this.#tripEventsModel.events]; //! временно. сохранить то что будет диспользоваться в других методах.
+    //! временно. сохранить то что будет использоваться в других методах.
+    this.#destinations = [...this.#tripEventsModel.destinations];
+    this.#typeOffers = [...this.#tripEventsModel.typeOffers];
+    this.#events = [...this.#tripEventsModel.events];
 
     this.#renderEventsList();
   }
@@ -27,9 +32,9 @@ export default class TripEventsPresenter {
   #renderEventsList() {
     const eventsListElement = this.#eventsListComponent.element;
     const events = this.#events;
-    const { destinationNames } = this.#tripEventsModel;
+    //const { destinationNames } = this.#tripEventsModel;
 
-    /**/
+    /*
     //! временно выводим форму редактирования
     const event = events[0];
     const extendedEvent = {
@@ -40,7 +45,7 @@ export default class TripEventsPresenter {
       offers: this.#tripEventsModel.getAvailableEventOffers(event)
     };
     render(new EventFormView({ extendedEvent }), eventsListElement);
-    /**/
+    */
     for (let i = 0; i < events.length; i++) {
       this.#renderEventItem(events[i], eventsListElement);
     }
@@ -53,11 +58,19 @@ export default class TripEventsPresenter {
   }
 
   #renderEventItem(event, eventsListElement) {
-    const eventInfo = {
+    const extendedEvent = {
       event,
-      destinationName: this.#tripEventsModel.getDestinationById(event.destination)?.name,
-      eventOffers: this.#tripEventsModel.getEventOffers(event)
+      eventTypes: EVENT_TYPES,
+      destinations: this.#destinations,
+      typeOffers: this.#typeOffers
     };
-    render(new EventItemView({ eventInfo }), eventsListElement);
+
+    const eventItem = {
+      ...extendedEvent,
+      onFavoriteClick: null,
+      onEditClick: null
+    };
+
+    render(new EventItemView(eventItem), eventsListElement);
   }
 }

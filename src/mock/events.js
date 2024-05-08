@@ -1,16 +1,16 @@
 import { getRandomNumber, getRandomBoolean, getRandomDate, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
 import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info, Cost } from './const.js';
 
-const getOfferIdsByType = (offers, type) => {
-  const typeOffers = offers.filter((offer) => offer.type === type)[0]?.offers;
+const getOfferIdsByType = (typeOffers, type) => {
+  const offers = typeOffers.filter((offer) => offer.type === type)[0]?.offers;
 
-  return (typeOffers) ? typeOffers.map((offer) => offer.id) : [];
+  return (offers) ? offers.map((offer) => offer.id) : [];
 };
 
-const createEvent = (id, type, offers, destinations) => {
+const createEvent = (id, type, typeOffers, destinations) => {
   const { MIN: minPrice, MAX: maxPrice } = Event.Price;
   const basePrice = getRandomNumber(minPrice, maxPrice);
-  const offerIds = getOfferIdsByType(offers, type);
+  const offerIds = getOfferIdsByType(typeOffers, type);
   const randomOffers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : [];
 
   const { MIN: minDate, MAX: maxDate } = Event.Date;
@@ -52,14 +52,14 @@ const generateMockData = (types) => {
     });
   });
 
-  const offers = types.map(
+  const typeOffers = types.map(
     (type) => {
       const { TITLES: titles } = Offer;
-      let typeOffers = [];
+      let offers = [];
       if (getRandomBoolean()) {
         const randomOfferTitles = getRandomArrayElements(titles, getRandomNumber(0, titles.length - 1));
         if (randomOfferTitles) {
-          typeOffers = randomOfferTitles.map((title) => {
+          offers = randomOfferTitles.map((title) => {
             const index = titles.indexOf(title);
             const name = `offer-${index}`;
             const id = `${name}-1`;//! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
@@ -70,14 +70,15 @@ const generateMockData = (types) => {
         }
       }
 
-      return { type, offers: typeOffers };
+      return { type, offers };
     });
 
-  const events = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1, getRandomArrayElement(types), offers, destinations));
+  const events = Array.from({ length: Event.COUNT }, (_, index) => createEvent(index + 1, getRandomArrayElement(types), typeOffers, destinations));
 
-  return { destinations, offers, events };
+  return { destinations, typeOffers, events };
 };
 
+//! убрать
 const getMockInfo = (destinations) => {
   const { DESTINATIONS_COUNT: destinationsCount, DATE_MAX: DateMax } = Info;
   const randomDestinations = getRandomArrayElements(destinations, destinationsCount, destinationsCount);

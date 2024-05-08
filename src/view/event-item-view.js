@@ -1,7 +1,8 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractEventView from './abstract-event-view.js';
 import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
+import { getById } from '../utils/utils.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
   <span class="event__offer-title">${title}</span>
@@ -14,7 +15,7 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
     ${createElementsTemplate(offers, createOfferTemplate)}
 </ul>`;
 
-const createEventItemTemplate = ({ event, destinationName, offers }) => {
+const createEventItemTemplate = (event, destinationName, offers) => {
   const
     { //id, //! пока не используется
       type,
@@ -63,14 +64,12 @@ const createEventItemTemplate = ({ event, destinationName, offers }) => {
 </li>`;
 };
 
-export default class EventItemView extends AbstractView {
-  #eventInfo = null;
+export default class EventItemView extends AbstractEventView {
   #onFavoriteClick = null;
   #onEditClick = null;
 
-  constructor({ eventInfo, onFavoriteClick, onEditClick }) {
-    super();
-    this.#eventInfo = eventInfo;
+  constructor({ event, eventTypes, destinations, typeOffers, onFavoriteClick, onEditClick }) {
+    super({ event, eventTypes, destinations, typeOffers });
     this.#onFavoriteClick = onFavoriteClick;
     this.#onEditClick = onEditClick;
 
@@ -80,7 +79,11 @@ export default class EventItemView extends AbstractView {
   }
 
   get template() {
-    return createEventItemTemplate(this.#eventInfo);
+    return createEventItemTemplate(this._event, this.#destinationName, this._eventOffers);
+  }
+
+  get #destinationName() {
+    return getById(this._destinations, this._event.destination)?.name;
   }
 
   #onFavoriteButtonClick = (evt) => {

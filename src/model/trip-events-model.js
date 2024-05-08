@@ -1,65 +1,33 @@
-import { isEmptyArray, getById } from '../utils/utils.js';
 import { EVENT_TYPES } from '../const.js';
 import { generateMockData, getMockInfo } from '../mock/events.js';
 
 export default class TripEventsModel {
   #destinations = [];
-  #offers = [];
+  #typeOffers = [];
   #events = [];
 
   constructor() {
-    //! временно - скорее всего сделать init()
-    const { destinations, offers, events } = generateMockData(EVENT_TYPES);
+    //! временно - скорее всего нужно сделать init()
+    const { destinations, typeOffers, events } = generateMockData(EVENT_TYPES);
     this.#destinations = destinations;
-    this.#offers = offers;
+    this.#typeOffers = typeOffers;
     this.#events = events;
   }
 
-  get info() {
-    return getMockInfo(this.#destinations); //! временно, потом собрать из событий
+  get destinations() {
+    return this.#destinations;
   }
 
-  get destinationNames() {
-    return this.#destinations.map((destination) => destination.name);
-  }
-
-  getDestinationById(id) {
-    return getById(this.#destinations, id);
-  }
-
-  getAvailableEventOffers(event) {
-    const { type, offers: eventOfferIds } = event;
-    const currentType = getById(this.#offers, type, 'type');
-    const typeOffers = currentType?.offers;
-
-    if (isEmptyArray(typeOffers)) {
-      return [];
-    }
-
-    if (isEmptyArray(eventOfferIds)) {
-      return typeOffers;
-    }
-
-    return typeOffers.map((offer) => ({ ...offer, checked: eventOfferIds.includes(offer.id) }));
-  }
-
-  getEventOffers(event) {
-    const { type, offers: eventOfferIds } = event;
-    const currentType = getById(this.#offers, type, 'type');
-    const typeOffers = currentType?.offers;
-
-    if (isEmptyArray(typeOffers)) {
-      return [];
-    }
-
-    if (isEmptyArray(eventOfferIds)) {
-      return typeOffers;
-    }
-
-    return typeOffers.filter((offer) => eventOfferIds.includes(offer.id));
+  get typeOffers() {
+    return this.#typeOffers;
   }
 
   get events() {
     return this.#events;
+  }
+
+  //! вычислить в TripInfoView
+  get info() {
+    return getMockInfo(this.#destinations); //! временно, потом собрать из событий
   }
 }

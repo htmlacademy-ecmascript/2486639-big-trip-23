@@ -7,6 +7,7 @@ import TripEventsModel from './model/trip-events-model.js';
 import { getRandomArrayElement } from './utils/random.js';
 import { TRIP_FILTERS, TRIP_SORTINGS } from './const.js';
 
+//! main.js как главный презентор, поробовать переделать
 const bodyElement = document.body;
 
 const headerContainerElement = bodyElement.querySelector('div.page-body__container.page-header__container');
