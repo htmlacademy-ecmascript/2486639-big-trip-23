@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractEventView from './abstract-event-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
@@ -22,9 +22,8 @@ const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="d
     ${createElementsTemplate(destinationNames, createDestinationOptionTemplate)}
 </datalist>`;
 
-//! без оферов нужно убрать блок блок!
-const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(checked) ? 'checked' : ''}>
+const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(eventOffers.includes(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -32,11 +31,11 @@ const createOfferTemplate = ({ id, name, title, price, checked = false }) => `<d
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (offers) => (isEmptyArray(offers)) ? '' : `<div class="event__offer-selector">
+const createSectionOffersTemplate = (typeOffers, eventOffers) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createElementsTemplate(offers, createOfferTemplate)}
+      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOffers)}
     </div>
 </section>`;
 
@@ -54,9 +53,25 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (!descri
   ${createPhotosContainerTemplate(pictures)}
 </section>`;
 
-const createEventFormTemplate = (event, types, destinationNames, destination, offers) => {
-  const { /*id, //! пока не используется*/ type, dateFrom, dateTo, basePrice } = event; //! от event? мало что педается
+const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (isEmptyArray(typeOffers) && !destination.description) ? '' : `<section class="event__details">
+  ${createSectionOffersTemplate(typeOffers, eventOffers)}
+  ${createSectionDestinationTemplate(destination)}
+</section>`;
+
+const createEventFormTemplate = (event, types, destinationNames, destination, typeOffers, eventOffers) => {
+  //? destinationNames сортировать ли для вывода?
+  //? offers сортировать ли для вывода?
+
+  //! при добавление, нет кнопки ^, при редактировании есть
+  const {
+    /*id, //! пока не используется, при добавлении нет=null?, при редактировании подставить*/
+    type,
+    dateFrom,
+    dateTo,
+    basePrice } = event;
   const destinationName = destination.name;
+  const isEditing = true; //! временно
+  const resetButtonCaption = (isEditing) ? 'Delete' : 'Cancel';
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -96,40 +111,44 @@ const createEventFormTemplate = (event, types, destinationNames, destination, of
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Cancel</button>
+      <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
+      ${(isEditing) ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
     </header>
-    <section class="event__details">
-      ${createSectionOffersTemplate(offers)}
-      ${createSectionDestinationTemplate(destination)}
-    </section>
+    ${createSectionDetailsTemplate(typeOffers, eventOffers, destination)}
   </form>
 <li>`;
 };
 
-export default class EventFormView {
-  constructor(event, types, destinationNames, destination, offers) {
-    this.event = event;
-    this.types = types;
-    this.destinationNames = destinationNames;
-    this.destination = destination;
-    this.offers = offers;
+export default class EventFormView extends AbstractEventView {
+  #onSubmit = null;
+  #onHide = null;
+
+  constructor({ event, eventTypes, destinations, typesOffers, onSubmit, onHide }) {
+    super(event, eventTypes, destinations, typesOffers);
+    this.#onSubmit = onSubmit;
+    this.#onHide = onHide;
+
+    this.element.querySelector('form.event.event--edit').addEventListener('submit', this.#onFormSubmit);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onHideForm);
   }
 
-  getTemplate() {
-    const { event, types, destinationNames, destination, offers } = this;
-
-    return createEventFormTemplate(event, types, destinationNames, destination, offers);
+  get template() {
+    return createEventFormTemplate(this._event, this._eventTypes, this.#destinationNames, this._eventDestination, this._eventTypeOffers, this._event.offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  get #destinationNames() {
+    return this._destinations.map((destination) => destination.name);
   }
 
-  removeElement() {
-    this.element = null;
-  }
+  #onFormSubmit = (evt) => {
+    evt.preventDefault();
+    //alert('onSubmitClick');
+    this.#onSubmit?.();
+  };
+
+  #onHideForm = (evt) => {
+    evt.preventDefault();
+    //alert('onSubmitClick');
+    this.#onHide?.();
+  };
 }

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractEventView from './abstract-event-view.js';
 import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
@@ -63,28 +63,36 @@ const createEventItemTemplate = (event, destinationName, offers) => {
 </li>`;
 };
 
-export default class EventItemView {
-  constructor(event, destinationName, offers) {
-    this.event = event;
-    this.destinationName = destinationName;
-    this.offers = offers;
+export default class EventItemView extends AbstractEventView {
+  #onFavoriteClick = null;
+  #onEditClick = null;
+
+  constructor({ event, eventTypes, destinations, typesOffers, onFavoriteClick, onEditClick }) {
+    super(event, eventTypes, destinations, typesOffers);
+    this.#onFavoriteClick = onFavoriteClick;
+    this.#onEditClick = onEditClick;
+
+    this.element.querySelector('button.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonClick);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEditButtonClick);
   }
 
-  getTemplate() {
-    const { event, destinationName } = this;
-
-    return createEventItemTemplate(event, destinationName, this.offers);
+  get template() {
+    return createEventItemTemplate(this._event, this._eventDestination?.name, this.#eventOffers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  get #eventOffers() {
+    return this._eventTypeOffers.filter((offer) => this._event.offers.includes(offer.id));
   }
 
-  removeElement() {
-    this.element = null;
-  }
+  #onFavoriteButtonClick = (evt) => {
+    evt.preventDefault();
+    //alert('onFavoriteButtonClick');
+    this.#onFavoriteClick?.();
+  };
+
+  #onEditButtonClick = (evt) => {
+    evt.preventDefault();
+    //alert('onEditButtonClick');
+    this.#onEditClick?.();
+  };
 }

@@ -5,6 +5,7 @@ const DateFormat = {
   SHORT_DATE_TIME: 'DD/MM/YY HH:mm',
   DATE: 'YYYY-MM-DD',
   MONTH_DAY: 'MMM DD',
+  DAY_MONTH: 'DD MMM',
   DATE_TIME: 'YYYY-MM-DDTHH:mm',
   TIME: 'HH:mm'
 };

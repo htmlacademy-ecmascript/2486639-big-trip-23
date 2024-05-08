@@ -31,12 +31,10 @@ const Description = {
 
 const Info = {
   DESTINATIONS_COUNT: 3,
-  DATE_MAX: 30
-};
-
-const Cost = {
-  MIN: 10000,
-  MAX: 20000
+  Cost: {
+    MIN: 10000,
+    MAX: 20000
+  }
 };
 
 export {
@@ -45,6 +43,5 @@ export {
   Offer,
   PhotoNumber,
   Description,
-  Info,
-  Cost
+  Info
 };
