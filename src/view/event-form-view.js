@@ -117,13 +117,13 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
 };
 
 export default class EventFormView extends AbstractEventView {
-  #onSubmitClick = null;
+  #onSubmit = null;
 
-  constructor({ event, eventTypes, destinations, typesOffers, onSubmitClick }) {
+  constructor({ event, eventTypes, destinations, typesOffers, onSubmit }) {
     super(event, eventTypes, destinations, typesOffers);
-    this.#onSubmitClick = onSubmitClick;
+    this.#onSubmit = onSubmit;
 
-    this.element.querySelector('button.event__save-btn').addEventListener('click', this.#onSubmitButtonClick);
+    this.element.querySelector('form.event.event--edit').addEventListener('submit', this.#onFormSubmit);
   }
 
   get template() {
@@ -134,9 +134,9 @@ export default class EventFormView extends AbstractEventView {
     return this._destinations.map((destination) => destination.name);
   }
 
-  #onSubmitButtonClick = (evt) => {
+  #onFormSubmit = (evt) => {
     evt.preventDefault();
     //alert('onSubmitClick');
-    this.#onSubmitClick?.();
+    this.#onSubmit?.();
   };
 }

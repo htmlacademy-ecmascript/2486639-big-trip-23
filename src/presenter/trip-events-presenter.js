@@ -1,4 +1,5 @@
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils/utils.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -30,31 +31,8 @@ export default class TripEventsPresenter {
   }
 
   #renderEventsList() {
-    const eventsListElement = this.#eventsListComponent.element;
-    const events = this.#events;
-    //const { destinationNames } = this.#tripEventsModel;
-
-    /* */
-    //! временно выводим форму редактирования
-    const extendedEvent = {
-      event: events[0],
-      eventTypes: EVENT_TYPES,
-      destinations: this.#destinations,
-      typesOffers: this.#typesOffers
-    };
-
-    const eventEdit = {
-      ...extendedEvent,
-      onSubmit: null
-    };
-
-    render(new EventFormView(eventEdit), eventsListElement);
-    /**/
-    for (let i = 0; i < events.length; i++) {
-      this.#renderEventItem(events[i], eventsListElement);
-    }
-
-    if (events.length) {
+    if (this.#events.length) {
+      this.#events.forEach((event) => this.#renderEventItem(event, this.#eventsListComponent.element));
       render(this.#eventsListComponent, this.#containerElement);
     } else {
       render(new TripMessageView(TripMessage.NEW_EVENT), this.#containerElement);
@@ -62,6 +40,15 @@ export default class TripEventsPresenter {
   }
 
   #renderEventItem(event, eventsListElement) {
+    //? по ТЗ нужен Enter?
+    const onEscKeyDown = (evt) => {
+      if (isEscapeKey(evt)) {
+        evt.preventDefault();
+        replaceFormToItem();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
     const extendedEvent = {
       event,
       eventTypes: EVENT_TYPES,
@@ -72,16 +59,32 @@ export default class TripEventsPresenter {
     const eventItem = {
       ...extendedEvent,
       onFavoriteClick: null,
-      onEditClick: null
+      onEditClick: () => {
+        replaceItemToForm();
+        document.addEventListener('keydown', onEscKeyDown);
+      }
     };
 
-    /*
+    const eventItemComponent = new EventItemView(eventItem);
+
     const eventEdit = {
       ...extendedEvent,
-      onSubmit: null
+      onSubmit: () => {
+        replaceFormToItem();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
     };
-    */
 
-    render(new EventItemView(eventItem), eventsListElement);
+    const eventFormComponent = new EventFormView(eventEdit);
+
+    function replaceItemToForm() {
+      replace(eventFormComponent, eventItemComponent);
+    }
+
+    function replaceFormToItem() {
+      replace(eventItemComponent, eventFormComponent);
+    }
+
+    render(eventItemComponent, eventsListElement);
   }
 }
