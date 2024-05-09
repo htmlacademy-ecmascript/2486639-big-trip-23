@@ -79,7 +79,7 @@ export default class EventItemView extends AbstractEventView {
   get template() {
     return createEventItemTemplate(this._event, this._eventDestination?.name, this.#eventOffers);
   }
-  
+
   //? removeElement() -> super.removeElement() + removeEventListener(.....)
 
   get #eventOffers() {

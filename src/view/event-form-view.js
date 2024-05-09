@@ -137,7 +137,7 @@ export default class EventFormView extends AbstractEventView {
   }
 
   //? removeElement() -> super.removeElement() + removeEventListener(.....)
-  
+
   get #destinationNames() {
     return this._destinations.map((destination) => destination.name);
   }
