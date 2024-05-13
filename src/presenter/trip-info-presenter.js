@@ -6,24 +6,24 @@ export default class TripInfoPresenter {
   #tripEventsModel = null;
 
   #destinations = [];
-  #typesOffers = [];
+  #offers = [];
   #events = [];
 
   constructor({ containerElement, tripEventsModel }) {
     this.#containerElement = containerElement;
     this.#tripEventsModel = tripEventsModel;
 
-    //! временно. сохранить то что будет использоваться в других методах.
+    //! временно
     //! дубль кода с презентором событий, сделать наследование
     this.#destinations = [...this.#tripEventsModel.destinations];
-    this.#typesOffers = [...this.#tripEventsModel.typesOffers];
+    this.#offers = [...this.#tripEventsModel.offers];
     this.#events = [...this.#tripEventsModel.events];
   }
 
   init() {
     //! разный текст в зависмости от фильтра, и обработка нажатий
     if (this.#events.length) {
-      render(new TripInfoView(this.#events, this.#destinations, this.#typesOffers), this.#containerElement, RenderPosition.AFTERBEGIN);
+      render(new TripInfoView(this.#events, this.#destinations, this.#offers), this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

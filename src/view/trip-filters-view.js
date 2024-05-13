@@ -29,7 +29,7 @@ export default class TripFiltersView extends AbstractView {
 
   constructor(events, activeTripFilter) {
     super();
-    this.#events = [...events]; //! временно?
+    this.#events = [...events]; //! временно
     this.#activeTripFilter = activeTripFilter;
   }
 

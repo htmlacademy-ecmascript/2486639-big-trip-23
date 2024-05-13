@@ -1,17 +1,18 @@
 import { render, replace } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
+import { getById } from '../utils/utils.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import TripMessageView from '../view/trip-message-view.js';
-import { EVENT_TYPES, TripMessage } from '../const.js';
+import { TripMessage } from '../const.js';
 
 export default class TripEventsPresenter {
   #containerElement = null;
   #tripEventsModel = null;
 
   #destinations = [];
-  #typesOffers = [];
+  #offers = [];
   #events = [];
 
   #eventsListComponent = new EventsListView();
@@ -22,9 +23,9 @@ export default class TripEventsPresenter {
   }
 
   init() {
-    //! временно. сохранить то что будет использоваться в других методах.
+    //! временно
     this.#destinations = [...this.#tripEventsModel.destinations];
-    this.#typesOffers = [...this.#tripEventsModel.typesOffers];
+    this.#offers = [...this.#tripEventsModel.offers];
     this.#events = [...this.#tripEventsModel.events];
 
     this.#renderEventsList();
@@ -48,16 +49,19 @@ export default class TripEventsPresenter {
       }
     };
 
-    const extendedEvent = {
-      event,
-      eventTypes: EVENT_TYPES,
-      destinations: this.#destinations,
-      typesOffers: this.#typesOffers
-    };
+    // Подготовим недостющие данные для отображения события в списке и при редактировании
+    const { destination, type, offers } = event;
+    const eventDestination = getById(this.#destinations, destination);
+    const offer = getById(this.#offers, type, 'type');
+    const typeOffers = (offer) ? offer.offers : [];
+    const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
+    //! название, может и не тужно сразу передать в функцию!
     const eventItem = {
-      ...extendedEvent,
-      onFavoriteClick: null,
+      event,
+      destinationName: eventDestination.name,
+      eventOffers,
+      onFavoriteClick: null, //! временно
       onEditClick: () => {
         replaceItemToForm();
       }
@@ -65,13 +69,17 @@ export default class TripEventsPresenter {
 
     const eventItemComponent = new EventItemView(eventItem);
 
+    //! название, может и не тужно сразу передать в функцию!
     const eventEdit = {
-      ...extendedEvent,
+      event,
+      destination: eventDestination,
+      typeOffers,
+      destinations: this.#destinations,
       onSubmit: () => {
         //! сохранить изменения
         replaceFormToItem();
       },
-      onHide: () => {
+      onClose: () => {
         replaceFormToItem();
       }
     };
