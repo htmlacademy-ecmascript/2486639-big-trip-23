@@ -1,7 +1,7 @@
 import { render, RenderPosition } from '../framework/render.js';
-import TripInfoView from '../view/trip-info-view.js';
+import InfoView from '../view/info-view.js';
 
-export default class TripInfoPresenter {
+export default class InfoPresenter {
   #containerElement = null;
   #tripEventsModel = null;
 
@@ -23,7 +23,7 @@ export default class TripInfoPresenter {
   init() {
     //! разный текст в зависмости от фильтра, и обработка нажатий
     if (this.#events.length) {
-      render(new TripInfoView(this.#events, this.#destinations, this.#offers), this.#containerElement, RenderPosition.AFTERBEGIN);
+      render(new InfoView(this.#events, this.#destinations, this.#offers), this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

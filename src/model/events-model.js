@@ -1,7 +1,7 @@
 import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
 
-export default class TripEventsModel {
+export default class EventsModel {
   #destinations = [];
   #offers = [];
   #events = [];

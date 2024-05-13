@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getMockInfo } from '../mock/events.js';//! временно
 import { DateFormat, getStringDate } from '../utils/date.js';
 
-const createTripInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
+const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
   //! почитать ТЗ и посмотреть как выводить, если в одном месяце?, если в разных? и т.д.?
   const tripDateFrom = getStringDate(dateFrom, DateFormat.DAY_MONTH);
   const tripDateTo = getStringDate(dateTo, DateFormat.DAY_MONTH);
@@ -18,7 +18,7 @@ const createTripInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 </section>`;
 };
 
-export default class TripInfoView extends AbstractView {
+export default class InfoView extends AbstractView {
   #destinations = [];
   #offers = []; //! возможно нужен для подсчета полной стоимости
   #events = [];
@@ -32,7 +32,7 @@ export default class TripInfoView extends AbstractView {
   }
 
   get template() {
-    return createTripInfoTemplate(this.#info);
+    return createInfoTemplate(this.#info);
   }
 
   get #info() {

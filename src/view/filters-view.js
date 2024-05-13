@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { TripFilters } from '../const.js';
+import { FilterType } from '../const.js';
 
-const createTripFilterItemTemplate = ({ filter, isEnabled }, activeFilter) => {
+const createFilterItemTemplate = ({ filter, isEnabled }, activeFilter) => {
   const checked = (filter === activeFilter) ? ' checked' : '';
   const disabled = (isEnabled) ? '' : ' disabled';
 
@@ -12,33 +12,33 @@ const createTripFilterItemTemplate = ({ filter, isEnabled }, activeFilter) => {
 </div>`;
 };
 
-const createTripFiltersTemplate = (tripFilters, activeTripFilter) => `<form class="trip-filters" action="#" method="get">
-  ${createElementsTemplate(tripFilters, createTripFilterItemTemplate, activeTripFilter)}
+const createFiltersTemplate = (filters, activeFilter) => `<form class="trip-filters" action="#" method="get">
+  ${createElementsTemplate(filters, createFilterItemTemplate, activeFilter)}
 </form > `;
 
-//! все еще немного похожи с TripSortingView, может получиться выделить общего предка?
-export default class TripFiltersView extends AbstractView {
+//! все еще немного похожи с SortingView, может получиться выделить общего предка?
+export default class FiltersView extends AbstractView {
   #events = [];
-  #activeTripFilter = '';
+  #activeFilter = '';
 
   #tripDatePeriodChecks = {
-    [TripFilters.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
-    [TripFilters.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
-    [TripFilters.PAST]: (_, dateTo, date) => (dateTo < date),
+    [FilterType.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
+    [FilterType.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
+    [FilterType.PAST]: (_, dateTo, date) => (dateTo < date),
   };
 
-  constructor(events, activeTripFilter) {
+  constructor(events, activeFilter) {
     super();
     this.#events = [...events]; //! временно
-    this.#activeTripFilter = activeTripFilter;
+    this.#activeFilter = activeFilter;
   }
 
   get template() {
-    const tripFilters = Object.entries(TripFilters).map(([, filter]) => {
+    const filters = Object.entries(FilterType).map(([, filter]) => {
       if (!this.#events.length) {
         return {
           filter,
-          isEnabled: [TripFilters.EVERYTHING, TripFilters.PRESENT].includes(filter)
+          isEnabled: [FilterType.EVERYTHING, FilterType.PRESENT].includes(filter)
         };
       }
 
@@ -56,6 +56,6 @@ export default class TripFiltersView extends AbstractView {
       };
     });
 
-    return createTripFiltersTemplate(tripFilters, this.#activeTripFilter);
+    return createFiltersTemplate(filters, this.#activeFilter);
   }
 }

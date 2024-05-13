@@ -143,7 +143,7 @@ export default class EventFormView extends AbstractView {
   }
 
   get template() {
-    //! Поиск вынести в отдельную функцию и забрать с trip-events-presenter.js const eventOffers = typeOffers.filter((offer) => offers.includes(offer.id));
+    //! Поиск вынести в отдельную функцию и забрать с events-presenter.js const eventOffers = typeOffers.filter((offer) => offers.includes(offer.id));
     //! в createOfferTemplate offers.includes...
     return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }

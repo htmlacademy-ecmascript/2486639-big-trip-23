@@ -4,10 +4,10 @@ import { getById } from '../utils/utils.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
-import TripMessageView from '../view/trip-message-view.js';
-import { TripMessage } from '../const.js';
+import MessageView from '../view/message-view.js';
+import { MessageType } from '../const.js';
 
-export default class TripEventsPresenter {
+export default class EventsPresenter {
   #containerElement = null;
   #tripEventsModel = null;
 
@@ -39,7 +39,7 @@ export default class TripEventsPresenter {
       this.#events.forEach((event) => this.#renderEventItem(event, this.#eventsListComponent.element));
       render(this.#eventsListComponent, this.#containerElement);
     } else {
-      render(new TripMessageView(TripMessage.NEW_EVENT), this.#containerElement);
+      render(new MessageView(MessageType.NEW_EVENT), this.#containerElement);
     }
   }
 

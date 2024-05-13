@@ -1,6 +1,6 @@
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const TripFilters = {
+const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
@@ -9,10 +9,10 @@ const TripFilters = {
 
 const TRIP_SORTINGS = ['day', 'event', 'time', 'price', 'offers'];
 
-const TripMessage = {
+const MessageType = {
   NEW_EVENT: 'Click New Event to create your first point',
   LOADING: 'Loading...',
   FAILEAD: 'Failed to load latest route information'
 };
 
-export { EVENT_TYPES, TripFilters, TRIP_SORTINGS, TripMessage };
+export { EVENT_TYPES, FilterType, TRIP_SORTINGS, MessageType };
