@@ -61,25 +61,26 @@ export default class EventsPresenter {
       eventOffers,
       onFavoriteClick: null, //! временно
       onEditClick: () => {
-        this.replaceItemToForm(eventFormComponent, eventItemComponent);
+        this.replaceItemToForm(eventItemComponent, eventFormComponent);
       }
     };
 
     eventItemComponent = new EventItemView(eventItem);
 
+    //? как сделать вариант c bind this.onFormSubmit.bind(this);
     //! название, может и не тужно сразу передать в функцию!
     const eventEdit = {
       event,
       destination: eventDestination,
       typeOffers,
       destinations: this.#destinations,
+      //onSubmit: this.onFormSubmit, //? как сделать вариант c bind
       onSubmit: () => {
         //! сохранить изменения
-        this.replaceFormToItem(eventItemComponent, eventFormComponent);
+        this.replaceFormToItem();
       },
       onClose: () => {
-        //console.log(this);
-        this.replaceFormToItem(eventItemComponent, eventFormComponent);
+        this.replaceFormToItem();
       }
     };
 
@@ -88,34 +89,39 @@ export default class EventsPresenter {
     render(eventItemComponent, eventsListElement);
   }
 
-  //? по ТЗ нужен Enter?
   onDocumentEscKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      if (this.hideItem && this.showForm) {
-        this.replaceFormToItem(this.hideItem, this.showForm);
-      }
+      this.replaceFormToItem();
     }
+    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };
 
-  replaceItemToForm = (eventFormComponent, eventItemComponent) => {
-    if (this.hideItem && this.showForm) {
-      this.replaceFormToItem(this.hideItem, this.showForm);
+  replaceFormToItem() {
+    if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
+      replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
+      document.removeEventListener('keydown', this.onDocumentEscKeyDown);
+      this.#hiddenEventItemComponent = null;
+      this.#openedEventFormComponent = null;
     }
+  }
 
-    this.hideItem = eventItemComponent;
-    this.showForm = eventFormComponent;
+  replaceItemToForm(eventItemComponent, eventFormComponent) {
+    this.replaceFormToItem();
 
     replace(eventFormComponent, eventItemComponent);
+    //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.onDocumentEscKeyDown);
-    //? тут прокрутить страницу если форма отрисовалась ниже видимой области?
-  };
+    this.#hiddenEventItemComponent = eventItemComponent;
+    this.#openedEventFormComponent = eventFormComponent;
+  }
 
-  replaceFormToItem = (eventItemComponent, eventFormComponent) => {
-    this.hideItem = null;
-    this.showForm = null;
-
-    replace(eventItemComponent, eventFormComponent);
-    document.removeEventListener('keydown', this.onDocumentEscKeyDown);
-  };
+  //? как сделать вариант c bind
+  /*
+  onFormSubmit() {
+    //! сохранить изменения
+    console.log(this);
+    this.replaceFormToItem();
+  }
+  */
 }
