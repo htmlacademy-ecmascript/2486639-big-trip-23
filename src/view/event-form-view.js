@@ -136,6 +136,8 @@ export default class EventFormView extends AbstractEventView {
     return createEventFormTemplate(this._event, this._eventTypes, this.#destinationNames, this._eventDestination, this._eventTypeOffers, this._event.offers);
   }
 
+  //? removeElement() -> super.removeElement() + removeEventListener(.....)
+
   get #destinationNames() {
     return this._destinations.map((destination) => destination.name);
   }

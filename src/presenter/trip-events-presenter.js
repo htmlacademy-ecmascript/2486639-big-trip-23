@@ -81,6 +81,7 @@ export default class TripEventsPresenter {
     function replaceItemToForm() {
       replace(eventFormComponent, eventItemComponent);
       document.addEventListener('keydown', onEscKeyDown);
+      //? тут прокрутить страницу если форма отрисовалась ниже видимой области?
     }
 
     function replaceFormToItem() {

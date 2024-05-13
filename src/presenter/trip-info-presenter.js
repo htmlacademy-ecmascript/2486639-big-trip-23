@@ -21,6 +21,9 @@ export default class TripInfoPresenter {
   }
 
   init() {
-    render(new TripInfoView(this.#events, this.#destinations, this.#typesOffers), this.#containerElement, RenderPosition.AFTERBEGIN);
+    //! разный текст в зависмости от фильтра, и обработка нажатий
+    if (this.#events.length) {
+      render(new TripInfoView(this.#events, this.#destinations, this.#typesOffers), this.#containerElement, RenderPosition.AFTERBEGIN);
+    }
   }
 }
