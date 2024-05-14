@@ -44,9 +44,6 @@ export default class EventsPresenter {
   }
 
   #renderEventItem(event, eventsListElement) {
-    let eventItemComponent = null;
-    let eventFormComponent = null;
-
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
     const eventDestination = getById(this.#destinations, destination);
@@ -54,37 +51,26 @@ export default class EventsPresenter {
     const typeOffers = (offer) ? offer.offers : [];
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
-    //! название, может и не тужно сразу передать в функцию!
-    const eventItem = {
+    const eventFormComponent = new EventFormView({
+      event,
+      destination: eventDestination,
+      typeOffers,
+      destinations: this.#destinations,
+      onSubmit: this.onFormSubmit,
+      onDelete: null, //! заготовка
+      onClose: this.onFormClose
+    });
+
+    const eventItemComponent = new EventItemView({
       event,
       destinationName: eventDestination.name,
       eventOffers,
       onFavoriteClick: null, //! временно
       onEditClick: () => {
+        //! при отдельном презенторе замкнуть внутри класса
         this.replaceItemToForm(eventItemComponent, eventFormComponent);
       }
-    };
-
-    eventItemComponent = new EventItemView(eventItem);
-
-    //? как сделать вариант c bind this.onFormSubmit.bind(this);
-    //! название, может и не тужно сразу передать в функцию!
-    const eventEdit = {
-      event,
-      destination: eventDestination,
-      typeOffers,
-      destinations: this.#destinations,
-      //onSubmit: this.onFormSubmit, //? как сделать вариант c bind
-      onSubmit: () => {
-        //! сохранить изменения
-        this.replaceFormToItem();
-      },
-      onClose: () => {
-        this.replaceFormToItem();
-      }
-    };
-
-    eventFormComponent = new EventFormView(eventEdit);
+    });
 
     render(eventItemComponent, eventsListElement);
   }
@@ -98,16 +84,16 @@ export default class EventsPresenter {
   };
 
   replaceFormToItem() {
-    if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
-      replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
-      document.removeEventListener('keydown', this.onDocumentEscKeyDown);
-      this.#hiddenEventItemComponent = null;
-      this.#openedEventFormComponent = null;
-    }
+    replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
+    document.removeEventListener('keydown', this.onDocumentEscKeyDown);
+    this.#hiddenEventItemComponent = null;
+    this.#openedEventFormComponent = null;
   }
 
   replaceItemToForm(eventItemComponent, eventFormComponent) {
-    this.replaceFormToItem();
+    if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
+      this.replaceFormToItem();
+    }
 
     replace(eventFormComponent, eventItemComponent);
     //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
@@ -116,12 +102,12 @@ export default class EventsPresenter {
     this.#openedEventFormComponent = eventFormComponent;
   }
 
-  //? как сделать вариант c bind
-  /*
-  onFormSubmit() {
-    //! сохранить изменения
-    console.log(this);
+  onFormSubmit = () => {
+    //! добавить сохранение данных
+    this.onFormClose();
+  };
+
+  onFormClose = () => {
     this.replaceFormToItem();
-  }
-  */
+  };
 }
