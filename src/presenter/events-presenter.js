@@ -25,6 +25,7 @@ export default class EventsPresenter {
     this.#tripEventsModel = tripEventsModel;
   }
 
+  //? все методы класса сделать на стрелочное объявление для едиообразия и для контекста this?
   init() {
     //! временно
     this.#destinations = [...this.#tripEventsModel.destinations];
@@ -56,9 +57,9 @@ export default class EventsPresenter {
       destination: eventDestination,
       typeOffers,
       destinations: this.#destinations,
-      onSubmit: this.onFormSubmit,
+      onSubmit: this.#onEventFormSubmit,
       onDelete: null, //! заготовка
-      onClose: this.onFormClose
+      onClose: this.#onEventFormClose
     });
 
     const eventItemComponent = new EventItemView({
@@ -68,46 +69,46 @@ export default class EventsPresenter {
       onFavoriteClick: null, //! временно
       onEditClick: () => {
         //! при отдельном презенторе замкнуть внутри класса
-        this.replaceItemToForm(eventItemComponent, eventFormComponent);
+        this.#replaceItemToForm(eventItemComponent, eventFormComponent);
       }
     });
 
     render(eventItemComponent, eventsListElement);
   }
 
-  onDocumentEscKeyDown = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.replaceFormToItem();
-    }
-    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
-  };
-
-  replaceFormToItem() {
-    replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
-    document.removeEventListener('keydown', this.onDocumentEscKeyDown);
-    this.#hiddenEventItemComponent = null;
-    this.#openedEventFormComponent = null;
-  }
-
-  replaceItemToForm(eventItemComponent, eventFormComponent) {
+  #replaceItemToForm(eventItemComponent, eventFormComponent) {
     if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
-      this.replaceFormToItem();
+      this.#replaceFormToItem();
     }
 
     replace(eventFormComponent, eventItemComponent);
     //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
-    document.addEventListener('keydown', this.onDocumentEscKeyDown);
+    document.addEventListener('keydown', this.#onDocumentEscKeyDown);
     this.#hiddenEventItemComponent = eventItemComponent;
     this.#openedEventFormComponent = eventFormComponent;
   }
 
-  onFormSubmit = () => {
-    //! добавить сохранение данных
-    this.onFormClose();
+  #replaceFormToItem() {
+    replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
+    document.removeEventListener('keydown', this.#onDocumentEscKeyDown);
+    this.#hiddenEventItemComponent = null;
+    this.#openedEventFormComponent = null;
+  }
+
+  #onDocumentEscKeyDown = (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      this.#onEventFormClose();
+    }
+    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };
 
-  onFormClose = () => {
-    this.replaceFormToItem();
+  #onEventFormSubmit = () => {
+    //! добавить сохранение данных
+    this.#onEventFormClose();
+  };
+
+  #onEventFormClose = () => {
+    this.#replaceFormToItem();
   };
 }

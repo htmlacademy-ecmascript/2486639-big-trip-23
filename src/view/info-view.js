@@ -35,7 +35,7 @@ export default class InfoView extends AbstractView {
     return createInfoTemplate(this.#info);
   }
 
-  get #info() {
+  get #info() { //! название не очень
     //! почитать в ТЗ, что показывать когда событий меньше трех и проверить это!
     //! временный код для генерации заголовка
     return getMockInfo(this.#destinations);

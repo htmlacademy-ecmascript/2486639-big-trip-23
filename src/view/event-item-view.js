@@ -87,13 +87,11 @@ export default class EventItemView extends AbstractView {
     return createEventItemTemplate(this.#event, this.#destinationName, this.#eventOffers);
   }
 
-  #onFavoriteButtonClick = (evt) => {
-    evt.preventDefault();
+  #onFavoriteButtonClick = () => {
     this.#onFavoriteClick?.();
   };
 
-  #onEditButtonClick = (evt) => {
-    evt.preventDefault();
+  #onEditButtonClick = () => {
     this.#onEditClick?.();
   };
 }

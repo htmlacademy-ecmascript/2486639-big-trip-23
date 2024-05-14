@@ -26,6 +26,7 @@ export default class FiltersView extends AbstractView {
     [FilterType.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
     [FilterType.PAST]: (_, dateTo, date) => (dateTo < date),
   };
+  //! у каждого фильтра свое сообщение
 
   constructor(events, activeFilter) {
     super();
