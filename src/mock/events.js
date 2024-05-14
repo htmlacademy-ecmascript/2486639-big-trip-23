@@ -58,7 +58,7 @@ const generateMockData = (types) => {
         if (randomOfferTitles) {
           randomOffers = randomOfferTitles.map((title) => {
             const index = titles.indexOf(title);
-            const name = `offer-${index}`;
+            const name = `${type}-offer-${index}`;
             const id = `${name}-1`;//! в разметке есть и id и for "event-offer-meal-1" и name="event-offer-meal"
             const price = Offer.PRICES[index];
 

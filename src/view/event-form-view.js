@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
-import { createElementsTemplate } from '../utils/dom.js';
+import { createElementsTemplate, createMapElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES } from '../const.js';
@@ -17,10 +17,10 @@ const createTypeListTemplate = (types) => `<div class="event__type-list">
   </fieldset>
 </div>`;
 
-const createDestinationOptionTemplate = ({ name }) => `<option value="${name}"></option>`;
+const createDestinationOptionTemplate = (_, { name }) => `<option value="${name}"></option>`;
 
 const createDestinationDatalistTemplate = (destinations) => `<datalist id="destination-list-1">
-    ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
+    ${createMapElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">

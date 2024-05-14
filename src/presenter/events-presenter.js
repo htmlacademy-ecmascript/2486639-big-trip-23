@@ -1,6 +1,5 @@
 import { render, replace } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
-import { getById } from '../utils/utils.js';
 import EventsListView from '../view/events-list-view.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -11,8 +10,6 @@ export default class EventsPresenter {
   #containerElement = null;
   #tripEventsModel = null;
 
-  #destinations = [];
-  #offers = [];
   #events = [];
 
   #eventsListComponent = new EventsListView();
@@ -25,12 +22,10 @@ export default class EventsPresenter {
     this.#tripEventsModel = tripEventsModel;
   }
 
-  //? все методы класса сделать на стрелочное объявление для едиообразия и для контекста this?
+  //? все методы класса сделать на стрелочное объявление для едиообразия и для контекста this или только необходимое?
   init() {
     //! временно
-    this.#destinations = [...this.#tripEventsModel.destinations];
-    this.#offers = [...this.#tripEventsModel.offers];
-    this.#events = [...this.#tripEventsModel.events];
+    this.#events = this.#tripEventsModel.events;
 
     this.#renderEventsList();
   }
@@ -47,16 +42,17 @@ export default class EventsPresenter {
   #renderEventItem(event, eventsListElement) {
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
-    const eventDestination = getById(this.#destinations, destination);
-    const offer = getById(this.#offers, type, 'type');
+    const eventDestination = this.#tripEventsModel.destinations.get(destination);
+    const offer = this.#tripEventsModel.offers.get(type);
     const typeOffers = (offer) ? offer.offers : [];
+    //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
     const eventFormComponent = new EventFormView({
       event,
       destination: eventDestination,
       typeOffers,
-      destinations: this.#destinations,
+      destinations: this.#tripEventsModel.destinations,
       onSubmit: this.#onEventFormSubmit,
       onDelete: null, //! заготовка
       onClose: this.#onEventFormClose
