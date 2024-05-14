@@ -7,6 +7,8 @@ const FilterType = {
   PAST: 'past'
 };
 
+const DEFAULT_ENABLED_FILTERS = [FilterType.EVERYTHING, FilterType.PRESENT];
+
 const TRIP_SORTINGS = ['day', 'event', 'time', 'price', 'offers'];
 
 const MessageType = {
@@ -15,4 +17,4 @@ const MessageType = {
   FAILEAD: 'Failed to load latest route information'
 };
 
-export { EVENT_TYPES, FilterType, TRIP_SORTINGS, MessageType };
+export { EVENT_TYPES, FilterType, DEFAULT_ENABLED_FILTERS, TRIP_SORTINGS, MessageType };

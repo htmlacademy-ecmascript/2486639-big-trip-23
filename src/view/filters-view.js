@@ -1,32 +1,27 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { FilterType } from '../const.js';
+import { FilterType, DEFAULT_ENABLED_FILTERS } from '../const.js';
+import { existFilteredEvents } from '../utils/filter.js';
 
-const createFilterItemTemplate = ({ filter, isEnabled }, activeFilter) => {
-  const checked = (filter === activeFilter) ? ' checked' : '';
-  const disabled = (isEnabled) ? '' : ' disabled';
+const createFilterItemTemplate = (filter, activeFilter, enabledFilters) => {
+  const checked = (filter === activeFilter) ? 'checked' : '';
+  const disabled = (!enabledFilters.includes(filter)) ? 'disabled' : '';
 
   return `<div class="trip-filters__filter">
-  <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}"${checked}${disabled}>
+  <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${checked} ${disabled}>
   <label class="trip-filters__filter-label" for="filter-${filter}">${filter}</label>
 </div>`;
 };
 
-const createFiltersTemplate = (filters, activeFilter) => `<form class="trip-filters" action="#" method="get">
-  ${createElementsTemplate(filters, createFilterItemTemplate, activeFilter)}
+const createFiltersTemplate = (filters, activeFilter, enabledFilters) => `<form class="trip-filters" action="#" method="get">
+  ${createElementsTemplate(filters, createFilterItemTemplate, activeFilter, enabledFilters)}
 </form > `;
 
 //! все еще немного похожи с SortingView, может получиться выделить общего предка?
 export default class FiltersView extends AbstractView {
   #events = [];
+  #filters = Object.entries(FilterType).map(([, filter]) => filter);
   #activeFilter = '';
-
-  #tripDatePeriodChecks = {
-    [FilterType.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
-    [FilterType.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
-    [FilterType.PAST]: (_, dateTo, date) => (dateTo < date),
-  };
-  //! у каждого фильтра свое сообщение
 
   constructor(events, activeFilter) {
     super();
@@ -35,28 +30,14 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const filters = Object.entries(FilterType).map(([, filter]) => {
-      if (!this.#events.length) {
-        return {
-          filter,
-          isEnabled: [FilterType.EVERYTHING, FilterType.PRESENT].includes(filter)
-        };
-      }
+    const enabledFilters = (!this.#events.length) ? DEFAULT_ENABLED_FILTERS : this.#getEnabledFilters();
 
-      const tripDatePeriodCheck = this.#tripDatePeriodChecks[filter];
-      const isEnabled = (!tripDatePeriodCheck) ? true : this.#events.some((event) => {
-        const now = new Date();
-        const { dateFrom, dateTo } = event;
+    return createFiltersTemplate(this.#filters, this.#activeFilter, enabledFilters);
+  }
 
-        return tripDatePeriodCheck(dateFrom, dateTo, now);
-      });
+  #getEnabledFilters() {
+    const now = Date.now();
 
-      return {
-        filter,
-        isEnabled
-      };
-    });
-
-    return createFiltersTemplate(filters, this.#activeFilter);
+    return this.#filters.filter((filter) => existFilteredEvents(this.#events, filter, now));
   }
 }
