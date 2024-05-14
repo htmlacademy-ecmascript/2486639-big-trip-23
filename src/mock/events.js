@@ -1,5 +1,5 @@
 import { getRandomNumber, getRandomBoolean, getRandomDatePeriod, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
-import { Event, DESTINATIONS, Offer, PhotoNumber, Description, Info } from './const.js';
+import { EventPrice, EventDate, EVENTS_MAX_COUNT, DESTINATIONS, Offer, PhotoNumber, Description, INFO_DESTINATIONS_COUNT, InfoCost } from './const.js';
 
 const getOfferIdsByType = (offers, type) => {
   const typeOffers = offers.filter((offer) => offer.type === type)[0]?.offers;
@@ -8,12 +8,11 @@ const getOfferIdsByType = (offers, type) => {
 };
 
 const createEvent = (id, type, offers, destinations) => {
-  const { MIN: minPrice, MAX: maxPrice } = Event.Price;
-  const basePrice = getRandomNumber(minPrice, maxPrice);
+  const basePrice = getRandomNumber(EventPrice.MIN, EventPrice.MAX);
   const offerIds = getOfferIdsByType(offers, type);
   const randomOffers = (offerIds) ? getRandomArrayElements(offerIds, offerIds.length - 1) : [];
 
-  const { dateFrom, dateTo } = getRandomDatePeriod(Event.Date.MIN, Event.Date.MAX);
+  const { dateFrom, dateTo } = getRandomDatePeriod(EventDate.MIN, EventDate.MAX);
 
   return {
     id,
@@ -72,7 +71,7 @@ const generateMockData = (types) => {
     });
 
   const events = Array.from(
-    { length: getRandomNumber(0, Event.MAX_COUNT) },
+    { length: getRandomNumber(0, EVENTS_MAX_COUNT) },
     //{ length: 0 }, //! для тестирования
     //{ length: 1 }, //! для тестирования
     //{ length: 2 }, //! для тестирования
@@ -82,11 +81,10 @@ const generateMockData = (types) => {
 };
 
 const getMockInfo = (destinations) => {
-  const { DESTINATIONS_COUNT: destinationsCount, Cost: { MIN: minCost, MAX: maxCost } } = Info;
-  const randomDestinations = getRandomArrayElements(destinations, destinationsCount, destinationsCount);
+  const randomDestinations = getRandomArrayElements(destinations, INFO_DESTINATIONS_COUNT, INFO_DESTINATIONS_COUNT);
   const title = randomDestinations.map((destination) => destination.name).join(' — ');
-  const { dateFrom, dateTo } = getRandomDatePeriod(Event.Date.MIN, Event.Date.MAX);
-  const cost = getRandomNumber(minCost, maxCost);
+  const { dateFrom, dateTo } = getRandomDatePeriod(EventDate.MIN, EventDate.MAX);
+  const cost = getRandomNumber(InfoCost.MIN, InfoCost.MAX);
 
   return { title, dateFrom, dateTo, cost };
 };

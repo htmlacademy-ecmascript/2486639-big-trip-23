@@ -1,14 +1,14 @@
-const Event = {
-  Price: { //? так не нарушаю критерий? или сразу отдельно?
-    MIN: 1000,
-    MAX: 5000
-  },
-  Date: { //? так не нарушаю критерий? или сразу отдельно?
-    MIN: new Date(2024, 0, 1),
-    MAX: new Date(2024, 5, 1) //(2024, 1, 1) //(2025, 0, 1)
-  },
-  MAX_COUNT: 10
+const EventPrice = {
+  MIN: 1000,
+  MAX: 5000
 };
+
+const EventDate = {
+  MIN: new Date(2024, 0, 1),
+  MAX: new Date(2024, 5, 1) //(2024, 1, 1) //(2025, 0, 1)
+};
+
+const EVENTS_MAX_COUNT = 10;
 
 const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix', 'Moscow', 'Tomsk', 'Tokyo', 'New York', 'London'];
 
@@ -29,19 +29,20 @@ const Description = {
   MAX_COUNT: 5
 };
 
-const Info = {
-  DESTINATIONS_COUNT: 3,
-  Cost: {
-    MIN: 10000,
-    MAX: 20000
-  }
+const INFO_DESTINATIONS_COUNT = 3;
+const InfoCost = {
+  MIN: 10000,
+  MAX: 20000
 };
 
 export {
-  Event,
+  EventPrice,
+  EventDate,
+  EVENTS_MAX_COUNT,
   DESTINATIONS,
   Offer,
   PhotoNumber,
   Description,
-  Info
+  INFO_DESTINATIONS_COUNT,
+  InfoCost
 };
