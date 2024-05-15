@@ -8,7 +8,7 @@ export default class EventsPresenter {
   #containerElement = null;
   #eventsModel = null;
 
-  #events = [];
+  #events = null;
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
@@ -30,8 +30,8 @@ export default class EventsPresenter {
   }
 
   #renderEventsList() {
-    if (this.#events.length) {
-      this.#events.forEach((event) => this.#renderEventItem(event,));
+    if (this.#events.size) {
+      this.#events.forEach((event) => this.#renderEventItem(event));
       render(this.#eventsListComponent, this.#containerElement);
     } else {
       render(new MessageView(MessageType.NEW_EVENT), this.#containerElement);
@@ -43,7 +43,8 @@ export default class EventsPresenter {
       containerElement: this.#eventsListComponent.element,
       eventsModel: this.#eventsModel,
       onAfterEditClick: this.#onAfterEventEditClick,
-      onAfterFormClose: this.#onAfterEventFormClose
+      onAfterFormClose: this.#onAfterEventFormClose,
+      onEventChange: this.#onEventChange
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
@@ -51,7 +52,7 @@ export default class EventsPresenter {
 
   #onAfterEventEditClick = (eventPresenter) => {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.replaceFormToItem();
+      this.#activeEventPresenter.closeForm();
     }
 
     this.#activeEventPresenter = eventPresenter;
@@ -59,5 +60,11 @@ export default class EventsPresenter {
 
   #onAfterEventFormClose = () => {
     this.#activeEventPresenter = null;
+  };
+
+  #onEventChange = (updatedEvent) => {
+    const { id } = updatedEvent;
+    this.#events.set(id, updatedEvent);
+    this.#eventPresenters.get(id).init(updatedEvent);
   };
 }

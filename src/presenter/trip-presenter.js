@@ -17,7 +17,7 @@ export default class TripPresenter {
   #filterComponent = null;
   #sortingComponent = null;
 
-  #events = [];
+  #events = null;
 
   constructor({ containerElement, eventsModel }) {
     //! Одинаково у всех презенторов, можно выделить в абстарктный презентор
@@ -60,7 +60,7 @@ export default class TripPresenter {
   }
 
   #renderSorting() {
-    if (this.#events.length) {
+    if (this.#events.size) {
       render(this.#sortingComponent, this.#tripEventsElement);
     }
   }

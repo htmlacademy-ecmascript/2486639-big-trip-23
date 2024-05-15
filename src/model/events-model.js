@@ -4,7 +4,7 @@ import { EVENT_TYPES } from '../const.js';
 export default class EventsModel {
   #destinations = new Map();
   #offers = new Map();
-  #events = []; //! сделать Map, если будет поиск по id
+  #events = new Map();
 
   constructor() {
     //! временно - скорее всего нужно сделать init()
@@ -16,7 +16,9 @@ export default class EventsModel {
       this.#offers.set(type, { name, offers: typeOffers });
     });
 
-    this.#events = events;
+    events.forEach((event) => {
+      this.#events.set(event.id, event); // весь event, с id, иначе id дополнительно доставать и хранить в перезенторе
+    });
   }
 
   get destinations() {
@@ -29,6 +31,6 @@ export default class EventsModel {
 
   get events() {
     //! временно
-    return [...this.#events];
+    return new Map(this.#events);
   }
 }

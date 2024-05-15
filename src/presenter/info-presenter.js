@@ -5,7 +5,7 @@ export default class InfoPresenter {
   #containerElement = null;
   #eventsModel = null;
 
-  #events = [];
+  #events = null;
 
   constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;

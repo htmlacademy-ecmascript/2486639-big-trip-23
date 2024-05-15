@@ -119,15 +119,17 @@ const createEventFormTemplate = (event, destination, destinations, typeOffers, e
 };
 
 export default class EventFormView extends AbstractView {
+  #formElement = null;
+
   #event = null;
   #destination = null;
   #destinations = [];
   #typeOffers = [];
 
   #onSubmit = null;
-  #onClose = null;
+  #onCancel = null;
 
-  constructor({ event, destination, typeOffers, destinations, onSubmit, onClose }) {
+  constructor({ event, destination, typeOffers, destinations, onSubmit, onCancel }) {
     super();
 
     this.#event = event;
@@ -136,9 +138,10 @@ export default class EventFormView extends AbstractView {
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
 
     this.#onSubmit = onSubmit;
-    this.#onClose = onClose;
+    this.#onCancel = onCancel;
 
-    this.element.querySelector('form.event.event--edit').addEventListener('submit', this.#onFormSubmit);
+    this.#formElement = this.element.querySelector('form.event.event--edit');
+    this.#formElement.addEventListener('submit', this.#onFormSubmit);
     this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonClick);
   }
 
@@ -148,13 +151,18 @@ export default class EventFormView extends AbstractView {
     return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }
 
+  resetForm() {
+    this.#formElement.reset();
+  }
+
   #onFormSubmit = (evt) => {
     evt.preventDefault();
-    this.#onSubmit?.();
+    this.#onSubmit();
   };
 
   #onEventRollupButtonClick = (evt) => {
     evt.preventDefault();
-    this.#onClose?.();
+    this.resetForm();
+    this.#onCancel();
   };
 }

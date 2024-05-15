@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -14,16 +14,21 @@ export default class EventPresenter {
 
   #onAfterEditClick = null;
   #onAfterFormClose = null;
+  #onEventChange = null;
 
-  constructor({ containerElement, eventsModel, onAfterEditClick, onAfterFormClose }) {
+  constructor({ containerElement, eventsModel, onAfterEditClick, onAfterFormClose, onEventChange }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
     this.#onAfterEditClick = onAfterEditClick; //? просто after?
     this.#onAfterFormClose = onAfterFormClose;
+    this.#onEventChange = onEventChange;
   }
 
+  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
+  //! наверное понадобятся при удалении событий
+
   init(event) {
-    this.#event = event; //! если не будет испольщования, то и удалить #event
+    this.#event = event;
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
@@ -33,57 +38,74 @@ export default class EventPresenter {
     //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
-    this.#formComponent = new EventFormView({
-      event,
-      destination: eventDestination,
-      typeOffers,
-      destinations: this.#eventsModel.destinations,
-      onSubmit: this.#onFormSubmit,
-      onDelete: null, //! заготовка
-      onClose: this.#onFormClose
-    });
+    //! если при после сохранения редактирование не будет закрываться, то нужно определять редактируем или просматриваем, а еще будет добавление, когда нет Item
+    //! const prevFormComponent = this.#formComponent;
+    if (!this.#formComponent) {
+      this.#formComponent = new EventFormView({
+        event,
+        destination: eventDestination,
+        typeOffers,
+        destinations: this.#eventsModel.destinations,
+        onSubmit: this.#onFormSubmit,
+        onDelete: null, //! заготовка
+        onCancel: this.closeForm
+      });
+    }
 
+    const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
       destinationName: eventDestination.name,
       eventOffers,
-      onFavoriteClick: null, //! временно
-      onEditClick: () => {
-        //! при отдельном презенторе замкнуть внутри класса
-        this.#replaceItemToForm();
-        this.#onAfterEditClick(this);
-      }
+      onFavoriteClick: this.#onFavoriteClick,
+      onEditClick: this.#onEditClick
     });
 
-    render(this.#itemComponent, this.#containerElement);
+    //! if (!prevItemComponent || !prevFormComponent) {
+    if (!prevItemComponent) {
+      render(this.#itemComponent, this.#containerElement);
+    } else {
+      replace(this.#itemComponent, prevItemComponent);
+      //! replace(this.#taskEditComponent, prevTaskEditComponent);
+
+      remove(prevItemComponent);
+      //! remove(prevFormComponent);
+    }
   }
 
-  #replaceItemToForm() {
+  #openForm() {
     replace(this.#formComponent, this.#itemComponent);
-    //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
+    //! тут бы прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.#onDocumentKeyDown);
   }
 
-  replaceFormToItem() { //! # или close
+  closeForm = () => {
     replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-  }
+    this.#onAfterFormClose();
+  };
+
+  #onEditClick = () => {
+    this.#openForm();
+    this.#onAfterEditClick(this);
+  };
+
+  #onFavoriteClick = () => {
+    const isFavorite = !this.#event.isFavorite;
+    this.#onEventChange({ ...this.#event, isFavorite });
+  };
+
+  #onFormSubmit = () => {
+    //! добавить сохранение данных? а потом закрыть
+    this.closeForm();
+  };
 
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#onFormClose();
+      this.#formComponent.resetForm();
+      this.closeForm();
     }
     //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
-  };
-
-  #onFormSubmit = () => {
-    //! добавить сохранение данных
-    this.#onFormClose();
-  };
-
-  #onFormClose = () => {
-    this.replaceFormToItem();
-    this.#onAfterFormClose();
   };
 }

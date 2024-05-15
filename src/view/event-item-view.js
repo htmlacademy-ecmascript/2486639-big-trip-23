@@ -88,10 +88,10 @@ export default class EventItemView extends AbstractView {
   }
 
   #onFavoriteButtonClick = () => {
-    this.#onFavoriteClick?.();
+    this.#onFavoriteClick();
   };
 
   #onEditButtonClick = () => {
-    this.#onEditClick?.(); //? лишняя проверка '?.'?
+    this.#onEditClick(); //? есть ли смылс проверять, если знаем, что обработчик будет? '?.' для this.#onEditClick?.()? например для переиспользовани или критерии не позволяют
   };
 }

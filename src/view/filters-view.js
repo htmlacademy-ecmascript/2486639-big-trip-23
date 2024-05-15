@@ -19,7 +19,7 @@ const createFiltersTemplate = (filters, activeFilter, enabledFilters) => `<form 
 
 //! все еще немного похожи с SortingView, может получиться выделить общего предка?
 export default class FiltersView extends AbstractView {
-  #events = [];
+  #events = null;
   #filters = Object.entries(FilterType).map(([, filter]) => filter); //! сделать функцию в utils
   #activeFilter = FilterType.EVERYTHING;
 

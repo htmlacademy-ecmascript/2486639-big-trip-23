@@ -20,15 +20,15 @@ const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 
 export default class InfoView extends AbstractView {
   #destinations = [];
-  #offers = []; //! возможно нужен для подсчета полной стоимости
-  #events = [];
+  #offers = null; //! возможно нужен для подсчета полной стоимости
+  #events = null;
 
   constructor(events, destinations, offers) {
     super();
     //! временно
-    this.#destinations = [...destinations];
-    this.#offers = [...offers];
-    this.#events = [...events];
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#events = events;
   }
 
   get template() {
