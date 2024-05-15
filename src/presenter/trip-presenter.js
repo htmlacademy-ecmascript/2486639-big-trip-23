@@ -36,9 +36,14 @@ export default class TripPresenter {
     this.#sortingComponent = new SortingView();
   }
 
+  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
+
   init() {
     this.#events = this.#eventsModel.events;
+    this.#render();
+  }
 
+  #render() {
     this.#renderInfo();
     this.#renderFilter();
     this.#renderSorting();
@@ -61,6 +66,6 @@ export default class TripPresenter {
   }
 
   #renderEvents() {
-    this.#eventsPresenter.init();
+    this.#eventsPresenter.init(this.#events); //! тут стоит передать фильтрованные и отсортированные
   }
 }

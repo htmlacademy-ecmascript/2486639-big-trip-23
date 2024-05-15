@@ -35,6 +35,7 @@ export default class FiltersView extends AbstractView {
   }
 
   #getEnabledFilters() {
+    //! проверить что now, не старое, наверное необходимо перерысовывать при определенных условиях и now переедвать с перезтора
     const now = Date.now();
 
     return this.#filters.filter((filter) => existFilteredEvents(this.#events, filter, now));

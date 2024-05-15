@@ -92,6 +92,6 @@ export default class EventItemView extends AbstractView {
   };
 
   #onEditButtonClick = () => {
-    this.#onEditClick?.();
+    this.#onEditClick?.(); //? лишняя проверка '?.'?
   };
 }

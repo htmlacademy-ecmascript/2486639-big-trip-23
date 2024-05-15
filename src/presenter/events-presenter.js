@@ -1,8 +1,9 @@
-import { render, replace } from '../framework/render.js';
+import { render/*, replace*/ } from '../framework/render.js';
+/*
 import { isEscapeKey } from '../utils/utils.js';
+*/
+import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import EventItemView from '../view/event-item-view.js';
-import EventFormView from '../view/event-form-view.js';
 import MessageView from '../view/message-view.js';
 import { MessageType } from '../const.js';
 
@@ -12,66 +13,47 @@ export default class EventsPresenter {
 
   #events = [];
 
-  #eventsListComponent = new EventsListView();
+  #evenPresenters = new Map();
 
+  #eventsListComponent = new EventsListView();
+  /*
   #hiddenEventItemComponent = null;
   #openedEventFormComponent = null;
+  */
 
   constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
   }
 
-  //? все методы класса сделать на стрелочное объявление для едиообразия и для контекста this или только необходимое?
-  init() {
+  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
+
+  init(events) {
     //! временно
-    this.#events = this.#eventsModel.events;
+    this.#events = events;
 
     this.#renderEventsList();
   }
 
   #renderEventsList() {
     if (this.#events.length) {
-      this.#events.forEach((event) => this.#renderEventItem(event, this.#eventsListComponent.element));
+      this.#events.forEach((event) => this.#renderEventItem(event,));
       render(this.#eventsListComponent, this.#containerElement);
     } else {
       render(new MessageView(MessageType.NEW_EVENT), this.#containerElement);
     }
   }
 
-  #renderEventItem(event, eventsListElement) {
-    // Подготовим недостющие данные для отображения события в списке и при редактировании
-    const { destination, type, offers } = event;
-    const eventDestination = this.#eventsModel.destinations.get(destination);
-    const offer = this.#eventsModel.offers.get(type);
-    const typeOffers = (offer) ? offer.offers : [];
-    //! попробовать переделать на Map
-    const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
-
-    const eventFormComponent = new EventFormView({
-      event,
-      destination: eventDestination,
-      typeOffers,
-      destinations: this.#eventsModel.destinations,
-      onSubmit: this.#onEventFormSubmit,
-      onDelete: null, //! заготовка
-      onClose: this.#onEventFormClose
+  #renderEventItem(event) {
+    const eventPresenter = new EventPresenter({
+      containerElement: this.#eventsListComponent.element,
+      eventsModel: this.#eventsModel
     });
-
-    const eventItemComponent = new EventItemView({
-      event,
-      destinationName: eventDestination.name,
-      eventOffers,
-      onFavoriteClick: null, //! временно
-      onEditClick: () => {
-        //! при отдельном презенторе замкнуть внутри класса
-        this.#replaceItemToForm(eventItemComponent, eventFormComponent);
-      }
-    });
-
-    render(eventItemComponent, eventsListElement);
+    eventPresenter.init(event);
+    this.#evenPresenters.set(event.id, eventPresenter);
   }
 
+  /*
   #replaceItemToForm(eventItemComponent, eventFormComponent) {
     if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
       this.#replaceFormToItem();
@@ -79,19 +61,19 @@ export default class EventsPresenter {
 
     replace(eventFormComponent, eventItemComponent);
     //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
-    document.addEventListener('keydown', this.#onDocumentEscKeyDown);
+    document.addEventListener('keydown', this.#onDocumentKeyDown);
     this.#hiddenEventItemComponent = eventItemComponent;
     this.#openedEventFormComponent = eventFormComponent;
   }
 
   #replaceFormToItem() {
     replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
-    document.removeEventListener('keydown', this.#onDocumentEscKeyDown);
+    document.removeEventListener('keydown', this.#onDocumentKeyDown);
     this.#hiddenEventItemComponent = null;
     this.#openedEventFormComponent = null;
   }
 
-  #onDocumentEscKeyDown = (evt) => {
+  #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#onEventFormClose();
@@ -107,4 +89,5 @@ export default class EventsPresenter {
   #onEventFormClose = () => {
     this.#replaceFormToItem();
   };
+  */
 }

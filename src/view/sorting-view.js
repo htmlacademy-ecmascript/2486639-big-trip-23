@@ -17,6 +17,7 @@ const createSortingTemplate = (sortings, activeSorting, tripDisableSortings) => 
 </form>`;
 
 export default class SortingView extends AbstractView {
+  //! добавлять дата атрибуты dataSet, событиее повешать на изменение формы, change
   get template() {
     return createSortingTemplate(SORTING_TYPES, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES);
   }
