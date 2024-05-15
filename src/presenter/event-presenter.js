@@ -9,18 +9,21 @@ export default class EventPresenter {
 
   #event = null;
 
-  /*
-    #hiddenEventItemComponent = null;
-    #openedEventFormComponent = null;
-  */
+  #itemComponent = null;
+  #formComponent = null;
 
-  constructor({ containerElement, eventsModel }) {
+  #onAfterEditClick = null;
+  #onAfterFormClose = null;
+
+  constructor({ containerElement, eventsModel, onAfterEditClick, onAfterFormClose }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
+    this.#onAfterEditClick = onAfterEditClick; //? просто after?
+    this.#onAfterFormClose = onAfterFormClose;
   }
 
   init(event) {
-    this.#event = event;
+    this.#event = event; //! если не будет испольщования, то и удалить #event
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
@@ -30,71 +33,57 @@ export default class EventPresenter {
     //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
-    const eventFormComponent = new EventFormView({
+    this.#formComponent = new EventFormView({
       event,
       destination: eventDestination,
       typeOffers,
       destinations: this.#eventsModel.destinations,
-      onSubmit: this.#onEventFormSubmit,
+      onSubmit: this.#onFormSubmit,
       onDelete: null, //! заготовка
-      onClose: this.#onEventFormClose
+      onClose: this.#onFormClose
     });
 
-    const eventItemComponent = new EventItemView({
+    this.#itemComponent = new EventItemView({
       event,
       destinationName: eventDestination.name,
       eventOffers,
       onFavoriteClick: null, //! временно
       onEditClick: () => {
         //! при отдельном презенторе замкнуть внутри класса
-        this.#replaceItemToForm(eventItemComponent, eventFormComponent);
+        this.#replaceItemToForm();
+        this.#onAfterEditClick(this);
       }
     });
 
-    render(eventItemComponent, this.#containerElement);
+    render(this.#itemComponent, this.#containerElement);
   }
 
-  #replaceItemToForm(eventItemComponent, eventFormComponent) {
-    /*
-    if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
-      this.#replaceFormToItem();
-    }
-    */
-
-    replace(eventFormComponent, eventItemComponent);
+  #replaceItemToForm() {
+    replace(this.#formComponent, this.#itemComponent);
     //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.#onDocumentKeyDown);
-    /*
-    this.#hiddenEventItemComponent = eventItemComponent;
-    this.#openedEventFormComponent = eventFormComponent;
-    */
   }
 
-  #replaceFormToItem() {
-    /*
-    replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
-    */
+  replaceFormToItem() { //! # или close
+    replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-    /*
-    this.#hiddenEventItemComponent = null;
-    this.#openedEventFormComponent = null;
-    */
   }
 
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#onEventFormClose();
+      this.#onFormClose();
     }
     //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };
 
-  #onEventFormSubmit = () => {
+  #onFormSubmit = () => {
     //! добавить сохранение данных
-    this.#onEventFormClose();
+    this.#onFormClose();
   };
 
-  #onEventFormClose = () => {
-    this.#replaceFormToItem();
+  #onFormClose = () => {
+    this.replaceFormToItem();
+    this.#onAfterFormClose();
   };
 }

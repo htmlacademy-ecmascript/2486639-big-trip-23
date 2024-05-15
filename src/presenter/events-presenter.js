@@ -1,7 +1,4 @@
-import { render/*, replace*/ } from '../framework/render.js';
-/*
-import { isEscapeKey } from '../utils/utils.js';
-*/
+import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
 import MessageView from '../view/message-view.js';
@@ -13,13 +10,10 @@ export default class EventsPresenter {
 
   #events = [];
 
-  #evenPresenters = new Map();
+  #eventPresenters = new Map();
+  #activeEventPresenter = null;
 
   #eventsListComponent = new EventsListView();
-  /*
-  #hiddenEventItemComponent = null;
-  #openedEventFormComponent = null;
-  */
 
   constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;
@@ -47,47 +41,23 @@ export default class EventsPresenter {
   #renderEventItem(event) {
     const eventPresenter = new EventPresenter({
       containerElement: this.#eventsListComponent.element,
-      eventsModel: this.#eventsModel
+      eventsModel: this.#eventsModel,
+      onAfterEditClick: this.#onAfterEventEditClick,
+      onAfterFormClose: this.#onAfterEventFormClose
     });
     eventPresenter.init(event);
-    this.#evenPresenters.set(event.id, eventPresenter);
+    this.#eventPresenters.set(event.id, eventPresenter);
   }
 
-  /*
-  #replaceItemToForm(eventItemComponent, eventFormComponent) {
-    if (this.#hiddenEventItemComponent && this.#openedEventFormComponent) {
-      this.#replaceFormToItem();
+  #onAfterEventEditClick = (eventPresenter) => {
+    if (this.#activeEventPresenter) {
+      this.#activeEventPresenter.replaceFormToItem();
     }
 
-    replace(eventFormComponent, eventItemComponent);
-    //! тут бы прокрутить страницу немного, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
-    this.#hiddenEventItemComponent = eventItemComponent;
-    this.#openedEventFormComponent = eventFormComponent;
-  }
-
-  #replaceFormToItem() {
-    replace(this.#hiddenEventItemComponent, this.#openedEventFormComponent);
-    document.removeEventListener('keydown', this.#onDocumentKeyDown);
-    this.#hiddenEventItemComponent = null;
-    this.#openedEventFormComponent = null;
-  }
-
-  #onDocumentKeyDown = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#onEventFormClose();
-    }
-    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
+    this.#activeEventPresenter = eventPresenter;
   };
 
-  #onEventFormSubmit = () => {
-    //! добавить сохранение данных
-    this.#onEventFormClose();
+  #onAfterEventFormClose = () => {
+    this.#activeEventPresenter = null;
   };
-
-  #onEventFormClose = () => {
-    this.#replaceFormToItem();
-  };
-  */
 }
