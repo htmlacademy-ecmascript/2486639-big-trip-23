@@ -3,21 +3,21 @@ import InfoView from '../view/info-view.js';
 
 export default class InfoPresenter {
   #containerElement = null;
-  #tripEventsModel = null;
+  #eventsModel = null;
 
   #events = [];
 
-  constructor({ containerElement, tripEventsModel }) {
+  constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;
-    this.#tripEventsModel = tripEventsModel;
+    this.#eventsModel = eventsModel;
 
-    this.#events = this.#tripEventsModel.events;
+    this.#events = this.#eventsModel.events;
   }
 
   init() {
     //! временно, разный текст в зависмости от фильтра, и обработка нажатий
     if (this.#events.length) {
-      const { offers, destinations } = this.#tripEventsModel;
+      const { offers, destinations } = this.#eventsModel;
       const destinationData = Array.from(destinations, ([, { name }]) => ({ name }));
       render(new InfoView(this.#events, destinationData, offers), this.#containerElement, RenderPosition.AFTERBEGIN);
     }

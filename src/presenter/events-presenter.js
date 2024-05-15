@@ -8,7 +8,7 @@ import { MessageType } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
-  #tripEventsModel = null;
+  #eventsModel = null;
 
   #events = [];
 
@@ -17,15 +17,15 @@ export default class EventsPresenter {
   #hiddenEventItemComponent = null;
   #openedEventFormComponent = null;
 
-  constructor({ containerElement, tripEventsModel }) {
+  constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;
-    this.#tripEventsModel = tripEventsModel;
+    this.#eventsModel = eventsModel;
   }
 
   //? все методы класса сделать на стрелочное объявление для едиообразия и для контекста this или только необходимое?
   init() {
     //! временно
-    this.#events = this.#tripEventsModel.events;
+    this.#events = this.#eventsModel.events;
 
     this.#renderEventsList();
   }
@@ -42,8 +42,8 @@ export default class EventsPresenter {
   #renderEventItem(event, eventsListElement) {
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
-    const eventDestination = this.#tripEventsModel.destinations.get(destination);
-    const offer = this.#tripEventsModel.offers.get(type);
+    const eventDestination = this.#eventsModel.destinations.get(destination);
+    const offer = this.#eventsModel.offers.get(type);
     const typeOffers = (offer) ? offer.offers : [];
     //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
@@ -52,7 +52,7 @@ export default class EventsPresenter {
       event,
       destination: eventDestination,
       typeOffers,
-      destinations: this.#tripEventsModel.destinations,
+      destinations: this.#eventsModel.destinations,
       onSubmit: this.#onEventFormSubmit,
       onDelete: null, //! заготовка
       onClose: this.#onEventFormClose

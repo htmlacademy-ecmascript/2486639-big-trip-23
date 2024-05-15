@@ -1,13 +1,14 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
+import { SORTING_TYPES, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES } from '../const.js';
 
-const createSortingItemTemplate = (sorting, activeSorting, tripDisableSortings) => {
-  const checked = (sorting === activeSorting) ? ' checked' : '';
-  const disabled = (tripDisableSortings.includes(sorting)) ? ' disabled' : '';
+const createSortingItemTemplate = (sortingType, activeSortingType, disableSortingTypes) => {
+  const checked = (sortingType === activeSortingType) ? ' checked' : '';
+  const disabled = (disableSortingTypes.includes(sortingType)) ? ' disabled' : '';
 
-  return `<div class="trip-sort__item  trip-sort__item--${sorting}">
-  <input id="sort-${sorting}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorting}"${checked}${disabled}>
-  <label class="trip-sort__btn" for="sort-${sorting}">${sorting}</label>
+  return `<div class="trip-sort__item  trip-sort__item--${sortingType}">
+  <input id="sort-${sortingType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortingType}"${checked}${disabled}>
+  <label class="trip-sort__btn" for="sort-${sortingType}">${sortingType}</label>
 </div>`;
 };
 
@@ -16,18 +17,7 @@ const createSortingTemplate = (sortings, activeSorting, tripDisableSortings) => 
 </form>`;
 
 export default class SortingView extends AbstractView {
-  #tripSortings = [];
-  #activeSorting = '';
-  #tripDisableSortings = [];
-
-  constructor(tripSortings, activeSorting, tripDisableSortings) {
-    super();
-    this.#tripSortings = tripSortings;
-    this.#activeSorting = activeSorting;
-    this.#tripDisableSortings = tripDisableSortings;
-  }
-
   get template() {
-    return createSortingTemplate(this.#tripSortings, this.#activeSorting, this.#tripDisableSortings);
+    return createSortingTemplate(SORTING_TYPES, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES);
   }
 }

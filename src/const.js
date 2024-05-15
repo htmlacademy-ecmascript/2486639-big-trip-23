@@ -9,7 +9,9 @@ const FilterType = {
 
 const DEFAULT_ENABLED_FILTERS = [FilterType.EVERYTHING, FilterType.PRESENT];
 
-const TRIP_SORTINGS = ['day', 'event', 'time', 'price', 'offers'];
+const SORTING_TYPES = ['day', 'event', 'time', 'price', 'offers'];
+const DEFAULT_SORTING_TYPE = SORTING_TYPES[0];
+const DISABLE_SORTING_TYPES = [SORTING_TYPES[1]];
 
 const MessageType = {
   NEW_EVENT: 'Click New Event to create your first point',
@@ -17,4 +19,12 @@ const MessageType = {
   FAILEAD: 'Failed to load latest route information'
 };
 
-export { EVENT_TYPES, FilterType, DEFAULT_ENABLED_FILTERS, TRIP_SORTINGS, MessageType };
+export {
+  EVENT_TYPES,
+  FilterType,
+  DEFAULT_ENABLED_FILTERS,
+  SORTING_TYPES,
+  DEFAULT_SORTING_TYPE,
+  DISABLE_SORTING_TYPES,
+  MessageType
+};
