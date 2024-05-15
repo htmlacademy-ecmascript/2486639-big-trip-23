@@ -1,16 +1,19 @@
-const createElementsTemplate =
-  (elements, createElementTemplate, ...rest) => (elements) ? elements.map((element) => createElementTemplate(element, ...rest)).join(' ') : '';
+const createElementsTemplate = (elements, createElementTemplate, ...rest) => {
+  if (elements instanceof Array) {
+    return (elements) ? elements.map((element) => createElementTemplate(element, ...rest)).join(' ') : '';
+  }
 
-//! название подобрать
-const createMapElementsTemplate =
-  (mapElements, createElementTemplate, ...rest) => {
+  if (elements instanceof Map) {
     const strings = [];
 
-    mapElements.forEach((value, key) => {
+    elements.forEach((value, key) => {
       strings.push(createElementTemplate(key, value, ...rest));
     });
 
     return strings.join('');
-  };
+  }
 
-export { createElementsTemplate, createMapElementsTemplate };
+  return '';
+};
+
+export { createElementsTemplate };

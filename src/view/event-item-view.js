@@ -92,6 +92,6 @@ export default class EventItemView extends AbstractView {
   };
 
   #onEditButtonClick = () => {
-    this.#onEditClick(); //? есть ли смылс проверять, если знаем, что обработчик будет? '?.' для this.#onEditClick?.()? например для переиспользовани или критерии не позволяют
+    this.#onEditClick();
   };
 }

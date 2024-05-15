@@ -20,12 +20,8 @@ export default class EventsPresenter {
     this.#eventsModel = eventsModel;
   }
 
-  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
-
   init(events) {
-    //! временно
     this.#events = events;
-
     this.#renderEventsList();
   }
 
@@ -42,15 +38,15 @@ export default class EventsPresenter {
     const eventPresenter = new EventPresenter({
       containerElement: this.#eventsListComponent.element,
       eventsModel: this.#eventsModel,
-      onAfterEditClick: this.#onAfterEventEditClick,
-      onAfterFormClose: this.#onAfterEventFormClose,
+      onFormOpen: this.#onEventFormOpen,
+      onFormClose: this.#onEventFormClose,
       onEventChange: this.#onEventChange
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
   }
 
-  #onAfterEventEditClick = (eventPresenter) => {
+  #onEventFormOpen = (eventPresenter) => {
     if (this.#activeEventPresenter) {
       this.#activeEventPresenter.closeForm();
     }
@@ -58,7 +54,7 @@ export default class EventsPresenter {
     this.#activeEventPresenter = eventPresenter;
   };
 
-  #onAfterEventFormClose = () => {
+  #onEventFormClose = () => {
     this.#activeEventPresenter = null;
   };
 

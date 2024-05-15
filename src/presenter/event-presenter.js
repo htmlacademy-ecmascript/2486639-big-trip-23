@@ -12,20 +12,17 @@ export default class EventPresenter {
   #itemComponent = null;
   #formComponent = null;
 
-  #onAfterEditClick = null;
-  #onAfterFormClose = null;
+  #onFormOpen = null;
+  #onFormClose = null;
   #onEventChange = null;
 
-  constructor({ containerElement, eventsModel, onAfterEditClick, onAfterFormClose, onEventChange }) {
+  constructor({ containerElement, eventsModel, onFormOpen, onFormClose, onEventChange }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
-    this.#onAfterEditClick = onAfterEditClick; //? просто after?
-    this.#onAfterFormClose = onAfterFormClose;
+    this.#onFormOpen = onFormOpen;
+    this.#onFormClose = onFormClose;
     this.#onEventChange = onEventChange;
   }
-
-  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
-  //! наверное понадобятся при удалении событий
 
   init(event) {
     this.#event = event;
@@ -77,17 +74,22 @@ export default class EventPresenter {
     replace(this.#formComponent, this.#itemComponent);
     //! тут бы прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.#onDocumentKeyDown);
+    this.#onFormOpen(this);
   }
 
   closeForm = () => {
+    this.#formComponent.resetForm();
+    this.#replaceFormToItem();
+    this.#onFormClose();
+  };
+
+  #replaceFormToItem = () => {
     replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-    this.#onAfterFormClose();
   };
 
   #onEditClick = () => {
     this.#openForm();
-    this.#onAfterEditClick(this);
   };
 
   #onFavoriteClick = () => {
@@ -96,14 +98,14 @@ export default class EventPresenter {
   };
 
   #onFormSubmit = () => {
-    //! добавить сохранение данных? а потом закрыть
-    this.closeForm();
+    //! добавить сохранение данных, а потом заменить/закрыть
+    this.#replaceFormToItem();
+    this.#onFormClose();//! будет вызов сохранения там можно и сбросить открытое событие
   };
 
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#formComponent.resetForm();
       this.closeForm();
     }
     //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам

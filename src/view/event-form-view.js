@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
-import { createElementsTemplate, createMapElementsTemplate } from '../utils/dom.js';
+import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES } from '../const.js';
@@ -20,7 +20,7 @@ const createTypeListTemplate = (types) => `<div class="event__type-list">
 const createDestinationOptionTemplate = (_, { name }) => `<option value="${name}"></option>`;
 
 const createDestinationDatalistTemplate = (destinations) => `<datalist id="destination-list-1">
-    ${createMapElementsTemplate(destinations, createDestinationOptionTemplate)}
+    ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">
@@ -61,9 +61,8 @@ const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (
 
 const createEventFormTemplate = (event, destination, destinations, typeOffers, eventOffers) => {
   //!Посомтреть в ТЗ нужно ли сортировать destinations и offers по алфивиту для отображения?
-
   const {
-    /*id, //! пока не используется, при добавлении нет=null?, при редактировании подставить*/
+    /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
     dateFrom,
     dateTo,
@@ -146,8 +145,6 @@ export default class EventFormView extends AbstractView {
   }
 
   get template() {
-    //! Поиск вынести в отдельную функцию и забрать с events-presenter.js const eventOffers = typeOffers.filter((offer) => offers.includes(offer.id));
-    //! в createOfferTemplate offers.includes...
     return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }
 

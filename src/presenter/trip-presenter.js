@@ -1,8 +1,8 @@
 import { render } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
 import EventsPresenter from './events-presenter.js';
-import FilterView from '../view/filters-view.js'; //! переименовать файл filter-view.js
-import SortingView from '../view/sorting-view.js'; //! сделать однотипно с filter или filters / sorting или sortings
+import FiltersView from '../view/filters-view.js';
+import SortingView from '../view/sorting-view.js';
 
 export default class TripPresenter {
   #containerElement = null;
@@ -14,7 +14,7 @@ export default class TripPresenter {
   #headerTripFiltersElement = null;
   #tripEventsElement = null;
 
-  #filterComponent = null;
+  #filtersComponent = null;
   #sortingComponent = null;
 
   #events = null;
@@ -24,7 +24,7 @@ export default class TripPresenter {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
 
-    const headerContainerElement = containerElement.querySelector('div.page-body__container.page-header__container');//! оставить один селектор, d других местах проверить
+    const headerContainerElement = containerElement.querySelector('div.page-body__container.page-header__container');//! оставить один селектор, и других местах проверить
     const headerTripMainElement = headerContainerElement.querySelector('div.trip-main');
     this.#headerTripFiltersElement = headerContainerElement.querySelector('div.trip-controls__filters');
     this.#tripEventsElement = containerElement.querySelector('section.trip-events');
@@ -32,11 +32,9 @@ export default class TripPresenter {
     this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
     this.#eventsPresenter = new EventsPresenter({ containerElement: this.#tripEventsElement, eventsModel });
 
-    this.#filterComponent = new FilterView(eventsModel.events);
+    this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView();
   }
-
-  //? а деструкторы нужны? TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
 
   init() {
     this.#events = this.#eventsModel.events;
@@ -56,7 +54,7 @@ export default class TripPresenter {
 
   #renderFilter() {
     //! возможно стоит отрисовать в конструкторе или init и не заводить #headerTripFiltersElement
-    render(this.#filterComponent, this.#headerTripFiltersElement);
+    render(this.#filtersComponent, this.#headerTripFiltersElement);
   }
 
   #renderSorting() {

@@ -80,7 +80,7 @@ const generateMockData = (types) => {
   return { destinations, offers, events };
 };
 
-const getMockInfo = (destinations) => {
+const getMockTripInfo = (destinations) => {
   const randomDestinations = getRandomArrayElements(destinations, INFO_DESTINATIONS_COUNT, INFO_DESTINATIONS_COUNT);
   const title = randomDestinations.map((destination) => destination.name).join(' — ');
   const { dateFrom, dateTo } = getRandomDatePeriod(EventDate.MIN, EventDate.MAX);
@@ -89,4 +89,4 @@ const getMockInfo = (destinations) => {
   return { title, dateFrom, dateTo, cost };
 };
 
-export { generateMockData, getMockInfo };
+export { generateMockData, getMockTripInfo };
