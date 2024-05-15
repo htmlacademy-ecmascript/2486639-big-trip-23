@@ -1,8 +1,9 @@
-import AbstractEventView from './abstract-event-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
+import { EVENT_TYPES } from '../const.js';
 
 const createTypeItemTemplate = (type) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
@@ -16,10 +17,10 @@ const createTypeListTemplate = (types) => `<div class="event__type-list">
   </fieldset>
 </div>`;
 
-const createDestinationOptionTemplate = (destinationName) => `<option value="${destinationName}"></option>`;
+const createDestinationOptionTemplate = (_, { name }) => `<option value="${name}"></option>`;
 
-const createDestinationDatalistTemplate = (destinationNames) => `<datalist id="destination-list-1">
-    ${createElementsTemplate(destinationNames, createDestinationOptionTemplate)}
+const createDestinationDatalistTemplate = (destinations) => `<datalist id="destination-list-1">
+    ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">
@@ -58,19 +59,16 @@ const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (
   ${createSectionDestinationTemplate(destination)}
 </section>`;
 
-const createEventFormTemplate = (event, types, destinationNames, destination, typeOffers, eventOffers) => {
-  //? destinationNames сортировать ли для вывода?
-  //? offers сортировать ли для вывода?
-
-  //! при добавление, нет кнопки ^, при редактировании есть
+const createEventFormTemplate = (event, destination, destinations, typeOffers, eventOffers) => {
+  //!Посомтреть в ТЗ нужно ли сортировать destinations и offers по алфивиту для отображения?
   const {
-    /*id, //! пока не используется, при добавлении нет=null?, при редактировании подставить*/
+    /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
     dateFrom,
     dateTo,
     basePrice } = event;
   const destinationName = destination.name;
-  const isEditing = true; //! временно
+  const isEditing = true; //! временно - при добавление, нет кнопки ^, при редактировании она есть и кнопки разные, но еще по ТЗ будет меняться текст при работе с сервером
   const resetButtonCaption = (isEditing) ? 'Delete' : 'Cancel';
 
   return `<li class="trip-events__item">
@@ -83,7 +81,7 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-          ${createTypeListTemplate(types)}
+          ${createTypeListTemplate(EVENT_TYPES)}
       </div>
 
       <div class="event__field-group  event__field-group--destination">
@@ -91,7 +89,7 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
           ${capitalizeFirstLetter(type)}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
-          ${createDestinationDatalistTemplate(destinationNames)}
+          ${createDestinationDatalistTemplate(destinations)}
       </div>
 
       <div class="event__field-group  event__field-group--time">
@@ -119,38 +117,49 @@ const createEventFormTemplate = (event, types, destinationNames, destination, ty
 <li>`;
 };
 
-export default class EventFormView extends AbstractEventView {
+export default class EventFormView extends AbstractView {
+  #formElement = null;
+
+  #event = null;
+  #destination = null;
+  #destinations = [];
+  #typeOffers = [];
+
   #onSubmit = null;
-  #onHide = null;
+  #onCancel = null;
 
-  constructor({ event, eventTypes, destinations, typesOffers, onSubmit, onHide }) {
-    super(event, eventTypes, destinations, typesOffers);
+  constructor({ event, destination, typeOffers, destinations, onSubmit, onCancel }) {
+    super();
+
+    this.#event = event;
+    this.#destination = destination;
+    this.#typeOffers = typeOffers; //! если передать все offers, то можно обработать изменения типа, если по ТЗ не нужно обновлять offers с сервера
+    this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
+
     this.#onSubmit = onSubmit;
-    this.#onHide = onHide;
+    this.#onCancel = onCancel;
 
-    this.element.querySelector('form.event.event--edit').addEventListener('submit', this.#onFormSubmit);
-    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onHideForm);
+    this.#formElement = this.element.querySelector('form.event.event--edit');
+    this.#formElement.addEventListener('submit', this.#onFormSubmit);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonClick);
   }
 
   get template() {
-    return createEventFormTemplate(this._event, this._eventTypes, this.#destinationNames, this._eventDestination, this._eventTypeOffers, this._event.offers);
+    return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }
 
-  //? removeElement() -> super.removeElement() + removeEventListener(.....)
-
-  get #destinationNames() {
-    return this._destinations.map((destination) => destination.name);
+  resetForm() {
+    this.#formElement.reset();
   }
 
   #onFormSubmit = (evt) => {
     evt.preventDefault();
-    //alert('onSubmitClick');
-    this.#onSubmit?.();
+    this.#onSubmit();
   };
 
-  #onHideForm = (evt) => {
+  #onEventRollupButtonClick = (evt) => {
     evt.preventDefault();
-    //alert('onSubmitClick');
-    this.#onHide?.();
+    this.resetForm();
+    this.#onCancel();
   };
 }

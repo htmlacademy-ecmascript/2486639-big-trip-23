@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getMockInfo } from '../mock/events.js';//! временно
+import { getMockTripInfo } from '../mock/events.js';//! временно
 import { DateFormat, getStringDate } from '../utils/date.js';
 
-const createTripInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
+const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
   //! почитать ТЗ и посмотреть как выводить, если в одном месяце?, если в разных? и т.д.?
   const tripDateFrom = getStringDate(dateFrom, DateFormat.DAY_MONTH);
   const tripDateTo = getStringDate(dateTo, DateFormat.DAY_MONTH);
@@ -18,26 +18,26 @@ const createTripInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 </section>`;
 };
 
-export default class TripInfoView extends AbstractView {
+export default class InfoView extends AbstractView {
   #destinations = [];
-  #typesOffers = []; //! возможно нужен для подсчета полной стоимости
-  #events = [];
+  #offers = null; //! возможно нужен для подсчета полной стоимости
+  #events = null;
 
-  constructor(events, destinations, typesOffers) {
+  constructor(events, destinations, offers) {
     super();
-    //! копируем для защиты от измененей?
-    this.#destinations = [...destinations];
-    this.#typesOffers = [...typesOffers];
-    this.#events = [...events];
+    //! временно
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#events = events;
   }
 
   get template() {
-    return createTripInfoTemplate(this.#info);
+    return createInfoTemplate(this.#tripInfo);
   }
 
-  get #info() {
+  get #tripInfo() {
     //! почитать в ТЗ, что показывать когда событий меньше трех и проверить это!
     //! временный код для генерации заголовка
-    return getMockInfo(this.#destinations);
+    return getMockTripInfo(this.#destinations);
   }
 }

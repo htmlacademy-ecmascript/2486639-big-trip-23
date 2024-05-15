@@ -1,29 +1,24 @@
-import { render } from './framework/render.js';
-import TripFiltersView from './view/trip-filters-view.js';
-import TripSortingView from './view/trip-sorting-view.js';
-import TripInfoPresenter from './presenter/trip-info-presenter.js';
-import TripEventsPresenter from './presenter/trip-events-presenter.js';
-import TripEventsModel from './model/trip-events-model.js';
-import { TripFilters, TRIP_SORTINGS } from './const.js';
+import TripPresenter from './presenter/trip-presenter.js';
+import EventsModel from './model/events-model.js';
 
-//! main.js как главный презентор, поробовать переделать
-const bodyElement = document.body;
+const eventsModel = new EventsModel();
+const tripPresenter = new TripPresenter({ containerElement: document.body, eventsModel });
 
-const headerContainerElement = bodyElement.querySelector('div.page-body__container.page-header__container');
-const headerTripMainElement = headerContainerElement.querySelector('div.trip-main');
-const headerTripFiltersElement = headerContainerElement.querySelector('div.trip-controls__filters');
-const tripEventsElement = bodyElement.querySelector('section.trip-events');
+tripPresenter.init();
 
-const tripEventsModel = new TripEventsModel();
-
-const tripInfoPresenter = new TripInfoPresenter({ containerElement: headerTripMainElement, tripEventsModel });
-const tripEventsPresenter = new TripEventsPresenter({ containerElement: tripEventsElement, tripEventsModel });
-
-render(new TripFiltersView(tripEventsModel.events, TripFilters.EVERYTHING), headerTripFiltersElement);
-
-if (tripEventsModel.events.length) {
-  render(new TripSortingView(TRIP_SORTINGS, TRIP_SORTINGS[0], [TRIP_SORTINGS[1]]), tripEventsElement);
-}
-
-tripInfoPresenter.init();
-tripEventsPresenter.init();
+/*
+ *
+ * Заметки и вопросы:
+ * 1. По заданию 11-"одна форма", нужно сделать в точности как описано? или оставить свою реализацию
+ *    я реализовал через активный презентор события в презенторе событий (EventsPresenter.#activeEventPresenter)
+ *
+ * 2. А деструкторы нужны?
+ *    в TaskPresenter ->destroy() { remove(this.#taskComponent); remove(this.#taskEditComponent); }
+ *    наверное понадобятся в EventPresenter при удалении событий или перерисовке всего.
+ *    в остальных презенторах или компонентах? обработчики событий в компонентах удаляються при удалении элементов.
+ *
+ * 3. Есть ли смылс проверять, на null переданный обработчик перед вызовом, если знаем, что обработчик точно будет?
+ *    '?.' для this.#onEditClick?.()? например для переиспользовани или будет не соблюден критерий об излишних проверке
+ *
+ *
+ */
