@@ -14,7 +14,7 @@ const tripDatePeriodChecks = { //! trip -> events?
 
 const existFilteredEvents = (events, filter, now) => {
   const tripDatePeriodCheck = tripDatePeriodChecks[filter];
-  return events.some((event) => {
+  return [...events.values()].some((event) => {
     const { dateFrom, dateTo } = event;
 
     return tripDatePeriodCheck(dateFrom, dateTo, now);

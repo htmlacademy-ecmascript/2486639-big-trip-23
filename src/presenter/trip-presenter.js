@@ -33,7 +33,7 @@ export default class TripPresenter {
     this.#eventsPresenter = new EventsPresenter({ containerElement: this.#tripEventsElement, eventsModel });
 
     this.#filtersComponent = new FiltersView(eventsModel.events);
-    this.#sortingComponent = new SortingView();
+    this.#sortingComponent = new SortingView();//! будет передача обработчиков
   }
 
   init() {

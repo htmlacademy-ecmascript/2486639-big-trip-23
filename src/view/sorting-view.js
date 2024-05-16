@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { SORTING_TYPES, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES } from '../const.js';
+import { SortingType, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES } from '../const.js';
 
-const createSortingItemTemplate = (sortingType, activeSortingType, disableSortingTypes) => {
+const createSortingItemTemplate = (sortingType, _, activeSortingType, disableSortingTypes) => {
   const checked = (sortingType === activeSortingType) ? ' checked' : '';
   const disabled = (disableSortingTypes.includes(sortingType)) ? ' disabled' : '';
 
@@ -12,13 +12,13 @@ const createSortingItemTemplate = (sortingType, activeSortingType, disableSortin
 </div>`;
 };
 
-const createSortingTemplate = (sortings, activeSorting, tripDisableSortings) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-  ${createElementsTemplate(sortings, createSortingItemTemplate, activeSorting, tripDisableSortings)}
+const createSortingTemplate = (activeSorting, tripDisableSortings) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  ${createElementsTemplate(SortingType, createSortingItemTemplate, activeSorting, tripDisableSortings)}
 </form>`;
 
 export default class SortingView extends AbstractView {
   //! добавлять дата атрибуты dataSet, событиее повешать на изменение формы, change
   get template() {
-    return createSortingTemplate(SORTING_TYPES, DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES);
+    return createSortingTemplate(DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES);
   }
 }

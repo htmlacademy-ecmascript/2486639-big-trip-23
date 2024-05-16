@@ -13,6 +13,10 @@ const createElementsTemplate = (elements, createElementTemplate, ...rest) => {
     return strings.join('');
   }
 
+  if (elements instanceof Object) {
+    return Object.entries(elements).map(([key, value]) => createElementTemplate(value, key, ...rest)).join('');
+  }
+
   return '';
 };
 
