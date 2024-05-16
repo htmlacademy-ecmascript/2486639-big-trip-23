@@ -3,6 +3,9 @@ import InfoPresenter from './info-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import FiltersView from '../view/filters-view.js';
 import SortingView from '../view/sorting-view.js';
+import MessageView from '../view/message-view.js';
+import { DEFAULT_SORTING_TYPE, MessageType } from '../const.js';
+import { sortEvents } from '../utils/sorting.js';
 
 export default class TripPresenter {
   #containerElement = null;
@@ -19,6 +22,8 @@ export default class TripPresenter {
 
   #events = null;
 
+  #currentSortingType = DEFAULT_SORTING_TYPE;
+
   constructor({ containerElement, eventsModel }) {
     //! Одинаково у всех презенторов, можно выделить в абстарктный презентор
     this.#containerElement = containerElement;
@@ -33,7 +38,7 @@ export default class TripPresenter {
     this.#eventsPresenter = new EventsPresenter({ containerElement: this.#tripEventsElement, eventsModel });
 
     this.#filtersComponent = new FiltersView(eventsModel.events);
-    this.#sortingComponent = new SortingView();//! будет передача обработчиков
+    this.#sortingComponent = new SortingView(this.#onSortingChange);
   }
 
   init() {
@@ -44,7 +49,6 @@ export default class TripPresenter {
   #render() {
     this.#renderInfo();
     this.#renderFilter();
-    this.#renderSorting();
     this.#renderEvents();
   }
 
@@ -57,13 +61,19 @@ export default class TripPresenter {
     render(this.#filtersComponent, this.#headerTripFiltersElement);
   }
 
-  #renderSorting() {
+  #renderEvents() {
     if (this.#events.size) {
       render(this.#sortingComponent, this.#tripEventsElement);
+
+      const events = sortEvents(this.#events, this.#currentSortingType);
+      this.#eventsPresenter.init(events); //! тут стоит передать фильтрованные и отсортированные
+    } else {
+      render(new MessageView(MessageType.NEW_EVENT), this.#tripEventsElement);
     }
   }
 
-  #renderEvents() {
-    this.#eventsPresenter.init(this.#events); //! тут стоит передать фильтрованные и отсортированные
-  }
+  #onSortingChange = (sortingType) => {
+    this.#currentSortingType = sortingType;
+    this.#renderEvents();
+  };
 }

@@ -24,6 +24,11 @@ export default class EventPresenter {
     this.#onEventChange = onEventChange;
   }
 
+  destroy() {
+    remove(this.#itemComponent);
+    remove(this.#formComponent);
+  }
+
   init(event) {
     this.#event = event;
 

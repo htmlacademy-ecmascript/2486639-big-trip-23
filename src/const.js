@@ -13,13 +13,13 @@ const DEFAULT_DISABLE_FILTER_TYPE = [FilterType.FUTURE, FilterType.PAST];
 const SortingType = {
   DAY: 'day',
   EVENT: 'event',
-  PRESENT: 'time',
-  PAST: 'price',
+  TIME: 'time',
+  PRICE: 'price',
   OFFERS: 'offers'
 };
 
 const DEFAULT_SORTING_TYPE = SortingType.DAY;
-const DISABLE_SORTING_TYPES = [SortingType.EVENT];
+const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFERS];
 
 const MessageType = {
   NEW_EVENT: 'Click New Event to create your first point',

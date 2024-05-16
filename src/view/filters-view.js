@@ -20,7 +20,6 @@ const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="t
 //! все еще немного похожи с SortingView, может получиться выделить общего предка?
 export default class FiltersView extends AbstractView {
   #events = null;
-  #activeFilter = DEFAULT_FILTER_TYPE;
 
   constructor(events) {
     super();
@@ -28,9 +27,9 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const disabledFilters = (this.#events.size) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
+    const disabledFilterTypes = (this.#events.size) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
 
-    return createFiltersTemplate(this.#activeFilter, disabledFilters);
+    return createFiltersTemplate(DEFAULT_FILTER_TYPE, disabledFilterTypes);
   }
 
   #getDisabledFilters() {

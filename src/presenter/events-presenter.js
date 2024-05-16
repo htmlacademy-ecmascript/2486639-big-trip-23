@@ -1,8 +1,6 @@
 import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import MessageView from '../view/message-view.js';
-import { MessageType } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -22,16 +20,19 @@ export default class EventsPresenter {
 
   init(events) {
     this.#events = events;
+
+    this.#clearEventsList();
     this.#renderEventsList();
   }
 
+  #clearEventsList() {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
+  }
+
   #renderEventsList() {
-    if (this.#events.size) {
-      this.#events.forEach((event) => this.#renderEventItem(event));
-      render(this.#eventsListComponent, this.#containerElement);
-    } else {
-      render(new MessageView(MessageType.NEW_EVENT), this.#containerElement);
-    }
+    this.#events.forEach((event) => this.#renderEventItem(event));
+    render(this.#eventsListComponent, this.#containerElement);
   }
 
   #renderEventItem(event) {
