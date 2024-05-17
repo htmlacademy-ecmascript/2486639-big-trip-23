@@ -70,5 +70,6 @@ export default class EventsPresenter {
     const { id } = updatedEvent;
     this.#events.set(id, updatedEvent);
     this.#eventPresenters.get(id).init(updatedEvent);
+    //! тут нужнозвать пересчет Info и при добавлении точки
   };
 }
