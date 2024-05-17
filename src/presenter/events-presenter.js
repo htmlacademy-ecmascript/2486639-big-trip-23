@@ -26,6 +26,7 @@ export default class EventsPresenter {
   }
 
   #clearEventsList() {
+    this.#closeEventForm();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
@@ -47,12 +48,17 @@ export default class EventsPresenter {
     this.#eventPresenters.set(event.id, eventPresenter);
   }
 
-  #onEventFormOpen = (eventPresenter) => {
+  #closeEventForm = () => {
     if (this.#activeEventPresenter) {
       this.#activeEventPresenter.resetEventForm();
       this.#activeEventPresenter.closeEventForm();
     }
 
+    this.#onEventFormClose();
+  };
+
+  #onEventFormOpen = (eventPresenter) => {
+    this.#closeEventForm();
     this.#activeEventPresenter = eventPresenter;
   };
 
