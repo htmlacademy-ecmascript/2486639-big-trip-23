@@ -39,8 +39,8 @@ export default class EventsPresenter {
     const eventPresenter = new EventPresenter({
       containerElement: this.#eventsListComponent.element,
       eventsModel: this.#eventsModel,
-      onFormOpen: this.#onEventFormOpen,
-      onFormClose: this.#onEventFormClose,
+      onEventFormOpen: this.#onEventFormOpen,
+      onEventFormClose: this.#onEventFormClose,
       onEventChange: this.#onEventChange
     });
     eventPresenter.init(event);
@@ -49,7 +49,8 @@ export default class EventsPresenter {
 
   #onEventFormOpen = (eventPresenter) => {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.closeForm();
+      this.#activeEventPresenter.resetEventForm();
+      this.#activeEventPresenter.closeEventForm();
     }
 
     this.#activeEventPresenter = eventPresenter;

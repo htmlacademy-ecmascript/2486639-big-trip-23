@@ -23,14 +23,14 @@ export default class SortingView extends AbstractView {
     super();
 
     this.#onSortingChange = onSortingChange;
-    this.element.addEventListener('change', this.#onFormChange);
+    this.element.addEventListener('change', this.#onFormElementChange);
   }
 
   get template() {
     return createSortingTemplate(DEFAULT_SORTING_TYPE, DISABLE_SORTING_TYPES);
   }
 
-  #onFormChange = (evt) => {
+  #onFormElementChange = (evt) => {
     const { sortingType } = evt.target.dataset;
     if (Object.values(SortingType).includes(sortingType)) {
       this.#onSortingChange(evt.target.dataset.sortingType);
