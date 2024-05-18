@@ -1,11 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { FilterType, DEFAULT_ENABLED_FILTERS } from '../const.js';
+import { FilterType, DEFAULT_FILTER_TYPE, DEFAULT_DISABLE_FILTER_TYPE } from '../const.js';
 import { existFilteredEvents } from '../utils/filter.js';
 
-const createFilterItemTemplate = (filter, activeFilter, enabledFilters) => {
+const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
-  const disabled = (!enabledFilters.includes(filter)) ? 'disabled' : '';
+  const disabled = (disabledFilters.includes(filter)) ? 'disabled' : '';
 
   return `<div class="trip-filters__filter">
   <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${checked} ${disabled}>
@@ -13,15 +13,12 @@ const createFilterItemTemplate = (filter, activeFilter, enabledFilters) => {
 </div>`;
 };
 
-const createFiltersTemplate = (filters, activeFilter, enabledFilters) => `<form class="trip-filters" action="#" method="get">
-  ${createElementsTemplate(filters, createFilterItemTemplate, activeFilter, enabledFilters)}
-</form > `;
+const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="trip-filters" action="#" method="get">
+  ${createElementsTemplate(FilterType, createFilterItemTemplate, activeFilter, disabledFilters)}
+</form>`;
 
-//! все еще немного похожи с SortingView, может получиться выделить общего предка?
 export default class FiltersView extends AbstractView {
   #events = null;
-  #filters = Object.entries(FilterType).map(([, filter]) => filter); //! сделать функцию в utils
-  #activeFilter = FilterType.EVERYTHING;
 
   constructor(events) {
     super();
@@ -29,15 +26,16 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const enabledFilters = (!this.#events.length) ? DEFAULT_ENABLED_FILTERS : this.#getEnabledFilters();
+    const disabledFilterTypes = (this.#events.size) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
 
-    return createFiltersTemplate(this.#filters, this.#activeFilter, enabledFilters);
+    return createFiltersTemplate(DEFAULT_FILTER_TYPE, disabledFilterTypes);
   }
 
-  #getEnabledFilters() {
+  #getDisabledFilters() {
     //! проверить что now, не старое, наверное необходимо перерысовывать при определенных условиях и now переедвать с перезтора
     const now = Date.now();
+    const filters = Object.entries(FilterType).map(([, filter]) => filter); //! можно собрать и один раз в конструкторе
 
-    return this.#filters.filter((filter) => existFilteredEvents(this.#events, filter, now));
+    return filters.filter((filter) => !existFilteredEvents(this.#events, filter, now));
   }
 }

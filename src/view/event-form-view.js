@@ -60,7 +60,6 @@ const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (
 </section>`;
 
 const createEventFormTemplate = (event, destination, destinations, typeOffers, eventOffers) => {
-  //!Посомтреть в ТЗ нужно ли сортировать destinations и offers по алфивиту для отображения?
   const {
     /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
@@ -125,10 +124,10 @@ export default class EventFormView extends AbstractView {
   #destinations = [];
   #typeOffers = [];
 
-  #onSubmit = null;
-  #onCancel = null;
+  #onFormSubmit = null;
+  #onFormClose = null;
 
-  constructor({ event, destination, typeOffers, destinations, onSubmit, onCancel }) {
+  constructor({ event, destination, typeOffers, destinations, onFormSubmit, onFormClose }) {
     super();
 
     this.#event = event;
@@ -136,12 +135,12 @@ export default class EventFormView extends AbstractView {
     this.#typeOffers = typeOffers; //! если передать все offers, то можно обработать изменения типа, если по ТЗ не нужно обновлять offers с сервера
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
 
-    this.#onSubmit = onSubmit;
-    this.#onCancel = onCancel;
+    this.#onFormSubmit = onFormSubmit;
+    this.#onFormClose = onFormClose;
 
     this.#formElement = this.element.querySelector('form.event.event--edit');
-    this.#formElement.addEventListener('submit', this.#onFormSubmit);
-    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonClick);
+    this.#formElement.addEventListener('submit', this.#onFormElementSubmit);
+    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
   }
 
   get template() {
@@ -152,14 +151,14 @@ export default class EventFormView extends AbstractView {
     this.#formElement.reset();
   }
 
-  #onFormSubmit = (evt) => {
+  #onFormElementSubmit = (evt) => {
     evt.preventDefault();
-    this.#onSubmit();
+    this.#onFormSubmit();
   };
 
-  #onEventRollupButtonClick = (evt) => {
+  #onEventRollupButtonElementClick = (evt) => {
     evt.preventDefault();
     this.resetForm();
-    this.#onCancel();
+    this.#onFormClose();
   };
 }

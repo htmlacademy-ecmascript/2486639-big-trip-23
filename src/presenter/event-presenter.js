@@ -12,16 +12,21 @@ export default class EventPresenter {
   #itemComponent = null;
   #formComponent = null;
 
-  #onFormOpen = null;
-  #onFormClose = null;
+  #onEventFormOpen = null;
+  #onEventFormClose = null;
   #onEventChange = null;
 
-  constructor({ containerElement, eventsModel, onFormOpen, onFormClose, onEventChange }) {
+  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
-    this.#onFormOpen = onFormOpen;
-    this.#onFormClose = onFormClose;
+    this.#onEventFormOpen = onEventFormOpen;
+    this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
+  }
+
+  destroy() {
+    remove(this.#itemComponent);
+    remove(this.#formComponent);
   }
 
   init(event) {
@@ -35,17 +40,19 @@ export default class EventPresenter {
     //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
-    //! если при после сохранения редактирование не будет закрываться, то нужно определять редактируем или просматриваем, а еще будет добавление, когда нет Item
-    //! const prevFormComponent = this.#formComponent;
+    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
+    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
+
+    //! const prevFormComponent = this.#formComponent; //! скорее всего форму нужно пересоздать после сохранения, но сначала посомтреть может все данные уже будут в форме
     if (!this.#formComponent) {
       this.#formComponent = new EventFormView({
         event,
         destination: eventDestination,
         typeOffers,
         destinations: this.#eventsModel.destinations,
-        onSubmit: this.#onFormSubmit,
+        onFormSubmit: this.#onFormSubmit,
         onDelete: null, //! заготовка
-        onCancel: this.closeForm
+        onFormClose: this.#onFormClose
       });
     }
 
@@ -72,15 +79,17 @@ export default class EventPresenter {
 
   #openForm() {
     replace(this.#formComponent, this.#itemComponent);
-    //! тут бы прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.#onDocumentKeyDown);
-    this.#onFormOpen(this);
+    this.#onEventFormOpen(this);
   }
 
-  closeForm = () => {
+  resetEventForm = () => {
     this.#formComponent.resetForm();
+  };
+
+  closeEventForm = () => {
     this.#replaceFormToItem();
-    this.#onFormClose();
+    this.#onEventFormClose();
   };
 
   #replaceFormToItem = () => {
@@ -100,13 +109,18 @@ export default class EventPresenter {
   #onFormSubmit = () => {
     //! добавить сохранение данных, а потом заменить/закрыть
     this.#replaceFormToItem();
-    this.#onFormClose();//! будет вызов сохранения там можно и сбросить открытое событие
+    this.#onEventFormClose();
+  };
+
+  #onFormClose = () => {
+    this.closeEventForm();
   };
 
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.closeForm();
+      this.resetEventForm();
+      this.closeEventForm();
     }
     //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };

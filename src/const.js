@@ -7,11 +7,19 @@ const FilterType = {
   PAST: 'past'
 };
 
-const DEFAULT_ENABLED_FILTERS = [FilterType.EVERYTHING, FilterType.PRESENT];
+const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
+const DEFAULT_DISABLE_FILTER_TYPE = [FilterType.FUTURE, FilterType.PAST];
 
-const SORTING_TYPES = ['day', 'event', 'time', 'price', 'offers'];
-const DEFAULT_SORTING_TYPE = SORTING_TYPES[0];
-const DISABLE_SORTING_TYPES = [SORTING_TYPES[1]];
+const SortingType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+const DEFAULT_SORTING_TYPE = SortingType.DAY;
+const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFERS];
 
 const MessageType = {
   NEW_EVENT: 'Click New Event to create your first point',
@@ -22,8 +30,9 @@ const MessageType = {
 export {
   EVENT_TYPES,
   FilterType,
-  DEFAULT_ENABLED_FILTERS,
-  SORTING_TYPES,
+  DEFAULT_FILTER_TYPE,
+  DEFAULT_DISABLE_FILTER_TYPE,
+  SortingType,
   DEFAULT_SORTING_TYPE,
   DISABLE_SORTING_TYPES,
   MessageType

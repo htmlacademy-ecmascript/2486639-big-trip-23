@@ -17,7 +17,9 @@ export default class EventsModel {
     });
 
     events.forEach((event) => {
-      this.#events.set(event.id, event); // весь event, с id, иначе id дополнительно доставать и хранить в перезенторе
+      //! может есть смыл добавить, что то постоянно вычисляемое...
+      //! например durationMinutes, для использования при сортироке, подсчета Info
+      this.#events.set(event.id, event); // весь event, с id, иначе id дополнительно доставать? перекладывать в event или хранить в перезенторе
     });
   }
 

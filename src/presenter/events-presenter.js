@@ -1,8 +1,6 @@
 import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import MessageView from '../view/message-view.js';
-import { MessageType } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -22,35 +20,45 @@ export default class EventsPresenter {
 
   init(events) {
     this.#events = events;
+
+    this.#clearEventsList();
     this.#renderEventsList();
   }
 
+  #clearEventsList() {
+    this.#closeEventForm();
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
+  }
+
   #renderEventsList() {
-    if (this.#events.size) {
-      this.#events.forEach((event) => this.#renderEventItem(event));
-      render(this.#eventsListComponent, this.#containerElement);
-    } else {
-      render(new MessageView(MessageType.NEW_EVENT), this.#containerElement);
-    }
+    this.#events.forEach((event) => this.#renderEventItem(event));
+    render(this.#eventsListComponent, this.#containerElement);
   }
 
   #renderEventItem(event) {
     const eventPresenter = new EventPresenter({
       containerElement: this.#eventsListComponent.element,
       eventsModel: this.#eventsModel,
-      onFormOpen: this.#onEventFormOpen,
-      onFormClose: this.#onEventFormClose,
+      onEventFormOpen: this.#onEventFormOpen,
+      onEventFormClose: this.#onEventFormClose,
       onEventChange: this.#onEventChange
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
   }
 
-  #onEventFormOpen = (eventPresenter) => {
+  #closeEventForm = () => {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.closeForm();
+      this.#activeEventPresenter.resetEventForm();
+      this.#activeEventPresenter.closeEventForm();
     }
 
+    this.#onEventFormClose();
+  };
+
+  #onEventFormOpen = (eventPresenter) => {
+    this.#closeEventForm();
     this.#activeEventPresenter = eventPresenter;
   };
 
@@ -62,5 +70,6 @@ export default class EventsPresenter {
     const { id } = updatedEvent;
     this.#events.set(id, updatedEvent);
     this.#eventPresenters.get(id).init(updatedEvent);
+    //! тут нужнозвать пересчет Info и при добавлении точки
   };
 }

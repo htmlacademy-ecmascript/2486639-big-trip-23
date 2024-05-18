@@ -15,8 +15,10 @@ const HOURS_IN_DAY = 24;
 
 const getStringDate = (date, format) => (!date) ? '' : dayjs(date).format(format);
 
+const getDurationMinutes = (dateStart, dateEnd) => dayjs(dateEnd).diff(dateStart, 'minute');
+
 const getDurationString = (dateStart, dateEnd) => {
-  const durationMinutes = dayjs(dateEnd).diff(dateStart, 'minute');
+  const durationMinutes = getDurationMinutes(dateStart, dateEnd);
   const minutes = durationMinutes % MINUTES_IN_HOUR;
   const durationHours = (durationMinutes - minutes) / MINUTES_IN_HOUR;
   const hours = durationHours % HOURS_IN_DAY;
@@ -35,4 +37,4 @@ const getDurationString = (dateStart, dateEnd) => {
   return strings.join('');
 };
 
-export { DateFormat, getStringDate, getDurationString };
+export { DateFormat, getStringDate, getDurationMinutes, getDurationString };

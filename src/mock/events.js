@@ -75,6 +75,7 @@ const generateMockData = (types) => {
     //{ length: 0 }, //! для тестирования
     //{ length: 1 }, //! для тестирования
     //{ length: 2 }, //! для тестирования
+    //{ length: 4 }, //! для тестирования
     (_, index) => createEvent(index + 1, getRandomArrayElement(types), offers, destinations));
 
   return { destinations, offers, events };
