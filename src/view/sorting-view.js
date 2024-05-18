@@ -31,9 +31,6 @@ export default class SortingView extends AbstractView {
   }
 
   #onFormElementChange = (evt) => {
-    const { sortingType } = evt.target.dataset;
-    if (Object.values(SortingType).includes(sortingType)) {
-      this.#onSortingChange(evt.target.dataset.sortingType);
-    }
+    this.#onSortingChange(evt.target.dataset.sortingType);
   };
 }

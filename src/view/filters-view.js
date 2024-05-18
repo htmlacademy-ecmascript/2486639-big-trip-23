@@ -17,7 +17,6 @@ const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="t
   ${createElementsTemplate(FilterType, createFilterItemTemplate, activeFilter, disabledFilters)}
 </form>`;
 
-//! все еще немного похожи с SortingView, может получиться выделить общего предка?
 export default class FiltersView extends AbstractView {
   #events = null;
 

@@ -8,7 +8,7 @@ import { DEFAULT_SORTING_TYPE, MessageType } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 
 export default class TripPresenter {
-  #containerElement = null;
+  #containerElement = null; //! удалить, если не будет использоваться нигде кроме конструктора
   #eventsModel = null;
 
   #infoPresenter = null;
@@ -65,8 +65,9 @@ export default class TripPresenter {
     if (this.#events.size) {
       render(this.#sortingComponent, this.#tripEventsElement);
 
-      const events = sortEvents(this.#events, this.#currentSortingType);
-      this.#eventsPresenter.init(events); //! тут стоит передать фильтрованные и отсортированные
+      const filteredEvents = this.#events; //! временно, как будет готова фильтрация, то отфильтровать filterEvents(this.#currentFilterType);
+      const sortedEvents = sortEvents(filteredEvents, this.#currentSortingType);
+      this.#eventsPresenter.init(sortedEvents);
     } else {
       render(new MessageView(MessageType.NEW_EVENT), this.#tripEventsElement);
     }

@@ -40,8 +40,10 @@ export default class EventPresenter {
     //! попробовать переделать на Map
     const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
 
-    //! если при после сохранения редактирование не будет закрываться, то нужно определять редактируем или просматриваем, а еще будет добавление, когда нет Item
-    //! const prevFormComponent = this.#formComponent;
+    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
+    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
+
+    //! const prevFormComponent = this.#formComponent; //! скорее всего форму нужно пересоздать после сохранения, но сначала посомтреть может все данные уже будут в форме
     if (!this.#formComponent) {
       this.#formComponent = new EventFormView({
         event,
@@ -77,7 +79,6 @@ export default class EventPresenter {
 
   #openForm() {
     replace(this.#formComponent, this.#itemComponent);
-    //! тут бы прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области... если не буте мешать автотестам
     document.addEventListener('keydown', this.#onDocumentKeyDown);
     this.#onEventFormOpen(this);
   }

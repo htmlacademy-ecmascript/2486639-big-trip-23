@@ -60,7 +60,6 @@ const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (
 </section>`;
 
 const createEventFormTemplate = (event, destination, destinations, typeOffers, eventOffers) => {
-  //!Посомтреть в ТЗ нужно ли сортировать destinations и offers по алфивиту для отображения?
   const {
     /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
