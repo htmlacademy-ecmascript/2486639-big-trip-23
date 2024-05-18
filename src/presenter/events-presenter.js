@@ -1,4 +1,5 @@
 import { render } from '../framework/render.js';
+import { findItemIndexByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
 
@@ -6,7 +7,7 @@ export default class EventsPresenter {
   #containerElement = null;
   #eventsModel = null;
 
-  #events = null;
+  #events = [];
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
@@ -68,8 +69,8 @@ export default class EventsPresenter {
 
   #onEventChange = (updatedEvent) => {
     const { id } = updatedEvent;
-    this.#events.set(id, updatedEvent);
+    this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
     this.#eventPresenters.get(id).init(updatedEvent);
-    //! тут нужнозвать пересчет Info и при добавлении точки
+    //! тут нужно вызать пересчет Info через основного презентора
   };
 }

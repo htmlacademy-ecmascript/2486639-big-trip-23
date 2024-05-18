@@ -17,6 +17,6 @@ tripPresenter.init();
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):
  * 1. При открытии формы редактирования события, расположенных снизу, прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области
  *     src/presenter/event-presenter.js EventPresenter.#openForm() - что то такое использовал Element.scrollTo(scrollX, Element.scrollHeight);
- *
+ * 2. Обработать на форме нажатие Enter в src\presenter\event-presenter.js EventPresenter.#onDocumentKeyDown
  *
  */

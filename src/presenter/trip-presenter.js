@@ -20,7 +20,7 @@ export default class TripPresenter {
   #filtersComponent = null;
   #sortingComponent = null;
 
-  #events = null;
+  #events = [];
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
@@ -53,21 +53,25 @@ export default class TripPresenter {
   }
 
   #renderInfo() {
+    //! нужно будет вызывать при изменении данных
     this.#infoPresenter.init();
   }
 
   #renderFilter() {
-    //! возможно стоит отрисовать в конструкторе или init и не заводить #headerTripFiltersElement
+    //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны
     render(this.#filtersComponent, this.#headerTripFiltersElement);
   }
 
   #renderEvents() {
-    if (this.#events.size) {
+    //! нужно будет вызывать и при изменении фильтра, добавлении нового события
+    //! и сортировать и фильтровать новое событие
+    if (this.#events.length) {
       render(this.#sortingComponent, this.#tripEventsElement);
 
-      const filteredEvents = this.#events; //! временно, как будет готова фильтрация, то отфильтровать filterEvents(this.#currentFilterType);
-      const sortedEvents = sortEvents(filteredEvents, this.#currentSortingType);
-      this.#eventsPresenter.init(sortedEvents);
+      this.#events.filter(() => true); //! временно, как будет готова фильтрация, то отфильтровать this.#events.filter(filterEvents(this.#currentFilterType))
+      this.#events.sort(sortEvents[this.#currentSortingType]);
+
+      this.#eventsPresenter.init(this.#events);
     } else {
       render(new MessageView(MessageType.NEW_EVENT), this.#tripEventsElement);
     }

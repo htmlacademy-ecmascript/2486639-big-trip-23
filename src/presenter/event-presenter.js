@@ -34,7 +34,7 @@ export default class EventPresenter {
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destination, type, offers } = event;
-    const eventDestination = this.#eventsModel.destinations.get(destination);
+    const eventDestination = this.#eventsModel.destinations.get(destination); //! при переводе на state, подумать и выбрать либо просим презентер найти данные по офферам типа и описанию пункта назначения, или представление немног "умнее"
     const offer = this.#eventsModel.offers.get(type);
     const typeOffers = (offer) ? offer.offers : [];
     //! попробовать переделать на Map
@@ -122,6 +122,5 @@ export default class EventPresenter {
       this.resetEventForm();
       this.closeEventForm();
     }
-    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };
 }

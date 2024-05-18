@@ -18,7 +18,7 @@ const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="t
 </form>`;
 
 export default class FiltersView extends AbstractView {
-  #events = null;
+  #events = [];
 
   constructor(events) {
     super();
@@ -26,15 +26,15 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const disabledFilterTypes = (this.#events.size) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
+    const disabledFilterTypes = (this.#events.length) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
 
     return createFiltersTemplate(DEFAULT_FILTER_TYPE, disabledFilterTypes);
   }
 
   #getDisabledFilters() {
-    //! проверить что now, не старое, наверное необходимо перерысовывать при определенных условиях и now переедвать с перезтора
+    //! проверить что now, не старое, наверное необходимо перерысовывать при определенных условиях и now передавать с основного перезентора
     const now = Date.now();
-    const filters = Object.entries(FilterType).map(([, filter]) => filter); //! можно собрать и один раз в конструкторе
+    const filters = Object.entries(FilterType).map(([, filter]) => filter); //! можно собрать и один раз в конструкторе, сделать в util
 
     return filters.filter((filter) => !existFilteredEvents(this.#events, filter, now));
   }
