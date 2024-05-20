@@ -58,7 +58,7 @@ const createEventItemTemplate = (event, destinationName, eventOffers) => {
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
-    </div>
+  </div>
 </li>`;
 };
 
@@ -79,8 +79,8 @@ export default class EventItemView extends AbstractView {
     this.#onFavoriteClick = onFavoriteClick;
     this.#onEditClick = onEditClick;
 
-    this.element.querySelector('button.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonElementClick);
-    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEditButtonElementClick);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonElementClick);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditButtonElementClick);
   }
 
   get template() {

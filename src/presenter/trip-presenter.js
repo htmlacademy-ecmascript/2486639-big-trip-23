@@ -29,10 +29,10 @@ export default class TripPresenter {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
 
-    const headerContainerElement = containerElement.querySelector('div.page-body__container.page-header__container');//! оставить один селектор, и других местах проверить
-    const headerTripMainElement = headerContainerElement.querySelector('div.trip-main');
-    this.#headerTripFiltersElement = headerContainerElement.querySelector('div.trip-controls__filters');
-    this.#tripEventsElement = containerElement.querySelector('section.trip-events');
+    const headerContainerElement = containerElement.querySelector('.page-header__container');
+    const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
+    this.#headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
+    this.#tripEventsElement = containerElement.querySelector('.trip-events');
 
     this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
     this.#eventsPresenter = new EventsPresenter({ containerElement: this.#tripEventsElement, eventsModel });

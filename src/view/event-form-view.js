@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
@@ -116,9 +116,7 @@ const createEventFormTemplate = (event, destination, destinations, typeOffers, e
 <li>`;
 };
 
-export default class EventFormView extends AbstractView {
-  #formElement = null;
-
+export default class EventFormView extends AbstractStatefulView {
   #event = null;
   #destination = null;
   #destinations = [];
@@ -138,17 +136,20 @@ export default class EventFormView extends AbstractView {
     this.#onFormSubmit = onFormSubmit;
     this.#onFormClose = onFormClose;
 
-    this.#formElement = this.element.querySelector('form.event.event--edit');
-    this.#formElement.addEventListener('submit', this.#onFormElementSubmit);
-    this.element.querySelector('button.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
+    this._restoreHandlers();
   }
 
   get template() {
     return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }
 
+  _restoreHandlers() {
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onFormElementSubmit);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
+  }
+
   resetForm() {
-    this.#formElement.reset();
+    this.element.firstElementChild.reset();
   }
 
   #onFormElementSubmit = (evt) => {
