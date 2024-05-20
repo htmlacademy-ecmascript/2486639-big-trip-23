@@ -5,15 +5,15 @@ import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES } from '../const.js';
 
-const createTypeItemTemplate = (type) => `<div class="event__type-item">
-  <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+const createTypeItemTemplate = (type, currentType) => `<div class="event__type-item">
+  <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${(type === currentType) ? 'checked' : ''}>
   <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
 </div>`;
 
-const createTypeListTemplate = (types) => `<div class="event__type-list">
+const createTypeListTemplate = (types, currentType) => `<div class="event__type-list">
   <fieldset class="event__type-group">
     <legend class="visually-hidden">Event type</legend>
-    ${createElementsTemplate(types, createTypeItemTemplate)}
+    ${createElementsTemplate(types, createTypeItemTemplate, currentType)}
   </fieldset>
 </div>`;
 
@@ -79,8 +79,7 @@ const createEventFormTemplate = (event, destination, destinations, typeOffers, e
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-          ${createTypeListTemplate(EVENT_TYPES)}
+          ${createTypeListTemplate(EVENT_TYPES, type)}
       </div>
 
       <div class="event__field-group  event__field-group--destination">
@@ -127,6 +126,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   constructor({ event, destination, typeOffers, destinations, onFormSubmit, onFormClose }) {
     super();
+    this._setState({ ...event });
 
     this.#event = event;
     this.#destination = destination;
@@ -140,11 +140,13 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventFormTemplate(this.#event, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
+    return createEventFormTemplate(this._state, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onFormElementSubmit);
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
+
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEventFormElementSubmit);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
   }
 
@@ -152,7 +154,13 @@ export default class EventFormView extends AbstractStatefulView {
     this.element.firstElementChild.reset();
   }
 
-  #onFormElementSubmit = (evt) => {
+  #onEventTypeListElementClick = (evt) => {
+    if (evt.target.tagName === 'INPUT') {
+      this.updateElement({ type: evt.target.value });
+    }
+  };
+
+  #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
     this.#onFormSubmit();
   };
