@@ -15,8 +15,7 @@ export default class InfoPresenter {
     //! временно, разный текст в зависмости от фильтра, и обработка нажатий
     const { events, destinations } = this.#eventsModel; //! считать либо тут - взять все данные или в модели
     if (events.length) {
-      const destinationData = Array.from(destinations, ([, { name }]) => ({ name }));
-      render(new InfoView(getMockTripInfo(destinationData)), this.#containerElement, RenderPosition.AFTERBEGIN);
+      render(new InfoView(getMockTripInfo(destinations)), this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

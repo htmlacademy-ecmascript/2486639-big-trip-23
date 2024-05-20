@@ -7,7 +7,7 @@ const createElementsTemplate = (elements, createElementTemplate, ...rest) => {
     const strings = [];
 
     elements.forEach((value, key) => {
-      strings.push(createElementTemplate(key, value, ...rest));
+      strings.push(createElementTemplate(value, key, ...rest));
     });
 
     return strings.join('');

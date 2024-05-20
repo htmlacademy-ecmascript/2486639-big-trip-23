@@ -17,14 +17,14 @@ const createTypeListTemplate = (types, currentType) => `<div class="event__type-
   </fieldset>
 </div>`;
 
-const createDestinationOptionTemplate = (_, { name }) => `<option value="${name}"></option>`;
+const createDestinationOptionTemplate = ({ name }) => `<option value="${name}"></option>`;
 
 const createDestinationDatalistTemplate = (destinations) => `<datalist id="destination-list-1">
     ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
-const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(eventOffers.includes(id)) ? 'checked' : ''}>
+const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(eventOfferIds.includes(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -32,11 +32,11 @@ const createOfferTemplate = ({ id, name, title, price }, eventOffers) => `<div c
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (typeOffers, eventOffers) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
+const createSectionOffersTemplate = (typeOffers, eventOfferIds) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOffers)}
+      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOfferIds)}
     </div>
 </section>`;
 
@@ -48,25 +48,28 @@ const createPhotosContainerTemplate = (pictures) => (isEmptyArray(pictures)) ? '
   </div>
 </div>`;
 
-const createSectionDestinationTemplate = ({ description, pictures }) => (!description) ? '' : `<section class="event__section  event__section--destination">
+const createSectionDestinationTemplate = ({ description, pictures }) => (description) ? `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
   <p class="event__destination-description">${description}</p>
   ${createPhotosContainerTemplate(pictures)}
-</section>`;
+</section>` : '';
 
-const createSectionDetailsTemplate = (typeOffers, eventOffers, destination) => (isEmptyArray(typeOffers) && !destination.description) ? '' : `<section class="event__details">
-  ${createSectionOffersTemplate(typeOffers, eventOffers)}
+const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
+  ${createSectionOffersTemplate(typeOffers, eventOfferIds)}
   ${createSectionDestinationTemplate(destination)}
-</section>`;
+</section>` : '';
 
-const createEventFormTemplate = (event, destination, destinations, typeOffers, eventOffers) => {
+const createEventFormTemplate = (event, destinations) => {
   const {
     /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
+    destination,
+    typeOffers,
+    offers: eventOfferIds,
     dateFrom,
     dateTo,
     basePrice } = event;
-  const destinationName = destination.name;
+  const destinationName = (destination) ? destination.name : '';
   const isEditing = true; //! временно - при добавление, нет кнопки ^, при редактировании она есть и кнопки разные, но еще по ТЗ будет меняться текст при работе с сервером
   const resetButtonCaption = (isEditing) ? 'Delete' : 'Cancel';
 
@@ -110,29 +113,27 @@ const createEventFormTemplate = (event, destination, destinations, typeOffers, e
       <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
       ${(isEditing) ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
     </header>
-    ${createSectionDetailsTemplate(typeOffers, eventOffers, destination)}
+    ${createSectionDetailsTemplate(typeOffers, eventOfferIds, destination)}
   </form>
 <li>`;
 };
 
 export default class EventFormView extends AbstractStatefulView {
-  #event = null;
-  #destination = null;
-  #destinations = [];
-  #typeOffers = [];
+  #destinations = null;
 
+  #onGetTypeOffers = null;
+  #onGetDestinationByName = null;
   #onFormSubmit = null;
   #onFormClose = null;
 
-  constructor({ event, destination, typeOffers, destinations, onFormSubmit, onFormClose }) {
+  constructor({ event, destination, typeOffers, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onFormClose }) {
     super();
-    this._setState({ ...event });
+    this._setState({ ...event, destination, typeOffers }); //! пока не стал делать static parseEventToState(event)
 
-    this.#event = event;
-    this.#destination = destination;
-    this.#typeOffers = typeOffers; //! если передать все offers, то можно обработать изменения типа, если по ТЗ не нужно обновлять offers с сервера
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
 
+    this.#onGetTypeOffers = onGetTypeOffers;
+    this.#onGetDestinationByName = onGetDestinationByName;
     this.#onFormSubmit = onFormSubmit;
     this.#onFormClose = onFormClose;
 
@@ -140,12 +141,12 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventFormTemplate(this._state, this.#destination, this.#destinations, this.#typeOffers, this.#event.offers);
+    return createEventFormTemplate(this._state, this.#destinations);
   }
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
-
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#onEventFormElementSubmit);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
   }
@@ -156,13 +157,26 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventTypeListElementClick = (evt) => {
     if (evt.target.tagName === 'INPUT') {
-      this.updateElement({ type: evt.target.value });
+      evt.preventDefault();
+      const type = evt.target.value;
+      const typeOffers = this.#onGetTypeOffers(evt.target.value);
+      const offers = [];
+      this.updateElement({ type, typeOffers, offers });
+    }
+  };
+
+  #onEventDestanationInputElementChange = (evt) => {
+    if (evt.target.tagName === 'INPUT') {
+      evt.preventDefault();
+      const destination = this.#onGetDestinationByName(evt.target.value);
+      this.updateElement({ destination });
     }
   };
 
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
-    this.#onFormSubmit();
+    //! тут добавить проверку, что пункт назначения не выбран
+    this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 
   #onEventRollupButtonElementClick = (evt) => {
@@ -170,4 +184,12 @@ export default class EventFormView extends AbstractStatefulView {
     this.resetForm();
     this.#onFormClose();
   };
+
+  static parseStateToEvent(state) {
+    const event = { ...state };
+    event.destination = state.destination.id;
+    delete event.typeOffers;
+
+    return event;
+  }
 }
