@@ -1,4 +1,4 @@
-import { render, replace, remove } from '../framework/render.js';
+import { render, replace, remove, RenderPosition } from '../framework/render.js';
 import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -59,21 +59,25 @@ export default class EventPresenter {
     const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
-      destinationName: destination.name,
+      destinationName: destination?.name, //! как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
       eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });
 
-    //! if (!prevItemComponent || !prevFormComponent) {
-    if (!prevItemComponent) {
-      render(this.#itemComponent, this.#containerElement);
-    } else {
-      replace(this.#itemComponent, prevItemComponent);
-      //! replace(this.#taskEditComponent, prevTaskEditComponent);
+    if (event.id) {
+      //! if (!prevItemComponent || !prevFormComponent) { //! удалить если будет ли использоваться
+      if (!prevItemComponent) {
+        render(this.#itemComponent, this.#containerElement);
+      } else {
+        replace(this.#itemComponent, prevItemComponent);
+        //! replace(this.#taskEditComponent, prevTaskEditComponent); //! удалить если будет ли использоваться
 
-      remove(prevItemComponent);
-      //! remove(prevFormComponent);
+        remove(prevItemComponent);
+        //! remove(prevFormComponent); //! удалить если будет ли использоваться
+      }
+    } else {
+      render(this.#formComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 

@@ -39,6 +39,8 @@ export default class TripPresenter {
 
     this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
+
+    headerContainerElement.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#onEventAddButtonElementClick);
   }
 
   init() {
@@ -76,6 +78,12 @@ export default class TripPresenter {
       render(new MessageView(MessageType.NEW_EVENT), this.#tripEventsElement);
     }
   }
+
+  #onEventAddButtonElementClick = (evt) => {
+    evt.preventDefault();
+    this.#eventsPresenter.AddEvent();
+    //! если нет событий, то вместо списка сообщение и нужно вызвать #renderEvents() с новым элементом и дать презентору понять, что там новый элемент
+  };
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;

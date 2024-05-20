@@ -2,12 +2,14 @@ import { render } from '../framework/render.js';
 import { findItemIndexByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
+import { DEFAULT_EVENT } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
   #eventsModel = null;
 
   #events = [];
+  #isOpenNewEvent = false;
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
@@ -24,6 +26,14 @@ export default class EventsPresenter {
 
     this.#clearEventsList();
     this.#renderEventsList();
+  }
+
+  AddEvent() {
+    //! посмотреть ТЗ, что делать если уже открыто добавление
+    if (!this.#isOpenNewEvent) {
+      this.#isOpenNewEvent = true;
+      this.#renderEventItem(DEFAULT_EVENT);
+    }
   }
 
   #clearEventsList() {
@@ -52,10 +62,13 @@ export default class EventsPresenter {
 
   #closeEventForm = () => {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.resetEventForm();
-      this.#activeEventPresenter.closeEventForm();
+      if (this.#isOpenNewEvent) {
+        this.#activeEventPresenter.destroy();
+      } else {
+        this.#activeEventPresenter.resetEventForm();
+        this.#activeEventPresenter.closeEventForm();
+      }
     }
-
     this.#onEventFormClose();
   };
 
@@ -69,8 +82,20 @@ export default class EventsPresenter {
   };
 
   #onEventChange = (updatedEvent) => {
-    const { id } = updatedEvent;
-    this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
+    const id = (this.#isOpenNewEvent) ? this.#events.length : updatedEvent.id;
+
+    if (this.#isOpenNewEvent) {
+      const eventPresenter = this.#eventPresenters.get(updatedEvent.id); //! updatedEvent.id === null
+      this.#eventPresenters.delete(updatedEvent.id);
+      updatedEvent.id = id;
+      this.#eventPresenters.set(updatedEvent.id, eventPresenter);
+
+      this.#events.push(updatedEvent);
+      this.#isOpenNewEvent = false;
+    } else {
+      this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
+    }
+
     this.#eventPresenters.get(id).init(updatedEvent);
     //! тут нужно вызать пересчет Info через основного презентора
   };
