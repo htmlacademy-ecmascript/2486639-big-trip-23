@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate, DateFormat } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray } from '../utils/utils.js';
+import { deleteItem, isEmptyArray, isInputElement } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES } from '../const.js';
 
@@ -24,8 +24,8 @@ const createDestinationDatalistTemplate = (destinations) => `<datalist id="desti
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${name}" ${(eventOfferIds.includes(id)) ? 'checked' : ''}>
-  <label class="event__offer-label" for="${id}">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.includes(id)) ? 'checked' : ''}>
+  <label class="event__offer-label" for="event-offer-${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
     <span class="event__offer-price">${price}</span>
@@ -56,7 +56,7 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (descrip
 
 const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
   ${createSectionOffersTemplate(typeOffers, eventOfferIds)}
-  ${createSectionDestinationTemplate(destination)}
+  ${(destination) ? createSectionDestinationTemplate(destination) : ''}
 </section>` : '';
 
 const createEventFormTemplate = (event, destinations) => {
@@ -124,17 +124,19 @@ export default class EventFormView extends AbstractStatefulView {
   #onGetTypeOffers = null;
   #onGetDestinationByName = null;
   #onFormSubmit = null;
+  #onDelete = null;
   #onFormClose = null;
 
-  constructor({ event, destination, typeOffers, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onFormClose }) {
+  constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
     super();
-    this._setState({ ...event, destination, typeOffers }); //! пока не стал делать static parseEventToState(event)
+    this._setState({ ...event }); //! пока не стал делать static parseEventToState(event)
 
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
 
     this.#onGetTypeOffers = onGetTypeOffers;
     this.#onGetDestinationByName = onGetDestinationByName;
     this.#onFormSubmit = onFormSubmit;
+    this.#onDelete = onDelete;
     this.#onFormClose = onFormClose;
 
     this._restoreHandlers();
@@ -147,7 +149,13 @@ export default class EventFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
+    if (this._state.offers.length) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
+    }
     this.element.querySelector('.event--edit').addEventListener('submit', this.#onEventFormElementSubmit);
+    //! или reset, но потом будет ясно...
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onEventResetButtonElementClick);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
   }
 
@@ -156,20 +164,43 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   #onEventTypeListElementClick = (evt) => {
-    if (evt.target.tagName === 'INPUT') {
+    if (isInputElement(evt.target)) {
       evt.preventDefault();
       const type = evt.target.value;
       const typeOffers = this.#onGetTypeOffers(evt.target.value);
       const offers = [];
+
       this.updateElement({ type, typeOffers, offers });
     }
   };
 
   #onEventDestanationInputElementChange = (evt) => {
-    if (evt.target.tagName === 'INPUT') {
+    if (isInputElement(evt.target)) {
       evt.preventDefault();
       const destination = this.#onGetDestinationByName(evt.target.value);
+
       this.updateElement({ destination });
+    }
+  };
+
+  #onEventPriceInputElementInput = (evt) => {
+    const basePrice = evt.target.value;
+
+    this._setState({ basePrice });
+  };
+
+  #onEventOffersDivElementChange = (evt) => {
+    if (isInputElement(evt.target)) {
+      const { checked, dataset: { offerId } } = evt.target;
+      const { offers } = this._state;
+
+      if (checked) {
+        offers.push(offerId);
+      } else {
+        deleteItem(offers, offerId);
+      }
+
+      this._setState({ offers });
     }
   };
 
@@ -177,6 +208,11 @@ export default class EventFormView extends AbstractStatefulView {
     evt.preventDefault();
     //! тут добавить проверку, что пункт назначения не выбран
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
+  };
+
+  #onEventResetButtonElementClick = (evt) => {
+    evt.preventDefault();
+    this.#onDelete(this._state.id);
   };
 
   #onEventRollupButtonElementClick = (evt) => {

@@ -15,13 +15,15 @@ export default class EventPresenter {
   #onEventFormOpen = null;
   #onEventFormClose = null;
   #onEventChange = null;
+  #onEventDelete = null;
 
-  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange }) {
+  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
+    this.#onEventDelete = onEventDelete;
   }
 
   destroy() {
@@ -34,10 +36,9 @@ export default class EventPresenter {
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destinations } = this.#eventsModel;
-    const { type, offers } = event;
-    const destination = findItemByKey(destinations, event.destination); //! при переводе на state, подумать и выбрать либо просим презентер найти данные по офферам типа и описанию пункта назначения, или представление немног "умнее"
-    const typeOffers = this.#eventsModel.getTypeOffers(type);
-    const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
+    const { type, offers: eventOfferIds } = event;
+    const destination = findItemByKey(destinations, event.destination);
+    const typeOffers = this.#eventsModel.getTypeOffers(type); //! можно вызвать this.#onGetTypeOffers(type) как будет определено название
 
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
@@ -45,14 +46,12 @@ export default class EventPresenter {
     //! const prevFormComponent = this.#formComponent; //! скорее всего форму нужно пересоздать после сохранения, но сначала посомтреть может все данные уже будут в форме
     if (!this.#formComponent) {
       this.#formComponent = new EventFormView({
-        event,
-        destination,
-        typeOffers,
+        event: { ...event, destination, typeOffers },
         destinations,
-        onGetTypeOffers: this.#onGetTypeOffers,
-        onGetDestinationByName: this.#onGetDestinationByName, //? как правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
+        onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
+        onGetDestinationByName: this.#onGetDestinationByName, //? тоже
         onFormSubmit: this.#onFormSubmit,
-        onDelete: null, //! заготовка
+        onDelete: this.#onDelete,
         onFormClose: this.#onFormClose
       });
     }
@@ -61,7 +60,7 @@ export default class EventPresenter {
     this.#itemComponent = new EventItemView({
       event,
       destinationName: destination.name,
-      eventOffers,
+      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });
@@ -112,12 +111,18 @@ export default class EventPresenter {
   #onGetDestinationByName = (name) => findItemByKey(this.#eventsModel.destinations, name, 'name');
 
   #onFormSubmit = (event) => {
-    //! добавить сохранение данных, а потом заменить/закрыть
     this.#replaceFormToItem();
     this.#onEventFormClose();
 
-    //console.log(event);
     this.#onEventChange({ ...event });
+  };
+
+  #onDelete = (eventId) => {
+    //! выше есть такие же две строки...
+    this.#replaceFormToItem();
+    this.#onEventFormClose();
+
+    this.#onEventDelete(eventId);
   };
 
   #onFormClose = () => {

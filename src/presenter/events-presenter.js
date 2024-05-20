@@ -43,7 +43,8 @@ export default class EventsPresenter {
       eventsModel: this.#eventsModel,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
-      onEventChange: this.#onEventChange
+      onEventChange: this.#onEventChange,
+      onEventDelete: this.#onEventDelete
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
@@ -71,6 +72,13 @@ export default class EventsPresenter {
     const { id } = updatedEvent;
     this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
     this.#eventPresenters.get(id).init(updatedEvent);
+    //! тут нужно вызать пересчет Info через основного презентора
+  };
+
+  #onEventDelete = (eventId) => {
+    const index = findItemIndexByKey(this.#events, eventId);
+    this.#events.splice(index, 1);
+    this.#eventPresenters.get(eventId).destroy();
     //! тут нужно вызать пересчет Info через основного презентора
   };
 }
