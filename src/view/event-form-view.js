@@ -119,6 +119,7 @@ const createEventFormTemplate = (event, destinations) => {
 };
 
 export default class EventFormView extends AbstractStatefulView {
+  #savedEvent = null;
   #destinations = null;
 
   #onGetTypeOffers = null;
@@ -129,6 +130,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
     super();
+    this.#savedEvent = event;
     this._setState({ ...event }); //! пока не стал делать static parseEventToState(event)
 
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
@@ -150,10 +152,12 @@ export default class EventFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
-    if (this._state.offers.length) {
+    if (this._state.typeOffers.length) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
     }
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEventFormElementSubmit);
+    const eventFormElement = this.element.querySelector('.event--edit');
+    eventFormElement.addEventListener('submit', this.#onEventFormElementSubmit);
+    eventFormElement.addEventListener('reset', this.#onEventFormElementReset);
     //! или reset, но потом будет ясно...
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onEventResetButtonElementClick);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
@@ -208,6 +212,11 @@ export default class EventFormView extends AbstractStatefulView {
     evt.preventDefault();
     //! тут добавить проверку, что пункт назначения не выбран
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
+  };
+
+  #onEventFormElementReset = (evt) => {
+    evt.preventDefault();
+    this.updateElement({ ...this.#savedEvent });
   };
 
   #onEventResetButtonElementClick = (evt) => {
