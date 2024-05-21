@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 
@@ -15,13 +15,15 @@ export default class EventPresenter {
   #onEventFormOpen = null;
   #onEventFormClose = null;
   #onEventChange = null;
+  #onEventDelete = null;
 
-  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange }) {
+  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
+    this.#onEventDelete = onEventDelete;
   }
 
   destroy() {
@@ -33,47 +35,45 @@ export default class EventPresenter {
     this.#event = event;
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
-    const { destination, type, offers } = event;
-    const eventDestination = this.#eventsModel.destinations.get(destination);
-    const offer = this.#eventsModel.offers.get(type);
-    const typeOffers = (offer) ? offer.offers : [];
-    //! попробовать переделать на Map
-    const eventOffers = typeOffers.filter((typeOffer) => offers.includes(typeOffer.id));
+    const { destinations } = this.#eventsModel;
+    const { type, offers: eventOfferIds } = event;
+    const destination = findItemByKey(destinations, event.destination);
+    const typeOffers = this.#eventsModel.getTypeOffers(type); //! можно вызвать this.#onGetTypeOffers(type) как будет определено название
 
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
-    //! const prevFormComponent = this.#formComponent; //! скорее всего форму нужно пересоздать после сохранения, но сначала посомтреть может все данные уже будут в форме
-    if (!this.#formComponent) {
-      this.#formComponent = new EventFormView({
-        event,
-        destination: eventDestination,
-        typeOffers,
-        destinations: this.#eventsModel.destinations,
-        onFormSubmit: this.#onFormSubmit,
-        onDelete: null, //! заготовка
-        onFormClose: this.#onFormClose
-      });
-    }
+    const prevFormComponent = this.#formComponent;
+    this.#formComponent = new EventFormView({
+      event: { ...event, destination, typeOffers },
+      destinations,
+      onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
+      onGetDestinationByName: this.#onGetDestinationByName, //? тоже
+      onFormSubmit: this.#onFormSubmit,
+      onDelete: this.#onDelete,
+      onFormClose: this.#onFormClose
+    });
 
     const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
-      destinationName: eventDestination.name,
-      eventOffers,
+      destinationName: destination?.name, //! как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
+      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });
 
-    //! if (!prevItemComponent || !prevFormComponent) {
-    if (!prevItemComponent) {
+    if (!prevItemComponent || !prevFormComponent) {
       render(this.#itemComponent, this.#containerElement);
+      if (!event.id) {
+        this.#openForm();
+      }
     } else {
       replace(this.#itemComponent, prevItemComponent);
-      //! replace(this.#taskEditComponent, prevTaskEditComponent);
+      //replace(this.#formComponent, prevFormComponent);
 
       remove(prevItemComponent);
-      //! remove(prevFormComponent);
+      remove(prevFormComponent); //! удалить если будет ли использоваться
     }
   }
 
@@ -106,10 +106,22 @@ export default class EventPresenter {
     this.#onEventChange({ ...this.#event, isFavorite });
   };
 
-  #onFormSubmit = () => {
-    //! добавить сохранение данных, а потом заменить/закрыть
+  #onGetTypeOffers = (type) => this.#eventsModel.getTypeOffers(type);
+
+  #onGetDestinationByName = (name) => findItemByKey(this.#eventsModel.destinations, name, 'name');
+
+  #onFormSubmit = (event) => {
+    this.#replaceFormToItem();
+    this.#onEventChange({ ...event });
+    this.#onEventFormClose();
+  };
+
+  #onDelete = (eventId) => {
+    //! выше есть такие же две строки...
     this.#replaceFormToItem();
     this.#onEventFormClose();
+
+    this.#onEventDelete(eventId);
   };
 
   #onFormClose = () => {
@@ -122,6 +134,5 @@ export default class EventPresenter {
       this.resetEventForm();
       this.closeEventForm();
     }
-    //! по ТЗ не нужен Enter, но можно добавить, если не будет мешать автотестам
   };
 }

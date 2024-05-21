@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getMockTripInfo } from '../mock/events.js';//! временно
 import { DateFormat, getStringDate } from '../utils/date.js';
 
 const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
@@ -19,25 +18,15 @@ const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 };
 
 export default class InfoView extends AbstractView {
-  #destinations = [];
-  #offers = null; //! возможно нужен для подсчета полной стоимости
-  #events = null;
+  #tripInfo = null;
 
-  constructor(events, destinations, offers) {
+  constructor(tripInfo) {
     super();
     //! временно
-    this.#destinations = destinations;
-    this.#offers = offers;
-    this.#events = events;
+    this.#tripInfo = tripInfo;
   }
 
   get template() {
     return createInfoTemplate(this.#tripInfo);
-  }
-
-  get #tripInfo() {
-    //! почитать в ТЗ, что показывать когда событий меньше трех и проверить это!
-    //! временный код для генерации заголовка
-    return getMockTripInfo(this.#destinations);
   }
 }

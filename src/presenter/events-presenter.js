@@ -1,21 +1,29 @@
-import { render } from '../framework/render.js';
+import { remove, render } from '../framework/render.js';
+import { findItemIndexByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
+import MessageView from '../view/message-view.js';
+import { DEFAULT_NEW_EVENT, MessageType } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
   #eventsModel = null;
 
-  #events = null;
+  #events = [];
+  #isOpenNewEvent = false;
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
 
+  #emptyEventsMessageComponent = new MessageView(MessageType.NEW_EVENT);
   #eventsListComponent = new EventsListView();
 
-  constructor({ containerElement, eventsModel }) {
+  #onAddNewEventClose = null;
+
+  constructor({ containerElement, eventsModel, onAddNewEventClose }) {
     this.#containerElement = containerElement;
     this.#eventsModel = eventsModel;
+    this.#onAddNewEventClose = onAddNewEventClose;
   }
 
   init(events) {
@@ -25,15 +33,33 @@ export default class EventsPresenter {
     this.#renderEventsList();
   }
 
+  AddEvent() {
+    //! посмотреть ТЗ, что делать если уже открыто добавление
+    if (!this.#isOpenNewEvent) {
+      this.#isOpenNewEvent = true;
+
+      if (!this.#events.length) {
+        remove(this.#emptyEventsMessageComponent);
+        render(this.#eventsListComponent, this.#containerElement);
+      }
+
+      this.#renderEventItem(DEFAULT_NEW_EVENT);
+    }
+  }
+
   #clearEventsList() {
-    this.#closeEventForm();
+    //!this.#closeEventForm();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
 
   #renderEventsList() {
-    this.#events.forEach((event) => this.#renderEventItem(event));
-    render(this.#eventsListComponent, this.#containerElement);
+    if (this.#events.length) {
+      this.#events.forEach((event) => this.#renderEventItem(event));
+      render(this.#eventsListComponent, this.#containerElement);
+    } else {
+      render(this.#emptyEventsMessageComponent, this.#containerElement);
+    }
   }
 
   #renderEventItem(event) {
@@ -42,7 +68,8 @@ export default class EventsPresenter {
       eventsModel: this.#eventsModel,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
-      onEventChange: this.#onEventChange
+      onEventChange: this.#onEventChange,
+      onEventDelete: this.#onEventDelete
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
@@ -50,11 +77,14 @@ export default class EventsPresenter {
 
   #closeEventForm = () => {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.resetEventForm();
-      this.#activeEventPresenter.closeEventForm();
+      if (this.#isOpenNewEvent) {
+        this.#activeEventPresenter.destroy();
+      } else {
+        this.#activeEventPresenter.resetEventForm();
+        this.#activeEventPresenter.closeEventForm();
+      }
+      this.#onEventFormClose();
     }
-
-    this.#onEventFormClose();
   };
 
   #onEventFormOpen = (eventPresenter) => {
@@ -64,12 +94,45 @@ export default class EventsPresenter {
 
   #onEventFormClose = () => {
     this.#activeEventPresenter = null;
+    if (this.#isOpenNewEvent) {
+      this.#isOpenNewEvent = false;
+      this.#eventPresenters.get(null).destroy();
+      this.#eventPresenters.delete(null);
+      if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
+        render(this.#emptyEventsMessageComponent, this.#containerElement);
+      }
+      this.#onAddNewEventClose();
+    }
   };
 
   #onEventChange = (updatedEvent) => {
-    const { id } = updatedEvent;
-    this.#events.set(id, updatedEvent);
+    const id = (this.#isOpenNewEvent) ? this.#events.length + 1 : updatedEvent.id;
+
+    if (this.#isOpenNewEvent) {
+      //! скорее всего будет полная отрисовка заново и придеться все удалить
+      this.#isOpenNewEvent = false;
+      const eventPresenter = this.#eventPresenters.get(null);
+      this.#eventPresenters.delete(null);
+      updatedEvent.id = id;
+      //! если не было событий, то нужно отрисовать шатку сортировки, но она в другом презенторе и скорее всего будет полная отрисовка
+      this.#events.push(updatedEvent);
+      this.#eventPresenters.set(id, eventPresenter);
+      this.#onAddNewEventClose();
+    } else {
+      this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
+    }
+
     this.#eventPresenters.get(id).init(updatedEvent);
-    //! тут нужнозвать пересчет Info и при добавлении точки
+    //! тут нужно вызать пересчет Info через основного презентора
+  };
+
+  #onEventDelete = (eventId) => {
+    const index = findItemIndexByKey(this.#events, eventId);
+    this.#events.splice(index, 1);
+    this.#eventPresenters.get(eventId).destroy();
+    if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
+      render(this.#emptyEventsMessageComponent, this.#containerElement);
+    }
+    //! тут нужно вызать пересчет Info через основного презентора
   };
 }

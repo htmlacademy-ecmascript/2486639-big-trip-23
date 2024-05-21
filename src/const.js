@@ -1,5 +1,17 @@
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
+//! посмотреть по ТЗ какие требования к новому событию
+const DEFAULT_NEW_EVENT = {
+  id: null,
+  type: EVENT_TYPES[5],
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  isFavorite: false,
+  offers: [],
+  destanation: null
+};
+
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
@@ -29,6 +41,7 @@ const MessageType = {
 
 export {
   EVENT_TYPES,
+  DEFAULT_NEW_EVENT,
   FilterType,
   DEFAULT_FILTER_TYPE,
   DEFAULT_DISABLE_FILTER_TYPE,
