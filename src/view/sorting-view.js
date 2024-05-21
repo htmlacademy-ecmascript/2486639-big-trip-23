@@ -8,7 +8,7 @@ const createSortingItemTemplate = (sortingType, _, activeSortingType, disableSor
 
   return `<div class="trip-sort__item  trip-sort__item--${sortingType}">
   <input id="sort-${sortingType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortingType}" ${checked} ${disabled} data-sorting-type="${sortingType}">
-  <label class="trip-sort__btn" for="sort-${sortingType}">${sortingType}</label>
+  <label class="trip-sort__btn" for="sort-${sortingType}">${sortingType}${(sortingType === SortingType.OFFER) ? 's' : ''/*id, value = offer, label = Offers*/}</label>
 </div>`;
 };
 
