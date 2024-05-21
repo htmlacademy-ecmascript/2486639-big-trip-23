@@ -240,7 +240,7 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onEventPriceInputElementInput = (evt) => {
-    const basePrice = evt.target.value;
+    const basePrice = parseInt(evt.target.value, 10);
 
     this._setState({ basePrice });
   };
