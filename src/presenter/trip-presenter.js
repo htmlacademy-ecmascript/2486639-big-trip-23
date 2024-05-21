@@ -3,8 +3,7 @@ import InfoPresenter from './info-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import FiltersView from '../view/filters-view.js';
 import SortingView from '../view/sorting-view.js';
-import MessageView from '../view/message-view.js';
-import { DEFAULT_SORTING_TYPE, MessageType } from '../const.js';
+import { DEFAULT_SORTING_TYPE } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 
 export default class TripPresenter {
@@ -16,6 +15,7 @@ export default class TripPresenter {
 
   #headerTripFiltersElement = null;
   #tripEventsElement = null;
+  #AddEventButtonElement = null;
 
   #filtersComponent = null;
   #sortingComponent = null;
@@ -35,12 +35,17 @@ export default class TripPresenter {
     this.#tripEventsElement = containerElement.querySelector('.trip-events');
 
     this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
-    this.#eventsPresenter = new EventsPresenter({ containerElement: this.#tripEventsElement, eventsModel });
+    this.#eventsPresenter = new EventsPresenter({
+      containerElement: this.#tripEventsElement,
+      eventsModel,
+      onAddNewEventClose: this.#onAddNewEventClose
+    });
 
     this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
 
-    headerContainerElement.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#onEventAddButtonElementClick);
+    this.#AddEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
+    this.#AddEventButtonElement.addEventListener('click', this.#onEventAddButtonElementClick);
   }
 
   init() {
@@ -66,23 +71,26 @@ export default class TripPresenter {
 
   #renderEvents() {
     //! нужно будет вызывать и при изменении фильтра, добавлении нового события
-    //! и сортировать и фильтровать новое событие
+    //! и сортировать и фильтровать дабавленное новое событие
     if (this.#events.length) {
       render(this.#sortingComponent, this.#tripEventsElement);
 
       this.#events.filter(() => true); //! временно, как будет готова фильтрация, то отфильтровать this.#events.filter(filterEvents(this.#currentFilterType))
       this.#events.sort(sortEvents[this.#currentSortingType]);
-
-      this.#eventsPresenter.init(this.#events);
-    } else {
-      render(new MessageView(MessageType.NEW_EVENT), this.#tripEventsElement);
     }
+
+    this.#eventsPresenter.init(this.#events);
   }
+
+  #onAddNewEventClose = () => {
+    this.#AddEventButtonElement.disabled = false;
+  };
 
   #onEventAddButtonElementClick = (evt) => {
     evt.preventDefault();
+    this.#AddEventButtonElement.disabled = true;
+    //! посмотреть в ТЗ, если собитий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
     this.#eventsPresenter.AddEvent();
-    //! если нет событий, то вместо списка сообщение и нужно вызвать #renderEvents() с новым элементом и дать презентору понять, что там новый элемент
   };
 
   #onSortingChange = (sortingType) => {

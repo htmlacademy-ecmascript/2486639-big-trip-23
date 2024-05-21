@@ -59,9 +59,8 @@ const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) =>
   ${(destination) ? createSectionDestinationTemplate(destination) : ''}
 </section>` : '';
 
-const createEventFormTemplate = (event, destinations) => {
+const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
   const {
-    /*id,*/ //! пока не используется, при добавлении нет=null?, при редактировании подставить
     type,
     destination,
     typeOffers,
@@ -70,8 +69,7 @@ const createEventFormTemplate = (event, destinations) => {
     dateTo,
     basePrice } = event;
   const destinationName = (destination) ? destination.name : '';
-  const isEditing = true; //! временно - при добавление, нет кнопки ^, при редактировании она есть и кнопки разные, но еще по ТЗ будет меняться текст при работе с сервером
-  const resetButtonCaption = (isEditing) ? 'Delete' : 'Cancel';
+  const resetButtonCaption = (isAddingNewEvent) ? 'Cancel' : 'Delete';
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -111,7 +109,7 @@ const createEventFormTemplate = (event, destinations) => {
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
-      ${(isEditing) ? '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>' : ''}
+      ${(isAddingNewEvent) ? '' : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
     </header>
     ${createSectionDetailsTemplate(typeOffers, eventOfferIds, destination)}
   </form>
@@ -120,6 +118,7 @@ const createEventFormTemplate = (event, destinations) => {
 
 export default class EventFormView extends AbstractStatefulView {
   #savedEvent = null;
+  #isAddingNewEvent = false;
   #destinations = null;
 
   #onGetTypeOffers = null;
@@ -131,6 +130,8 @@ export default class EventFormView extends AbstractStatefulView {
   constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
     super();
     this.#savedEvent = event;
+    this.#isAddingNewEvent = event.id === null;
+
     this._setState({ ...event }); //! пока не стал делать static parseEventToState(event)
 
     this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
@@ -145,7 +146,7 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventFormTemplate(this._state, this.#destinations);
+    return createEventFormTemplate(this._state, this.#destinations, this.#isAddingNewEvent);
   }
 
   _restoreHandlers() {
@@ -158,9 +159,10 @@ export default class EventFormView extends AbstractStatefulView {
     const eventFormElement = this.element.querySelector('.event--edit');
     eventFormElement.addEventListener('submit', this.#onEventFormElementSubmit);
     eventFormElement.addEventListener('reset', this.#onEventFormElementReset);
-    //! или reset, но потом будет ясно...
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onEventResetButtonElementClick);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
+    if (!this.#isAddingNewEvent) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
+    }
   }
 
   resetForm() {
@@ -221,7 +223,12 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventResetButtonElementClick = (evt) => {
     evt.preventDefault();
-    this.#onDelete(this._state.id);
+    if (this.#isAddingNewEvent) {
+      this.resetForm();
+      this.#onFormClose();
+    } else {
+      this.#onDelete(this._state.id);
+    }
   };
 
   #onEventRollupButtonElementClick = (evt) => {

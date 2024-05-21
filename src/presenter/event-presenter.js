@@ -1,4 +1,4 @@
-import { render, replace, remove, RenderPosition } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -43,18 +43,16 @@ export default class EventPresenter {
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
-    //! const prevFormComponent = this.#formComponent; //! скорее всего форму нужно пересоздать после сохранения, но сначала посомтреть может все данные уже будут в форме
-    if (!this.#formComponent) {
-      this.#formComponent = new EventFormView({
-        event: { ...event, destination, typeOffers },
-        destinations,
-        onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
-        onGetDestinationByName: this.#onGetDestinationByName, //? тоже
-        onFormSubmit: this.#onFormSubmit,
-        onDelete: this.#onDelete,
-        onFormClose: this.#onFormClose
-      });
-    }
+    const prevFormComponent = this.#formComponent;
+    this.#formComponent = new EventFormView({
+      event: { ...event, destination, typeOffers },
+      destinations,
+      onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
+      onGetDestinationByName: this.#onGetDestinationByName, //? тоже
+      onFormSubmit: this.#onFormSubmit,
+      onDelete: this.#onDelete,
+      onFormClose: this.#onFormClose
+    });
 
     const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
@@ -65,19 +63,17 @@ export default class EventPresenter {
       onEditClick: this.#onEditClick
     });
 
-    if (event.id) {
-      //! if (!prevItemComponent || !prevFormComponent) { //! удалить если будет ли использоваться
-      if (!prevItemComponent) {
-        render(this.#itemComponent, this.#containerElement);
-      } else {
-        replace(this.#itemComponent, prevItemComponent);
-        //! replace(this.#taskEditComponent, prevTaskEditComponent); //! удалить если будет ли использоваться
-
-        remove(prevItemComponent);
-        //! remove(prevFormComponent); //! удалить если будет ли использоваться
+    if (!prevItemComponent || !prevFormComponent) {
+      render(this.#itemComponent, this.#containerElement);
+      if (!event.id) {
+        this.#openForm();
       }
     } else {
-      render(this.#formComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
+      replace(this.#itemComponent, prevItemComponent);
+      //replace(this.#formComponent, prevFormComponent);
+
+      remove(prevItemComponent);
+      remove(prevFormComponent); //! удалить если будет ли использоваться
     }
   }
 
@@ -116,9 +112,8 @@ export default class EventPresenter {
 
   #onFormSubmit = (event) => {
     this.#replaceFormToItem();
-    this.#onEventFormClose();
-
     this.#onEventChange({ ...event });
+    this.#onEventFormClose();
   };
 
   #onDelete = (eventId) => {
