@@ -39,6 +39,23 @@ const MessageType = {
   FAILEAD: 'Failed to load latest route information'
 };
 
+const DateFormat = {
+  SHORT_DATE_TIME: 'DD/MM/YY HH:mm',
+  SHORT_DATE_TIME_FLATPICKR: 'd/m/y H:i',
+  DATE: 'YYYY-MM-DD',
+  MONTH_DAY: 'MMM DD',
+  DAY_MONTH: 'DD MMM',
+  DATE_TIME: 'YYYY-MM-DDTHH:mm',
+  TIME: 'HH:mm'
+};
+
+const DEFAULT_FLATPICKR_CONFIG = {
+  enableTime: true,
+  // eslint-disable-next-line camelcase
+  time_24hr: true, // такое название в настройках, а linter ругаеться на camelCase: "error  Identifier 'time_24hr' is not in camel case  camelcase"
+  dateFormat: DateFormat.SHORT_DATE_TIME_FLATPICKR,
+};
+
 export {
   EVENT_TYPES,
   DEFAULT_NEW_EVENT,
@@ -48,5 +65,7 @@ export {
   SortingType,
   DEFAULT_SORTING_TYPE,
   DISABLE_SORTING_TYPES,
-  MessageType
+  MessageType,
+  DateFormat,
+  DEFAULT_FLATPICKR_CONFIG
 };

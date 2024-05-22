@@ -1,7 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { DateFormat, getDurationString, getStringDate } from '../utils/date.js';
+import { getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
+import { DateFormat } from '../const.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
   <span class="event__offer-title">${title}</span>

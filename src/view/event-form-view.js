@@ -1,9 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { getStringDate, DateFormat } from '../utils/date.js';
+import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { deleteItem, isEmptyArray, isInputElement } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { EVENT_TYPES } from '../const.js';
+import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -130,7 +130,8 @@ export default class EventFormView extends AbstractStatefulView {
   #onDelete = null;
   #onFormClose = null;
 
-  #dateFlatpickrs = [];
+  #dateFromFlatpickr = null;
+  #dateToFlatpickr = null;
 
   constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
     super();
@@ -157,7 +158,7 @@ export default class EventFormView extends AbstractStatefulView {
   removeElement() {
     super.removeElement();
 
-    this.#dateFlatpickrs.forEach((dateFlatpickr) => {
+    [this.#dateFromFlatpickr, this.#dateToFlatpickr].forEach((dateFlatpickr) => {
       if (dateFlatpickr) {
         dateFlatpickr.destroy();
         dateFlatpickr = null;
@@ -188,27 +189,23 @@ export default class EventFormView extends AbstractStatefulView {
 
   #setDateFlatpickrs = () => {
     const { dateFrom, dateTo } = this._state;
-    const dateFlatpickrs = [];
 
-    const dateFromElement = this.element.querySelector('#event-start-time-1');
-    const dateToElement = this.element.querySelector('#event-end-time-1');
+    this.#dateFromFlatpickr = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        ...DEFAULT_FLATPICKR_CONFIG,
+        defaultDate: dateFrom,
+        onChange: this.#onDateFromDatepickerElementChange
+      });
 
-    dateFlatpickrs.push({ defaultDate: dateFrom, element: dateFromElement, onChange: this.#onDateFromDatepickerElementChange });
-    dateFlatpickrs.push({ defaultDate: dateTo, element: dateToElement, onChange: this.#onDateToDatepickerElementChange });
-
-    dateFlatpickrs.forEach(({ defaultDate, element, onChange }) => {
-      this.#dateFlatpickrs.push(
-        flatpickr(
-          element,
-          {
-            enableTime: true,
-            'time_24hr': true, //! такое название в настройках, а linter ругаеться на camelCase
-            dateFormat: DateFormat.SHORT_DATE_TIME_FLATPICKR,
-            defaultDate,
-            onChange
-          }
-        ));
-    });
+    this.#dateToFlatpickr = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        ...DEFAULT_FLATPICKR_CONFIG,
+        defaultDate: dateFrom,
+        minDate: dateTo,
+        onChange: this.#onDateToDatepickerElementChange
+      });
   };
 
   #onEventTypeListElementClick = (evt) => {
@@ -232,11 +229,17 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onDateFromDatepickerElementChange = ([dateFrom]) => {
-    this.updateElement({ dateFrom });
+    this.#dateToFlatpickr.config.minDate = dateFrom;
+    // обработка сброса даты во втором flatpickr, если текущая дата меньше новой minDate, то дата сбрасывается
+    //! когда новое событие, то можно оставить как есть...
+    if (!this.#dateToFlatpickr.selectedDates.length) {
+      this.#dateToFlatpickr.setDate(dateFrom);
+    }
+    this._setState({ dateFrom });
   };
 
   #onDateToDatepickerElementChange = ([dateTo]) => {
-    this.updateElement({ dateTo });
+    this._setState({ dateTo });
   };
 
   #onEventPriceInputElementInput = (evt) => {
