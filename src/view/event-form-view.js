@@ -159,10 +159,8 @@ export default class EventFormView extends AbstractStatefulView {
     super.removeElement();
 
     [this.#dateFromFlatpickr, this.#dateToFlatpickr].forEach((dateFlatpickr) => {
-      if (dateFlatpickr) {
-        dateFlatpickr.destroy();
-        dateFlatpickr = null;
-      }
+      dateFlatpickr.destroy();
+      dateFlatpickr = null;
     });
   }
 
