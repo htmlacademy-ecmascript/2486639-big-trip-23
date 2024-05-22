@@ -30,6 +30,14 @@ const SortingType = {
   OFFER: 'offer'
 };
 
+const sortingTypeLabelText = {
+  [SortingType.DAY]: SortingType.DAY,
+  [SortingType.EVENT]: SortingType.EVENT,
+  [SortingType.TIME]: SortingType.TIME,
+  [SortingType.PRICE]: SortingType.PRICE,
+  [SortingType.OFFER]: 'offers'
+};
+
 const DEFAULT_SORTING_TYPE = SortingType.DAY;
 const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
@@ -63,6 +71,7 @@ export {
   DEFAULT_FILTER_TYPE,
   DEFAULT_DISABLE_FILTER_TYPE,
   SortingType,
+  sortingTypeLabelText,
   DEFAULT_SORTING_TYPE,
   DISABLE_SORTING_TYPES,
   MessageType,
