@@ -10,7 +10,7 @@ export default class EventsPresenter {
   #eventsModel = null;
 
   #events = [];
-  #isOpenNewEvent = false;
+  #isOpenNewEvent = false; //! сделать наследование презенторов и формы редактирования
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
@@ -87,6 +87,7 @@ export default class EventsPresenter {
   };
 
   #onEventFormOpen = (eventPresenter) => {
+    //! ошибка при окрытом редактировании и добавлнении нового, проверить и наоборот, и только на редактируемых
     this.#closeEventForm();
     this.#activeEventPresenter = eventPresenter;
   };
@@ -107,12 +108,13 @@ export default class EventsPresenter {
   #onEventChange = (updatedEvent) => {
     const id = (this.#isOpenNewEvent) ? this.#events.length + 1 : updatedEvent.id;
 
+    //! для нового сделать отдельный обработчик onNewEvent
     if (this.#isOpenNewEvent) {
       //! скорее всего будет полная отрисовка заново и придеться все удалить
       //! применить фильтр и сортировку, или сбросить все и применить сортировку по дням
       this.#isOpenNewEvent = false;
-      const eventPresenter = this.#eventPresenters.get(null);
-      this.#eventPresenters.delete(null);
+      const eventPresenter = this.#eventPresenters.get(DEFAULT_NEW_EVENT.id);//! после отдельно onNewEvent определение id переделать!
+      this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
       updatedEvent.id = id;
       //! если не было событий, то нужно отрисовать шатку сортировки, но она в другом презенторе и скорее всего будет полная отрисовка
       this.#events.push(updatedEvent);

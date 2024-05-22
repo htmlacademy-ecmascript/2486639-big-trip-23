@@ -44,7 +44,7 @@ export default class TripPresenter {
     this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
 
-    this.#AddEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
+    this.#AddEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
     this.#AddEventButtonElement.addEventListener('click', this.#onEventAddButtonElementClick);
   }
 
