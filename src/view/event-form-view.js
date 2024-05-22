@@ -4,6 +4,9 @@ import { createElementsTemplate } from '../utils/dom.js';
 import { deleteItem, isEmptyArray, isInputElement } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES } from '../const.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createTypeItemTemplate = (type, currentType) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${(type === currentType) ? 'checked' : ''}>
@@ -127,6 +130,8 @@ export default class EventFormView extends AbstractStatefulView {
   #onDelete = null;
   #onFormClose = null;
 
+  #dateFlatpickrs = [];
+
   constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
     super();
     this.#savedEvent = event;
@@ -149,9 +154,21 @@ export default class EventFormView extends AbstractStatefulView {
     return createEventFormTemplate(this._state, this.#destinations, this.#isAddingNewEvent);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    this.#dateFlatpickrs.forEach((dateFlatpickr) => {
+      if (dateFlatpickr) {
+        dateFlatpickr.destroy();
+        dateFlatpickr = null;
+      }
+    });
+  }
+
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
+    this.#setDateFlatpickrs();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
     if (this._state.typeOffers.length) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
@@ -168,6 +185,31 @@ export default class EventFormView extends AbstractStatefulView {
   resetForm() {
     this.element.firstElementChild.reset();
   }
+
+  #setDateFlatpickrs = () => {
+    const { dateFrom, dateTo } = this._state;
+    const dateFlatpickrs = [];
+
+    const dateFromElement = this.element.querySelector('#event-start-time-1');
+    const dateToElement = this.element.querySelector('#event-end-time-1');
+
+    dateFlatpickrs.push({ defaultDate: dateFrom, element: dateFromElement, onChange: this.#onDateFromDatepickerElementChange });
+    dateFlatpickrs.push({ defaultDate: dateTo, element: dateToElement, onChange: this.#onDateToDatepickerElementChange });
+
+    dateFlatpickrs.forEach(({ defaultDate, element, onChange }) => {
+      this.#dateFlatpickrs.push(
+        flatpickr(
+          element,
+          {
+            enableTime: true,
+            'time_24hr': true, //! такое название в настройках, а linter ругаеться на camelCase
+            dateFormat: DateFormat.SHORT_DATE_TIME_FLATPICKR,
+            defaultDate,
+            onChange
+          }
+        ));
+    });
+  };
 
   #onEventTypeListElementClick = (evt) => {
     if (isInputElement(evt.target)) {
@@ -189,8 +231,16 @@ export default class EventFormView extends AbstractStatefulView {
     }
   };
 
+  #onDateFromDatepickerElementChange = ([dateFrom]) => {
+    this.updateElement({ dateFrom });
+  };
+
+  #onDateToDatepickerElementChange = ([dateTo]) => {
+    this.updateElement({ dateTo });
+  };
+
   #onEventPriceInputElementInput = (evt) => {
-    const basePrice = evt.target.value;
+    const basePrice = parseInt(evt.target.value, 10);
 
     this._setState({ basePrice });
   };

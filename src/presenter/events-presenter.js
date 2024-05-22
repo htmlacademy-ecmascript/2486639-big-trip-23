@@ -48,7 +48,6 @@ export default class EventsPresenter {
   }
 
   #clearEventsList() {
-    //!this.#closeEventForm();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
@@ -110,6 +109,7 @@ export default class EventsPresenter {
 
     if (this.#isOpenNewEvent) {
       //! скорее всего будет полная отрисовка заново и придеться все удалить
+      //! применить фильтр и сортировку, или сбросить все и применить сортировку по дням
       this.#isOpenNewEvent = false;
       const eventPresenter = this.#eventPresenters.get(null);
       this.#eventPresenters.delete(null);

@@ -1,4 +1,4 @@
-import { render, replace, remove } from '../framework/render.js';
+import { render, replace, remove, RenderPosition } from '../framework/render.js';
 import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
@@ -39,7 +39,6 @@ export default class EventPresenter {
     const { type, offers: eventOfferIds } = event;
     const destination = findItemByKey(destinations, event.destination);
     const typeOffers = this.#eventsModel.getTypeOffers(type); //! можно вызвать this.#onGetTypeOffers(type) как будет определено название
-
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
@@ -64,13 +63,14 @@ export default class EventPresenter {
     });
 
     if (!prevItemComponent || !prevFormComponent) {
-      render(this.#itemComponent, this.#containerElement);
-      if (!event.id) {
+      const isAddingNewEvent = !event.id;
+      const place = (isAddingNewEvent) ? RenderPosition.AFTERBEGIN : undefined;
+      render(this.#itemComponent, this.#containerElement, place);
+      if (isAddingNewEvent) {
         this.#openForm();
       }
     } else {
       replace(this.#itemComponent, prevItemComponent);
-      //replace(this.#formComponent, prevFormComponent);
 
       remove(prevItemComponent);
       remove(prevFormComponent); //! удалить если будет ли использоваться

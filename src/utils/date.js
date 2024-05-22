@@ -3,6 +3,7 @@ import { getTwoDigitString } from '../utils/string.js';
 
 const DateFormat = {
   SHORT_DATE_TIME: 'DD/MM/YY HH:mm',
+  SHORT_DATE_TIME_FLATPICKR: 'd/m/y H:i',
   DATE: 'YYYY-MM-DD',
   MONTH_DAY: 'MMM DD',
   DAY_MONTH: 'DD MMM',

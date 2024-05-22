@@ -27,11 +27,11 @@ const SortingType = {
   EVENT: 'event',
   TIME: 'time',
   PRICE: 'price',
-  OFFERS: 'offers'
+  OFFER: 'offer'
 };
 
 const DEFAULT_SORTING_TYPE = SortingType.DAY;
-const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFERS];
+const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
 const MessageType = {
   NEW_EVENT: 'Click New Event to create your first point',
