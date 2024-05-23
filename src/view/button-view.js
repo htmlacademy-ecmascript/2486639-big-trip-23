@@ -1,15 +1,12 @@
-//? а можно измользовать view без отрисовки?
 export default class ButtonView {
   #buttonElement = null;
   #onClick = null;
 
-  constructor({ containerElement, selector, onClick }) {
-    //! найти свою кнопку
-    this.#buttonElement = containerElement.querySelector('.trip-main__event-add-btn'); //! selector
+  constructor(buttonElement, onClick) {
+    this.#buttonElement = buttonElement;
     this.#onClick = onClick;
 
-    //! повешать обработчики
-    this.#buttonElement.addEventListener('click', this.#onEventAddButtonElementClick);
+    this.#buttonElement.addEventListener('click', this.#onButtonElementClick);
   }
 
   enable() {
@@ -20,7 +17,7 @@ export default class ButtonView {
     this.#buttonElement.disabled = true;
   }
 
-  #onEventAddButtonElementClick = (evt) => {
+  #onButtonElementClick = (evt) => {
     evt.preventDefault();
     this.#disable();
 

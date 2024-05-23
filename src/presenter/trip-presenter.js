@@ -3,6 +3,7 @@ import InfoPresenter from './info-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import FiltersView from '../view/filters-view.js';
 import SortingView from '../view/sorting-view.js';
+import ButtonView from '../view/button-view.js';
 import { DEFAULT_SORTING_TYPE } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 
@@ -15,10 +16,10 @@ export default class TripPresenter {
 
   #headerTripFiltersElement = null;
   #tripEventsElement = null;
-  #addEventButtonElement = null;
 
   #filtersComponent = null;
   #sortingComponent = null;
+  #addEventButtonComponent = null;
 
   #events = [];
 
@@ -33,6 +34,7 @@ export default class TripPresenter {
     const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
     this.#headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
     this.#tripEventsElement = containerElement.querySelector('.trip-events');
+    const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
 
     this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
     this.#eventsPresenter = new EventsPresenter({
@@ -43,9 +45,7 @@ export default class TripPresenter {
 
     this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
-
-    this.#addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
-    this.#addEventButtonElement.addEventListener('click', this.#onAddEventButtonElementClick);
+    this.#addEventButtonComponent = new ButtonView(addEventButtonElement, this.#onAddEventClick);
   }
 
   init() {
@@ -83,12 +83,10 @@ export default class TripPresenter {
   }
 
   #onAddNewEventClose = () => {
-    this.#addEventButtonElement.disabled = false;
+    this.#addEventButtonComponent.enable();
   };
 
-  #onAddEventButtonElementClick = (evt) => {
-    evt.preventDefault();
-    this.#addEventButtonElement.disabled = true;
+  #onAddEventClick = () => {
     //! посмотреть в ТЗ, если собитий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
     this.#eventsPresenter.addEvent();
   };
