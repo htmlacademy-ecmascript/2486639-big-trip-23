@@ -207,26 +207,28 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onEventTypeListElementClick = (evt) => {
-    if (isInputElement(evt.target)) {
-      evt.preventDefault();
-      const type = evt.target.value;
-      const typeOffers = findTypeOffers(this.#offers, evt.target.value);
-      const offers = [];
-
-      this.updateElement({ type, typeOffers, offers });
+    if (!isInputElement(evt.target)) {
+      return;
     }
+
+    evt.preventDefault();
+    const type = evt.target.value;
+    const typeOffers = findTypeOffers(this.#offers, evt.target.value);
+    const offers = [];
+
+    this.updateElement({ type, typeOffers, offers });
   };
 
   #onEventDestanationInputElementChange = (evt) => {
-    if (isInputElement(evt.target)) {
-      evt.preventDefault();
-      const destinationInfo = findDestinationByName(this.#destinations, evt.target.value);
-      console.log(destinationInfo);
-      const destination = destinationInfo?.id;
-      console.log(destination);
-
-      this.updateElement({ destination, destinationInfo });
+    if (!isInputElement(evt.target)) {
+      return;
     }
+
+    evt.preventDefault();
+    const destinationInfo = findDestinationByName(this.#destinations, evt.target.value);
+    const destination = destinationInfo?.id;
+
+    this.updateElement({ destination, destinationInfo });
   };
 
   #onDateFromDatepickerElementChange = ([dateFrom]) => {
@@ -250,18 +252,20 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onEventOffersDivElementChange = (evt) => {
-    if (isInputElement(evt.target)) {
-      const { checked, dataset: { offerId } } = evt.target;
-      const { offers } = this._state;
-
-      if (checked) {
-        offers.push(offerId);
-      } else {
-        deleteItem(offers, offerId);
-      }
-
-      this._setState({ offers });
+    if (!isInputElement(evt.target)) {
+      return;
     }
+
+    const { checked, dataset: { offerId } } = evt.target;
+    const { offers } = this._state;
+
+    if (checked) {
+      offers.push(offerId);
+    } else {
+      deleteItem(offers, offerId);
+    }
+
+    this._setState({ offers });
   };
 
   #onEventFormElementSubmit = (evt) => {
