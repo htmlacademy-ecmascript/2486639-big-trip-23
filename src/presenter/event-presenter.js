@@ -2,6 +2,7 @@ import { render, replace, remove, RenderPosition } from '../framework/render.js'
 import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
+import { findTypeOffers } from '../utils/event.js';
 
 export default class EventPresenter {
   #containerElement = null;
@@ -35,19 +36,20 @@ export default class EventPresenter {
     this.#event = event;
 
     // Подготовим недостющие данные для отображения события в списке и при редактировании
-    const { destinations } = this.#eventsModel;
+    const { destinations, offers } = this.#eventsModel;
     const { type, offers: eventOfferIds } = event;
     const destination = findItemByKey(destinations, event.destination);
-    const typeOffers = this.#eventsModel.getTypeOffers(type); //! можно вызвать this.#onGetTypeOffers(type) как будет определено название
+    const typeOffers = findTypeOffers(offers, type);
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
     const prevFormComponent = this.#formComponent;
     this.#formComponent = new EventFormView({
-      event: { ...event, destination, typeOffers },
+      event,
+      destination,
+      typeOffers,
       destinations,
-      onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
-      onGetDestinationByName: this.#onGetDestinationByName, //? тоже
+      offers,
       onFormSubmit: this.#onFormSubmit,
       onDelete: this.#onDelete,
       onFormClose: this.#onFormClose
@@ -105,10 +107,6 @@ export default class EventPresenter {
     const isFavorite = !this.#event.isFavorite;
     this.#onEventChange({ ...this.#event, isFavorite });
   };
-
-  #onGetTypeOffers = (type) => this.#eventsModel.getTypeOffers(type);
-
-  #onGetDestinationByName = (name) => findItemByKey(this.#eventsModel.destinations, name, 'name');
 
   #onFormSubmit = (event) => {
     this.#replaceFormToItem();

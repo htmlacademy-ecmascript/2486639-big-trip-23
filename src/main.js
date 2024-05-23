@@ -11,7 +11,6 @@ tripPresenter.init();
  *   1. Огромный файл src\view\event-form-view.js, может из него убрать функцию createEventFormTemplate(), а какое название для файла src\view\event-form-view-template.js? критерии?
  *        подумать, что еще можно убрать и где еще есть огромные файлы...
  *        src\presenter\event-presenter.js попробовать сделать наследование для добавления события
- *   2. Найминг src\presenter\event-presenter.js onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
  *
  * Заметки:
  *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презенторов

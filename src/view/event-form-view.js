@@ -1,8 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { deleteItem, isEmptyArray, isInputElement } from '../utils/utils.js';
+import { isEmptyArray, isInputElement, deleteItem } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
+import { findTypeOffers, findDestinationByName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import flatpickr from 'flatpickr';
 
@@ -122,10 +123,9 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
 export default class EventFormView extends AbstractStatefulView {
   #savedEvent = null;
   #isAddingNewEvent = false;
-  #destinations = null;
+  #destinations = [];
+  #offers = [];
 
-  #onGetTypeOffers = null;
-  #onGetDestinationByName = null;
   #onFormSubmit = null;
   #onDelete = null;
   #onFormClose = null;
@@ -133,17 +133,16 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  constructor({ event, destinations, onGetTypeOffers, onGetDestinationByName, onFormSubmit, onDelete, onFormClose }) {
+  constructor({ event, destination, typeOffers, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
     super();
-    this.#savedEvent = event;
+    this.#savedEvent = { ...event, destination, typeOffers };
     this.#isAddingNewEvent = event.id === null;
 
-    this._setState({ ...event }); //! пока не стал делать static parseEventToState(event)
+    this._setState(this.#savedEvent); //! пока не стал делать static parseEventToState(event)
 
-    this.#destinations = destinations; //! при измении пунтка назначения, можно заменить информацию, если по ТЗ не нужно обновлять destinations с сервера
+    this.#destinations = destinations;
+    this.#offers = offers;
 
-    this.#onGetTypeOffers = onGetTypeOffers;
-    this.#onGetDestinationByName = onGetDestinationByName;
     this.#onFormSubmit = onFormSubmit;
     this.#onDelete = onDelete;
     this.#onFormClose = onFormClose;
@@ -210,7 +209,7 @@ export default class EventFormView extends AbstractStatefulView {
     if (isInputElement(evt.target)) {
       evt.preventDefault();
       const type = evt.target.value;
-      const typeOffers = this.#onGetTypeOffers(evt.target.value);
+      const typeOffers = findTypeOffers(this.#offers, evt.target.value);
       const offers = [];
 
       this.updateElement({ type, typeOffers, offers });
@@ -220,7 +219,7 @@ export default class EventFormView extends AbstractStatefulView {
   #onEventDestanationInputElementChange = (evt) => {
     if (isInputElement(evt.target)) {
       evt.preventDefault();
-      const destination = this.#onGetDestinationByName(evt.target.value);
+      const destination = findDestinationByName(this.#destinations, evt.target.value);
 
       this.updateElement({ destination });
     }

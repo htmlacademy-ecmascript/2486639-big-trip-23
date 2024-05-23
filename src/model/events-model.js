@@ -29,9 +29,4 @@ export default class EventsModel {
   get events() {
     return this.#events;
   }
-
-  getTypeOffers(type) {
-    const offer = this.#offers.get(type);
-    return (offer) ? offer.offers : [];
-  }
 }

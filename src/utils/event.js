@@ -1,3 +1,10 @@
-//! попробовать выделить общие функции работы с событиями, вычисление свойств, офферов
+import { findItemByKey } from './utils.js';
 
-//export {};
+const findTypeOffers = (offers, type) => {
+  const offer = offers.get(type);
+  return (offer) ? offer.offers : [];
+};
+
+const findDestinationByName = (destinations, destinationName) => findItemByKey(destinations, destinationName, 'name');
+
+export { findTypeOffers, findDestinationByName };
