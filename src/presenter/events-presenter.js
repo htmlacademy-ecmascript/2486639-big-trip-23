@@ -34,17 +34,14 @@ export default class EventsPresenter {
   }
 
   addEvent() {
-    //! посмотреть ТЗ, что делать если уже открыто добавление
-    if (!this.#isOpenNewEvent) {
-      this.#isOpenNewEvent = true;
+    this.#isOpenNewEvent = true;
 
-      if (!this.#events.length) {
-        remove(this.#emptyEventsMessageComponent);
-        render(this.#eventsListComponent, this.#containerElement);
-      }
-
-      this.#renderEventItem(DEFAULT_NEW_EVENT);
+    if (!this.#events.length) {
+      remove(this.#emptyEventsMessageComponent);
+      render(this.#eventsListComponent, this.#containerElement);
     }
+
+    this.#renderEventItem(DEFAULT_NEW_EVENT);
   }
 
   #clearEventsList() {
@@ -76,6 +73,8 @@ export default class EventsPresenter {
 
   #closeEventForm = () => {
     if (this.#activeEventPresenter) {
+      //! как то спраятать все #activeEventPresenter.destroy(); #activeEventPresenter.resetEventForm(); #activeEventPresenter.closeEventForm();
+      //! и больше логики передать EventPresenter
       if (this.#isOpenNewEvent) {
         this.#activeEventPresenter.destroy();
       } else {
