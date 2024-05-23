@@ -133,11 +133,11 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  //! подумать - начальные данные destinationInfo, typeOffers, можно определить по event.destination и event.type при отрисовкке, просто в презенторе эта информация уже найденна и подготовлена для ItemView
+  //! подумать про начальные данные destinationInfo, typeOffers, можно определить по event.destination и event.type при отрисовкке, просто в презенторе эта информация уже найденна и подготовлена для ItemView
   constructor({ event, destinationInfo, typeOffers, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
     super();
 
-    this._setState(EventFormView.parseEventToState(event, destinationInfo, typeOffers));
+    this._setState(EventFormView.parseEventToState(event, destinationInfo, typeOffers)); //! тут можно передать длополнительную информацию или сначала её добавить в событие
     this.#savedState = this._state;
     this.#isAddingNewEvent = event.id === null; //! наследорвать для AddNew...
 
@@ -270,7 +270,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
-    //! тут добавить проверку, что пункт назначения не выбран
+    //! тут добавить проверку, что пункт назначения не выбран, потрясти формой
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 

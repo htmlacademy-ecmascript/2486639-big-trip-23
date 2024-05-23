@@ -112,11 +112,12 @@ export default class EventsPresenter {
     if (this.#isOpenNewEvent) {
       //! скорее всего будет полная отрисовка заново и придеться все удалить
       //! применить фильтр и сортировку, или сбросить все и применить сортировку по дням
+      //! возможно перенести логику сортировки и фильтрации сюда...
       this.#isOpenNewEvent = false;
       const eventPresenter = this.#eventPresenters.get(DEFAULT_NEW_EVENT.id);//! после отдельно onNewEvent определение id переделать!
       this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
       updatedEvent.id = id;
-      //! если не было событий, то нужно отрисовать шатку сортировки, но она в другом презенторе и скорее всего будет полная отрисовка
+      //! если не было событий, то нужно отрисовать сортировку, но она в другом презенторе и скорее всего будет полная отрисовка
       this.#events.push(updatedEvent);
       //! в модели не забыть добавить
       this.#eventPresenters.set(id, eventPresenter);

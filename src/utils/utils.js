@@ -25,4 +25,4 @@ const deleteItem = (items, item) => {
 };
 */
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey/*, deleteItem*/ };
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey/*//!, deleteItem*/ };

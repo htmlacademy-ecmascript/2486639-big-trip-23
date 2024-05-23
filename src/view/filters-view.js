@@ -32,7 +32,7 @@ export default class FiltersView extends AbstractView {
   }
 
   #getDisabledFilters() {
-    //! проверить что now, не старое, наверное необходимо перерысовывать при определенных условиях и now передавать с основного перезентора
+    //! проверить что в нужно месте вызываеться и нужно время
     const now = Date.now();
     const filters = Object.entries(FilterType).map(([, filter]) => filter); //! можно собрать и один раз в конструкторе, сделать в util
 

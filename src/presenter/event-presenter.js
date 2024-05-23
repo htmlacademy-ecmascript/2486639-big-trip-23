@@ -39,7 +39,7 @@ export default class EventPresenter {
     const { type, offers: eventOfferIds } = event;
     const destinationInfo = findItemByKey(destinations, event.destination);
     const typeOffers = offers.get(type);
-    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
+    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форма в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
     const prevFormComponent = this.#formComponent;
@@ -57,7 +57,7 @@ export default class EventPresenter {
     const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
-      destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
+      destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_NEW_EVENT.destination === null
       eventOffers: typeOffers.filter((typeOffer) => eventOfferIds?.has(typeOffer.id)), //! ?. из-за нового события
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
@@ -74,7 +74,7 @@ export default class EventPresenter {
       replace(this.#itemComponent, prevItemComponent);
 
       remove(prevItemComponent);
-      remove(prevFormComponent); //! удалить если будет ли использоваться
+      remove(prevFormComponent);
     }
   }
 

@@ -18,7 +18,7 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
 const createEventItemTemplate = (event, destinationName, eventOffers) => {
   const
     { type,
-      basePrice, //! почитать в ТЗ как считать сумму!
+      basePrice,
       dateFrom,
       dateTo,
       isFavorite } = event;
