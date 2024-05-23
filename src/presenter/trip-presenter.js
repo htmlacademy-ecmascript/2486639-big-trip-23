@@ -15,7 +15,7 @@ export default class TripPresenter {
 
   #headerTripFiltersElement = null;
   #tripEventsElement = null;
-  #AddEventButtonElement = null;
+  #addEventButtonElement = null;
 
   #filtersComponent = null;
   #sortingComponent = null;
@@ -44,8 +44,8 @@ export default class TripPresenter {
     this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
 
-    this.#AddEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
-    this.#AddEventButtonElement.addEventListener('click', this.#onEventAddButtonElementClick);
+    this.#addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
+    this.#addEventButtonElement.addEventListener('click', this.#onAddEventButtonElementClick);
   }
 
   init() {
@@ -83,14 +83,14 @@ export default class TripPresenter {
   }
 
   #onAddNewEventClose = () => {
-    this.#AddEventButtonElement.disabled = false;
+    this.#addEventButtonElement.disabled = false;
   };
 
-  #onEventAddButtonElementClick = (evt) => {
+  #onAddEventButtonElementClick = (evt) => {
     evt.preventDefault();
-    this.#AddEventButtonElement.disabled = true;
+    this.#addEventButtonElement.disabled = true;
     //! посмотреть в ТЗ, если собитий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
-    this.#eventsPresenter.AddEvent();
+    this.#eventsPresenter.addEvent();
   };
 
   #onSortingChange = (sortingType) => {

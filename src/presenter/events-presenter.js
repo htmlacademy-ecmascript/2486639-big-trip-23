@@ -33,7 +33,7 @@ export default class EventsPresenter {
     this.#renderEventsList();
   }
 
-  AddEvent() {
+  addEvent() {
     //! посмотреть ТЗ, что делать если уже открыто добавление
     if (!this.#isOpenNewEvent) {
       this.#isOpenNewEvent = true;
