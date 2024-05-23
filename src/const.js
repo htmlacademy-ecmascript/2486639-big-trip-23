@@ -59,8 +59,7 @@ const DateFormat = {
 
 const DEFAULT_FLATPICKR_CONFIG = {
   enableTime: true,
-  // eslint-disable-next-line camelcase
-  time_24hr: true, // такое название в настройках, а linter ругаеться на camelCase: "error  Identifier 'time_24hr' is not in camel case  camelcase"
+  'time_24hr': true, // в настройках  flatpickr назваеться time_24hr, а linter ругаеться на camelCase: "error  Identifier 'time_24hr' is not in camel case  camelcase"
   dateFormat: DateFormat.SHORT_DATE_TIME_FLATPICKR,
 };
 

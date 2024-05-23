@@ -27,8 +27,7 @@ export default class EventsModel {
   }
 
   get events() {
-    //! временно
-    return [...this.#events];
+    return this.#events;
   }
 
   getTypeOffers(type) {

@@ -49,7 +49,7 @@ export default class TripPresenter {
   }
 
   init() {
-    this.#events = this.#eventsModel.events;
+    this.#events = [...this.#eventsModel.events];
     this.#render();
   }
 
