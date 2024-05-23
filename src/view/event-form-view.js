@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray, isInputElement, deleteItem } from '../utils/utils.js';
+import { isEmptyArray, isInputElement } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { findTypeOffers, findDestinationByName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
@@ -28,7 +28,7 @@ const createDestinationDatalistTemplate = (destinations) => `<datalist id="desti
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.includes(id)) ? 'checked' : ''}>
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.has(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -260,9 +260,9 @@ export default class EventFormView extends AbstractStatefulView {
     const { offers } = this._state;
 
     if (checked) {
-      offers.push(offerId);
+      offers.add(offerId);
     } else {
-      deleteItem(offers, offerId);
+      offers.delete(offerId);
     }
 
     this._setState({ offers });

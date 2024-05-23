@@ -18,8 +18,11 @@ const deleteItemByKey = (items, keyValue, keyName = 'id') => {
   deleteItemByIndex(items, findItemIndexByKey(items, keyValue, keyName));
 };
 
+//! удалить если не пригодится
+/*
 const deleteItem = (items, item) => {
   deleteItemByIndex(items, items.indexOf(item));
 };
+*/
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey, deleteItem };
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey/*, deleteItem*/ };

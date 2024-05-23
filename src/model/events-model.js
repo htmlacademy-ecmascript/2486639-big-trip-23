@@ -15,7 +15,8 @@ export default class EventsModel {
     offers.forEach(({ type, offers: typeOffers }) => {
       this.#offers.set(type, { name, offers: typeOffers });
     });
-    this.#events = events;
+    // в событиях переконвертируем офферы в Set
+    this.#events = events.map((event) => ({ ...event, offers: new Set(event.offers) }));
   }
 
   get destinations() {

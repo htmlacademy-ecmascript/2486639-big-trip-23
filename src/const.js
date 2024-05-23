@@ -20,7 +20,7 @@ const FilterType = {
 };
 
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
-const DEFAULT_DISABLE_FILTER_TYPE = [FilterType.FUTURE, FilterType.PAST];
+const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
 
 const SortingType = {
   DAY: 'day',
@@ -68,7 +68,7 @@ export {
   DEFAULT_NEW_EVENT,
   FilterType,
   DEFAULT_FILTER_TYPE,
-  DEFAULT_DISABLE_FILTER_TYPE,
+  DEFAULT_DISABLE_FILTER_TYPES,
   SortingType,
   sortingTypeLabelText,
   DEFAULT_SORTING_TYPE,

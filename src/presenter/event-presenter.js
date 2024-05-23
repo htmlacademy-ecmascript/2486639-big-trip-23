@@ -59,7 +59,7 @@ export default class EventPresenter {
     this.#itemComponent = new EventItemView({
       event,
       destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
-      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
+      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });

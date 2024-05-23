@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { FilterType, DEFAULT_FILTER_TYPE, DEFAULT_DISABLE_FILTER_TYPE } from '../const.js';
+import { FilterType, DEFAULT_FILTER_TYPE, DEFAULT_DISABLE_FILTER_TYPES } from '../const.js';
 import { existFilteredEvents } from '../utils/filter.js';
 
 const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
@@ -26,7 +26,7 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const disabledFilterTypes = (this.#events.length) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPE;
+    const disabledFilterTypes = (this.#events.length) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPES;
 
     return createFiltersTemplate(DEFAULT_FILTER_TYPE, disabledFilterTypes);
   }
