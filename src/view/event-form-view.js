@@ -3,7 +3,7 @@ import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray, isInputElement } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { findTypeOffers, findDestinationByName } from '../utils/event.js';
+import { findDestinationByName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import flatpickr from 'flatpickr';
 
@@ -28,7 +28,7 @@ const createDestinationDatalistTemplate = (destinations) => `<datalist id="desti
 </datalist>`;
 
 const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.has(id)) ? 'checked' : ''}>
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds?.has(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -124,7 +124,7 @@ export default class EventFormView extends AbstractStatefulView {
   #savedState = null;//! точно нужно?
   #isAddingNewEvent = false;
   #destinations = [];
-  #offers = [];
+  #offers = null;
 
   #onFormSubmit = null;
   #onDelete = null;
@@ -213,8 +213,8 @@ export default class EventFormView extends AbstractStatefulView {
 
     evt.preventDefault();
     const type = evt.target.value;
-    const typeOffers = findTypeOffers(this.#offers, evt.target.value);
-    const offers = [];
+    const typeOffers = this.#offers.get(type);
+    const offers = new Set();
 
     this.updateElement({ type, typeOffers, offers });
   };

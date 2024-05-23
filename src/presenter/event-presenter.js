@@ -2,7 +2,6 @@ import { render, replace, remove, RenderPosition } from '../framework/render.js'
 import { isEscapeKey, findItemByKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
-import { findTypeOffers } from '../utils/event.js';
 
 export default class EventPresenter {
   #containerElement = null;
@@ -39,7 +38,7 @@ export default class EventPresenter {
     const { destinations, offers } = this.#eventsModel;
     const { type, offers: eventOfferIds } = event;
     const destinationInfo = findItemByKey(destinations, event.destination);
-    const typeOffers = findTypeOffers(offers, type);
+    const typeOffers = offers.get(type);
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
@@ -59,7 +58,7 @@ export default class EventPresenter {
     this.#itemComponent = new EventItemView({
       event,
       destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
-      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id)),
+      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds?.has(typeOffer.id)), //! ?. из-за нового события
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });

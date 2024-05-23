@@ -1,6 +1,5 @@
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-//! посмотреть по ТЗ какие требования к новому событию
 const DEFAULT_NEW_EVENT = {
   id: null,
   type: EVENT_TYPES[5],
@@ -8,7 +7,7 @@ const DEFAULT_NEW_EVENT = {
   dateFrom: null,
   dateTo: null,
   isFavorite: false,
-  offers: [],
+  offers: null,
   destanation: null
 };
 

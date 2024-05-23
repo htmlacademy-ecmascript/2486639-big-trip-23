@@ -13,8 +13,10 @@ export default class EventsModel {
     this.#destinations = destinations;
     // перекладываем в Map для удобства поиска по type
     offers.forEach(({ type, offers: typeOffers }) => {
-      this.#offers.set(type, { name, offers: typeOffers });
+      //! подумать может и сам массив (offers: typeOffers) на Map...
+      this.#offers.set(type, typeOffers);
     });
+
     // в событиях переконвертируем офферы в Set
     this.#events = events.map((event) => ({ ...event, offers: new Set(event.offers) }));
   }
