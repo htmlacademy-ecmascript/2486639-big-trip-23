@@ -8,11 +8,18 @@ const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex(
 
 const findItemByKey = (items, keyValue, keyName = 'id') => items[findItemIndexByKey(items, keyValue, keyName)];
 
-const deleteItem = (items, item) => {
-  const index = items.indexOf(item);
-  if (index !== -1) {
+const deleteItemByIndex = (items, index) => {
+  if (index >= 0) {
     items.splice(index, 1);
   }
 };
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItem };
+const deleteItemByKey = (items, keyValue, keyName = 'id') => {
+  deleteItemByIndex(items, findItemIndexByKey(items, keyValue, keyName));
+};
+
+const deleteItem = (items, item) => {
+  deleteItemByIndex(items, items.indexOf(item));
+};
+
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey, deleteItem };

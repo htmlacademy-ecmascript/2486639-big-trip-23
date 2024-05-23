@@ -1,5 +1,5 @@
 import { remove, render } from '../framework/render.js';
-import { findItemIndexByKey } from '../utils/utils.js';
+import { deleteItemByKey, findItemIndexByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
 import MessageView from '../view/message-view.js';
@@ -96,8 +96,8 @@ export default class EventsPresenter {
     this.#activeEventPresenter = null;
     if (this.#isOpenNewEvent) {
       this.#isOpenNewEvent = false;
-      this.#eventPresenters.get(null).destroy();
-      this.#eventPresenters.delete(null);
+      this.#eventPresenters.get(DEFAULT_NEW_EVENT.id).destroy(); //! еще варианты по замене null из DEFAULT_NEW_EVENT.id
+      this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
       if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
         render(this.#emptyEventsMessageComponent, this.#containerElement);
       }
@@ -106,6 +106,7 @@ export default class EventsPresenter {
   };
 
   #onEventChange = (updatedEvent) => {
+    //! временно новый id
     const id = (this.#isOpenNewEvent) ? this.#events.length + 1 : updatedEvent.id;
 
     //! для нового сделать отдельный обработчик onNewEvent
@@ -118,10 +119,12 @@ export default class EventsPresenter {
       updatedEvent.id = id;
       //! если не было событий, то нужно отрисовать шатку сортировки, но она в другом презенторе и скорее всего будет полная отрисовка
       this.#events.push(updatedEvent);
+      //! в модели не забыть добавить
       this.#eventPresenters.set(id, eventPresenter);
       this.#onAddNewEventClose();
     } else {
       this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
+      //! в модели не забыть изменить
     }
 
     this.#eventPresenters.get(id).init(updatedEvent);
@@ -129,8 +132,8 @@ export default class EventsPresenter {
   };
 
   #onEventDelete = (eventId) => {
-    const index = findItemIndexByKey(this.#events, eventId);
-    this.#events.splice(index, 1);
+    deleteItemByKey(this.#events, eventId);
+    //! в модели не забыть удалить
     this.#eventPresenters.get(eventId).destroy();
     if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
       render(this.#emptyEventsMessageComponent, this.#containerElement);

@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray, isInputElement, findItemByKey, deleteItem } from '../utils/utils.js';
+import { isEmptyArray, isInputElement, deleteItem } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { findTypeOffers, findDestinationByName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
