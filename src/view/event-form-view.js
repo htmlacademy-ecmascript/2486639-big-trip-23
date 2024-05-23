@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray, isInputElement, deleteItem } from '../utils/utils.js';
+import { isEmptyArray, isInputElement, findItemByKey, deleteItem } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { findTypeOffers, findDestinationByName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat, DEFAULT_FLATPICKR_CONFIG } from '../const.js';
@@ -66,13 +66,13 @@ const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) =>
 const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
   const {
     type,
-    destination,
+    destinationInfo,
     typeOffers,
     offers: eventOfferIds,
     dateFrom,
     dateTo,
     basePrice } = event;
-  const destinationName = (destination) ? destination.name : '';
+  const destinationName = (destinationInfo) ? destinationInfo.name : '';
   const resetButtonCaption = (isAddingNewEvent) ? 'Cancel' : 'Delete';
 
   return `<li class="trip-events__item">
@@ -115,13 +115,13 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
       <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
       ${(isAddingNewEvent) ? '' : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
     </header>
-    ${createSectionDetailsTemplate(typeOffers, eventOfferIds, destination)}
+    ${createSectionDetailsTemplate(typeOffers, eventOfferIds, destinationInfo)}
   </form>
 <li>`;
 };
 
 export default class EventFormView extends AbstractStatefulView {
-  #savedEvent = null;
+  #savedState = null;//! точно нужно?
   #isAddingNewEvent = false;
   #destinations = [];
   #offers = [];
@@ -133,12 +133,13 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  constructor({ event, destination, typeOffers, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
+  //! подумать - начальные данные destinationInfo, typeOffers, можно определить по event.destination и event.type при отрисовкке, просто в презенторе эта информация уже найденна и подготовлена для ItemView
+  constructor({ event, destinationInfo, typeOffers, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
     super();
-    this.#savedEvent = { ...event, destination, typeOffers };
-    this.#isAddingNewEvent = event.id === null;
 
-    this._setState(this.#savedEvent); //! пока не стал делать static parseEventToState(event)
+    this._setState(EventFormView.parseEventToState(event, destinationInfo, typeOffers));
+    this.#savedState = this._state;
+    this.#isAddingNewEvent = event.id === null; //! наследорвать для AddNew...
 
     this.#destinations = destinations;
     this.#offers = offers;
@@ -219,9 +220,12 @@ export default class EventFormView extends AbstractStatefulView {
   #onEventDestanationInputElementChange = (evt) => {
     if (isInputElement(evt.target)) {
       evt.preventDefault();
-      const destination = findDestinationByName(this.#destinations, evt.target.value);
+      const destinationInfo = findDestinationByName(this.#destinations, evt.target.value);
+      console.log(destinationInfo);
+      const destination = destinationInfo?.id;
+      console.log(destination);
 
-      this.updateElement({ destination });
+      this.updateElement({ destination, destinationInfo });
     }
   };
 
@@ -268,7 +272,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventFormElementReset = (evt) => {
     evt.preventDefault();
-    this.updateElement({ ...this.#savedEvent });
+    this.updateElement({ ...this.#savedState });
   };
 
   #onEventResetButtonElementClick = (evt) => {
@@ -287,9 +291,13 @@ export default class EventFormView extends AbstractStatefulView {
     this.#onFormClose();
   };
 
+  static parseEventToState(event, destinationInfo, typeOffers) {
+    return { ...event, destinationInfo, typeOffers };
+  }
+
   static parseStateToEvent(state) {
     const event = { ...state };
-    event.destination = state.destination.id;
+    delete event.destinationInfo;
     delete event.typeOffers;
 
     return event;

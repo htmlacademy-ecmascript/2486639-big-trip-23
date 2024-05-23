@@ -38,7 +38,7 @@ export default class EventPresenter {
     // Подготовим недостющие данные для отображения события в списке и при редактировании
     const { destinations, offers } = this.#eventsModel;
     const { type, offers: eventOfferIds } = event;
-    const destination = findItemByKey(destinations, event.destination);
+    const destinationInfo = findItemByKey(destinations, event.destination);
     const typeOffers = findTypeOffers(offers, type);
     //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
@@ -46,7 +46,7 @@ export default class EventPresenter {
     const prevFormComponent = this.#formComponent;
     this.#formComponent = new EventFormView({
       event,
-      destination,
+      destinationInfo,
       typeOffers,
       destinations,
       offers,
@@ -58,7 +58,7 @@ export default class EventPresenter {
     const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
-      destinationName: destination?.name, //! как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
+      destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
       eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
