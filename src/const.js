@@ -8,7 +8,9 @@ const DEFAULT_NEW_EVENT = {
   dateTo: null,
   isFavorite: false,
   offers: null,
-  destanation: null
+  destanation: null,
+  destanationInfo: null,
+  typeOffers: []
 };
 
 const FilterType = {

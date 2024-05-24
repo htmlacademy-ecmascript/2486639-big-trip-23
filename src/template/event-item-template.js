@@ -1,7 +1,7 @@
 import { getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { getEventOffers } from '../utils/event.js';
+import { getEventOffers, getDestinationName } from '../utils/event.js';
 import { DateFormat } from '../const.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
@@ -16,7 +16,7 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
 </ul>`;
 
 const createEventItemTemplate = (event) => {
-  const { type, basePrice, dateFrom, dateTo, isFavorite, offers, destinationInfo: { name: destinationName }, typeOffers } = event;
+  const { type, basePrice, dateFrom, dateTo, isFavorite, offers, destinationInfo, typeOffers } = event;
   const eventOffers = getEventOffers(typeOffers, offers);
 
   const eventDateValue = getStringDate(dateFrom, DateFormat.DATE);
@@ -33,7 +33,7 @@ const createEventItemTemplate = (event) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${capitalizeFirstLetter(type)} ${destinationName}</h3>
+    <h3 class="event__title">${capitalizeFirstLetter(type)} ${getDestinationName(destinationInfo)}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${eventDateFromValue}">${eventDateFrom}</time>
