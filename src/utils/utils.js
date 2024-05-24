@@ -6,7 +6,10 @@ const isInputElement = (element) => element.tagName === 'INPUT';
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
 
+//! удалить если не будет использоваться
+/*
 const findItemByKey = (items, keyValue, keyName = 'id') => items[findItemIndexByKey(items, keyValue, keyName)];
+*/
 
 const deleteItemByIndex = (items, index) => {
   if (index >= 0) {
@@ -25,4 +28,4 @@ const deleteItem = (items, item) => {
 };
 */
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItemByKey/*//!, deleteItem*/ };
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey /*//! ,findItemByKey*/, deleteItemByKey/*//! ,deleteItem*/ };

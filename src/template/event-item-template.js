@@ -14,13 +14,8 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
     ${createElementsTemplate(offers, createOfferTemplate)}
 </ul>`;
 
-const createEventItemTemplate = (event, destinationName, eventOffers) => {
-  const
-    { type,
-      basePrice,
-      dateFrom,
-      dateTo,
-      isFavorite } = event;
+const createEventItemTemplate = (event) => {
+  const { type, basePrice, dateFrom, dateTo, isFavorite, destinationInfo: { name: destinationName }, eventOffers } = event;
 
   const eventDateValue = getStringDate(dateFrom, DateFormat.DATE);
   const eventDate = getStringDate(dateFrom, DateFormat.MONTH_DAY);

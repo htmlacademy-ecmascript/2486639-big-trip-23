@@ -1,5 +1,3 @@
-import { findItemByKey } from './utils.js';
+const getEventOffers = (typeOffers, eventOfferIds) => typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id));
 
-const findDestinationByName = (destinations, destinationName) => findItemByKey(destinations, destinationName, 'name');
-
-export { findDestinationByName };
+export { getEventOffers };

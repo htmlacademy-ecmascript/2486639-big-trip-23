@@ -1,5 +1,5 @@
 import { render, replace, remove, RenderPosition } from '../framework/render.js';
-import { isEscapeKey, findItemByKey } from '../utils/utils.js';
+import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 
@@ -33,35 +33,10 @@ export default class EventPresenter {
 
   init(event) {
     this.#event = event;
-
-    // Подготовим недостющие данные для отображения события в списке и при редактировании
-    const { destinations, offers } = this.#eventsModel;
-    const { type, offers: eventOfferIds } = event;
-    const destinationInfo = findItemByKey(destinations, event.destination);
-    const typeOffers = offers.get(type);
-    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форма в режиме добавления,
-    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
-
     const prevFormComponent = this.#formComponent;
-    this.#formComponent = new EventFormView({
-      event,
-      destinationInfo,
-      typeOffers,
-      destinations,
-      offers,
-      onFormSubmit: this.#onFormSubmit,
-      onDelete: this.#onDelete,
-      onFormClose: this.#onFormClose
-    });
-
     const prevItemComponent = this.#itemComponent;
-    this.#itemComponent = new EventItemView({
-      event,
-      destinationName: destinationInfo?.name, //! '?.' как то покрасивее обойти при добавлении DEFAULT_NEW_EVENT.destination === null
-      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds?.has(typeOffer.id)), //! ?. из-за нового события
-      onFavoriteClick: this.#onFavoriteClick,
-      onEditClick: this.#onEditClick
-    });
+
+    this.#makeComponents();
 
     if (!prevItemComponent || !prevFormComponent) {
       const isAddingNewEvent = !event.id;
@@ -76,6 +51,29 @@ export default class EventPresenter {
       remove(prevItemComponent);
       remove(prevFormComponent);
     }
+  }
+
+  #makeComponents() {
+    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форма в режиме добавления,
+    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
+
+    const event = this.#event;
+    const { destinations, offers } = this.#eventsModel;
+
+    this.#formComponent = new EventFormView({
+      event,
+      destinations,
+      offers,
+      onFormSubmit: this.#onFormSubmit,
+      onDelete: this.#onDelete,
+      onFormClose: this.#onFormClose
+    });
+
+    this.#itemComponent = new EventItemView({
+      event,
+      onFavoriteClick: this.#onFavoriteClick,
+      onEditClick: this.#onEditClick
+    });
   }
 
   #openForm() {

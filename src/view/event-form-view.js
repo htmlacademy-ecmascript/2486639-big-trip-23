@@ -1,14 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { isInputElement } from '../utils/utils.js';
-import { findDestinationByName } from '../utils/event.js';
 import { DEFAULT_FLATPICKR_CONFIG, DEFAULT_NEW_EVENT } from '../const.js';
+import { getEventOffers } from '../utils/event.js';
 import { createEventFormTemplate } from '../template/event-form-template.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EventFormView extends AbstractStatefulView {
-  #savedState = null;//! точно нужно?
+  #event = null;
   #isAddingNewEvent = false;
   #destinations = [];
   #offers = null;
@@ -20,13 +20,12 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  //! подумать про начальные данные destinationInfo, typeOffers, можно определить по event.destination и event.type при отрисовкке, просто в презенторе эта информация уже найденна и подготовлена для ItemView
-  constructor({ event, destinationInfo, typeOffers, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
+  constructor({ event, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
     super();
 
-    this._setState(EventFormView.parseEventToState(event, destinationInfo, typeOffers)); //! тут можно передать длополнительную информацию или сначала её добавить в событие
-    this.#savedState = this._state;
-    this.#isAddingNewEvent = event.id === DEFAULT_NEW_EVENT.id; //! наследорвать для AddNew...
+    this.#event = event;
+    this._setState({ ...event });
+    this.#isAddingNewEvent = event.id === DEFAULT_NEW_EVENT.id;
 
     this.#destinations = destinations;
     this.#offers = offers;
@@ -112,8 +111,8 @@ export default class EventFormView extends AbstractStatefulView {
     }
 
     evt.preventDefault();
-    const destinationInfo = findDestinationByName(this.#destinations, evt.target.value);
-    const destination = destinationInfo?.id;
+    const destinationInfo = this.#destinations.get(evt.target.value);
+    const destination = destinationInfo?.id; // так как destinationInfo может быть пусто, поле ощищено //! может другому обработать...
 
     this.updateElement({ destination, destinationInfo });
   };
@@ -163,7 +162,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventFormElementReset = (evt) => {
     evt.preventDefault();
-    this.updateElement({ ...this.#savedState });
+    this.updateElement({ ...this.#event });
   };
 
   #onEventResetButtonElementClick = (evt) => {
@@ -182,14 +181,11 @@ export default class EventFormView extends AbstractStatefulView {
     this.#onFormClose();
   };
 
-  static parseEventToState(event, destinationInfo, typeOffers) {
-    return { ...event, destinationInfo, typeOffers };
-  }
-
   static parseStateToEvent(state) {
-    const event = { ...state };
-    delete event.destinationInfo;
-    delete event.typeOffers;
+    // дополняем информацию о typeOffers, т.к. при изменениях изменялисть только offers
+    const { typeOffers, offers } = state;
+    const eventOffers = getEventOffers(typeOffers, offers);
+    const event = { ...state, eventOffers };
 
     return event;
   }

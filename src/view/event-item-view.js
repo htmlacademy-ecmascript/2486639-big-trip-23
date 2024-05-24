@@ -3,18 +3,14 @@ import { createEventItemTemplate } from '../template/event-item-template.js';
 
 export default class EventItemView extends AbstractView {
   #event = null;
-  #destinationName = null;
-  #eventOffers = [];
 
   #onFavoriteClick = null;
   #onEditClick = null;
 
-  constructor({ event, destinationName, eventOffers, onFavoriteClick, onEditClick }) {
+  constructor({ event, onFavoriteClick, onEditClick }) {
     super();
 
     this.#event = event;
-    this.#destinationName = destinationName;
-    this.#eventOffers = eventOffers;
     this.#onFavoriteClick = onFavoriteClick;
     this.#onEditClick = onEditClick;
 
@@ -23,7 +19,7 @@ export default class EventItemView extends AbstractView {
   }
 
   get template() {
-    return createEventItemTemplate(this.#event, this.#destinationName, this.#eventOffers);
+    return createEventItemTemplate(this.#event);
   }
 
   #onFavoriteButtonElementClick = () => {
