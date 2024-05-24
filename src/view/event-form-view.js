@@ -54,14 +54,14 @@ export default class EventFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
     this.#setDateFlatpickrs();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
-    if (this._state.typeOffers.length) {
+    if (this._state.typeOffers.length) { // нет данных и событие не добавляю
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
     }
     const eventFormElement = this.element.querySelector('.event--edit');
     eventFormElement.addEventListener('submit', this.#onEventFormElementSubmit);
     eventFormElement.addEventListener('reset', this.#onEventFormElementReset);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onEventResetButtonElementClick);
-    if (!this.#isAddingNewEvent) {
+    if (!this.#isAddingNewEvent) { // кнопка будет скрыта и событие не добавляю
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
     }
   }
