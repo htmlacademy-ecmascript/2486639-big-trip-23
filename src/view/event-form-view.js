@@ -24,7 +24,8 @@ export default class EventFormView extends AbstractStatefulView {
 
     this.#event = event;
     this._setState({ ...event });
-    this.#isAddingNewEvent = event.id === DEFAULT_NEW_EVENT.id;
+
+    this.#isAddingNewEvent = !(event.id || false); //! !Object.hasOwn(event, 'id');
 
     this.#destinations = destinations;
     this.#offers = offers;

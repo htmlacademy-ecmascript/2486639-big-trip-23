@@ -1,7 +1,6 @@
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const DEFAULT_NEW_EVENT = {
-  id: null,
   type: EVENT_TYPES[5],
   basePrice: 0,
   dateFrom: null,

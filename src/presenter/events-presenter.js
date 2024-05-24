@@ -41,6 +41,7 @@ export default class EventsPresenter {
       render(this.#eventsListComponent, this.#containerElement);
     }
 
+    //! будет отдельный презентер
     this.#renderEventItem(DEFAULT_NEW_EVENT);
   }
 
