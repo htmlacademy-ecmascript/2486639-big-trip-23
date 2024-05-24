@@ -1,7 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { isInputElement } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG, DEFAULT_NEW_EVENT } from '../const.js';
-import { getEventOffers } from '../utils/event.js';
 import { createEventFormTemplate } from '../template/event-form-template.js';
 import flatpickr from 'flatpickr';
 
@@ -157,7 +156,7 @@ export default class EventFormView extends AbstractStatefulView {
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
     //! тут добавить проверку, что пункт назначения не выбран, потрясти формой
-    this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
+    this.#onFormSubmit(this._state);
   };
 
   #onEventFormElementReset = (evt) => {
@@ -180,13 +179,4 @@ export default class EventFormView extends AbstractStatefulView {
     this.resetForm();
     this.#onFormClose();
   };
-
-  static parseStateToEvent(state) {
-    // дополняем информацию о typeOffers, т.к. при изменениях изменялисть только offers
-    const { typeOffers, offers } = state;
-    const eventOffers = getEventOffers(typeOffers, offers);
-    const event = { ...state, eventOffers };
-
-    return event;
-  }
 }

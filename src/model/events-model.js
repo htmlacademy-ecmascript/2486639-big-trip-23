@@ -1,5 +1,4 @@
 import { generateMockData } from '../mock/events.js';
-import { getEventOffers } from '../utils/event.js';
 import { EVENT_TYPES } from '../const.js';
 
 export default class EventsModel {
@@ -22,20 +21,20 @@ export default class EventsModel {
     });
 
     // подготовим дополнительный справочкик для конвертации событий
-    const destinationsById = new Map();
+    const destinationsMap = new Map();
     destinations.forEach((destination) => {
-      destinationsById.set(destination.id, destination);
+      destinationsMap.set(destination.id, destination);
     });
 
-    // в событиях переконвертируем офферы в Set и добавим полную информацию
+    // в событиях переконвертируем офферы в Set и добавим информацию по точке назначения и офферам
+    // events осталяем массивом т.к. есть сортировка и фильтрация
     this.#events = events.map((event) => {
-      const { type, destination } = event;
-      const eventOfferIds = new Set(event.offers);
-      const destinationInfo = destinationsById.get(destination);
+      const { type, destination, offers: offerIds } = event;
+      const offersMap = new Set(offerIds);
+      const destinationInfo = destinationsMap.get(destination);
       const typeOffers = this.#offers.get(type);
-      const eventOffers = getEventOffers(typeOffers, eventOfferIds); // можно и eventOffers, но далее только вывод
 
-      return { ...event, offers: eventOfferIds, destinationInfo, eventOffers, typeOffers };
+      return { ...event, offers: offersMap, destinationInfo, typeOffers };
     });
   }
 

@@ -20,8 +20,7 @@ tripPresenter.init();
  *   2. Не использовать '?.()' для проверки перед выполнением this.#onEditClick?.()
  *   3. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView
  *   4. src\presenter\event-presenter.js попробовать сделать наследование для добавления события
- *   5. eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id))
- *        А если офферы типа(typeOffers) сделать Map, то как подружить Map и Set... подумать
+ *   5. typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id)), а если офферы типа(typeOffers) сделать Map, то как подружить Map и Set... подумать
  *
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):
  *   1. При открытии формы редактирования события, расположенных снизу, прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области
