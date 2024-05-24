@@ -19,9 +19,7 @@ tripPresenter.init();
  *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презенторов
  *   2. Не использовать '?.()' для проверки перед выполнением this.#onEditClick?.()
  *   3. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView
- *   4. Огромный файл src\view\event-form-view.js, может из него убрать функцию createEventFormTemplate(), а какое название для файла src\view\event-form-view-template.js
- *       подумать, что еще можно убрать и где еще есть огромные файлы...
- *       src\presenter\event-presenter.js попробовать сделать наследование для добавления события
+ *   4. src\presenter\event-presenter.js попробовать сделать наследование для добавления события
  *   5. eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id))
  *        А если офферы типа(typeOffers) сделать Map, то как подружить Map и Set... подумать
  *
