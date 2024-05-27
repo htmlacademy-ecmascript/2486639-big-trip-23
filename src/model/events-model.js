@@ -1,6 +1,6 @@
+import { makeExtendedEvent } from '../utils/event.js';
 import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
-import { makeExtendedEvent } from '../utils/event.js';
 
 export default class EventsModel {
   #destinationsByName = new Map();
