@@ -1,14 +1,17 @@
-import { findItemIndexByKey } from '../utils/utils.js';
+import Observable from '../framework/observable.js';
+import { updateItemByKey, addItem, deleteItem } from '../utils/utils.js';
 import { makeExtendedEvent } from '../utils/event.js';
 import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
 
-export default class EventsModel {
+export default class EventsModel extends Observable {
   #destinationsByName = new Map();
   #offers = new Map();
   #events = [];
 
   constructor() {
+    super();
+
     //! временно - скорее всего нужно сделать init()
     const { destinations, offers, events } = generateMockData(EVENT_TYPES);
 
@@ -49,8 +52,21 @@ export default class EventsModel {
     this.#events = newEvents;
   }
 
-  updateEvent(updatedEvent) {
-    this.#events[findItemIndexByKey(this.#events, updatedEvent.id)] = updatedEvent;
-    //! проверить, нужно ли обновить дополнительную информацию
+  updateEvent(updateType, updatedEvent) {
+    updateItemByKey(this.#events, updatedEvent);
+
+    this._notify(updateType, updatedEvent);
+  }
+
+  addEvent(updateType, newEvent) {
+    addItem(this.#events, newEvent);
+
+    this._notify(updateType, newEvent);
+  }
+
+  deleteEvent(updateType, event) {
+    deleteItem(this.#events, event);
+
+    this._notify(updateType);
   }
 }
