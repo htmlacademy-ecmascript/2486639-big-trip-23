@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { FilterType, DEFAULT_FILTER_TYPE, DEFAULT_DISABLE_FILTER_TYPES } from '../const.js';
-import { existFilteredEvents } from '../utils/filter.js';
+import { FilterType, DEFAULT_FILTER_TYPE } from '../const.js';
+import { getDisabledFilters } from '../utils/filter.js';
 
 const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
@@ -30,17 +30,7 @@ export default class FiltersView extends AbstractView {
   }
 
   get template() {
-    const disabledFilterTypes = (this.#events.length) ? this.#getDisabledFilters() : DEFAULT_DISABLE_FILTER_TYPES;
-
-    return createFiltersTemplate(DEFAULT_FILTER_TYPE, disabledFilterTypes);
-  }
-
-  #getDisabledFilters() {
-    //! проверить что в нужно месте вызываеться и нужно время
-    const now = Date.now();
-    const filters = Object.entries(FilterType).map(([, filter]) => filter); //! можно собрать и один раз в конструкторе, сделать в util
-
-    return filters.filter((filter) => !existFilteredEvents(this.#events, filter, now));
+    return createFiltersTemplate(DEFAULT_FILTER_TYPE, getDisabledFilters(this.#events));
   }
 
   #onFormElementChange = (evt) => {

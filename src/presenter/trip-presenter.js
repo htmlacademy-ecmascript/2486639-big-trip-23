@@ -5,8 +5,10 @@ import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
 import { DEFAULT_SORTING_TYPE } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
+import { filterEvents } from '../utils/filter.js';
 
 export default class TripPresenter {
+  #filterModel = null;
   #eventsModel = null;
 
   #infoPresenter = null;
@@ -21,7 +23,8 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ headerTripMainElement, tripEventsElement, addEventButtonElement, eventsModel }) {
+  constructor({ headerTripMainElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
+    this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
     this.#tripEventsElement = tripEventsElement;
 
@@ -60,7 +63,7 @@ export default class TripPresenter {
     if (this.#events.length) {
       render(this.#sortingComponent, this.#tripEventsElement);
 
-      this.#events.filter(() => true); //! временно, как будет готова фильтрация, то отфильтровать this.#events.filter(filterEvents(this.#currentFilterType))
+      this.#events = filterEvents(this.#events, this.#filterModel.filterType);
       this.#events.sort(sortEvents[this.#currentSortingType]);
     }
 

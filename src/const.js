@@ -19,6 +19,8 @@ const FilterType = {
   PAST: 'past'
 };
 
+const filterTypes = Object.entries(FilterType).map(([, filter]) => filter);
+
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
 
@@ -66,6 +68,7 @@ const DEFAULT_FLATPICKR_CONFIG = {
 export {
   EVENT_TYPES,
   DEFAULT_NEW_EVENT,
+  filterTypes,
   FilterType,
   DEFAULT_FILTER_TYPE,
   DEFAULT_DISABLE_FILTER_TYPES,

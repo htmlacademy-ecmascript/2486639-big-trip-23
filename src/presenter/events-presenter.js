@@ -126,10 +126,11 @@ export default class EventsPresenter {
     } else {
       this.#eventsModel.updateEvent(updatedEvent);
       this.#events = this.#eventsModel.events;
+      //! тут нужно вызать пересчет Info через основного презентора
+      //! оповестить презентер фильтров и применить сортировку
     }
 
     this.#eventPresenters.get(id).init(updatedEvent);
-    //! тут нужно вызать пересчет Info через основного презентора
   };
 
   #onEventDelete = (eventId) => {

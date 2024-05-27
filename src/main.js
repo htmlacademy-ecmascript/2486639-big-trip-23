@@ -13,13 +13,15 @@ const filterModel = new FilterModel();
 const eventsModel = new EventsModel();
 const filterPresenter = new FilterPresenter({
   containerElement: headerTripFiltersElement,
-  filterModel
+  filterModel,
+  eventsModel
 });
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
   tripEventsElement,
   addEventButtonElement,
+  filterModel,
   eventsModel
 });
 
