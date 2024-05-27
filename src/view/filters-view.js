@@ -19,10 +19,14 @@ const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="t
 
 export default class FiltersView extends AbstractView {
   #events = [];
+  #onFilterChange = null;
 
-  constructor(events) {
+  constructor(events, onFilterChange) {
     super();
+
     this.#events = events;
+    this.#onFilterChange = onFilterChange;
+    this.element.addEventListener('change', this.#onFormElementChange);
   }
 
   get template() {
@@ -38,4 +42,8 @@ export default class FiltersView extends AbstractView {
 
     return filters.filter((filter) => !existFilteredEvents(this.#events, filter, now));
   }
+
+  #onFormElementChange = (evt) => {
+    this.#onFilterChange(evt.target.value);
+  };
 }

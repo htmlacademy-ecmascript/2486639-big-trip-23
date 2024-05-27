@@ -4,15 +4,19 @@ import FiltersView from '../view/filters-view.js';
 export default class FilterPresenter {
   //! похоже у нескольких презенторов, вынести в базовый класс + конструктор
   #containerElement = null;
-  #eventsModel = null;
+  #filterModel = null;
 
-  constructor({ containerElement, eventsModel }) {
+  constructor({ containerElement, filterModel }) {
     this.#containerElement = containerElement;
-    this.#eventsModel = eventsModel;
+    this.#filterModel = filterModel;
   }
 
   init() {
     //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны, или не так!
-    render(new FiltersView(this.#eventsModel.events), this.#containerElement);
+    render(new FiltersView([]/*//!this.#eventsModel.events*/, this.#onFilterChange), this.#containerElement);
   }
+
+  #onFilterChange = (filterType) => {
+    this.#filterModel.filterType = filterType;
+  };
 }

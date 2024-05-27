@@ -1,6 +1,5 @@
 import { render } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
-import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
@@ -11,7 +10,6 @@ export default class TripPresenter {
   #eventsModel = null;
 
   #infoPresenter = null;
-  #filterPresenter = null;
   #eventsPresenter = null;
 
   #tripEventsElement = null;
@@ -23,16 +21,12 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel }) {
+  constructor({ headerTripMainElement, tripEventsElement, addEventButtonElement, eventsModel }) {
     this.#eventsModel = eventsModel;
     this.#tripEventsElement = tripEventsElement;
 
     this.#infoPresenter = new InfoPresenter({
       containerElement: headerTripMainElement,
-      eventsModel
-    });
-    this.#filterPresenter = new FilterPresenter({
-      containerElement: headerTripFiltersElement,
       eventsModel
     });
     this.#eventsPresenter = new EventsPresenter({
@@ -52,17 +46,12 @@ export default class TripPresenter {
 
   #render() {
     this.#renderInfo();
-    this.#renderFilter();
     this.#renderEvents();
   }
 
   #renderInfo() {
     //! нужно будет вызывать при изменении данных
     this.#infoPresenter.init();
-  }
-
-  #renderFilter() {
-    this.#filterPresenter.init();
   }
 
   #renderEvents() {
