@@ -1,23 +1,21 @@
 import { render } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
+import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
-import FiltersView from '../view/filters-view.js';
 import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
 import { DEFAULT_SORTING_TYPE } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 
 export default class TripPresenter {
-  #containerElement = null; //! удалить, если не будет использоваться нигде кроме конструктора
   #eventsModel = null;
 
   #infoPresenter = null;
+  #filterPresenter = null;
   #eventsPresenter = null;
 
-  #headerTripFiltersElement = null;
   #tripEventsElement = null;
 
-  #filtersComponent = null;
   #sortingComponent = null;
   #addEventButtonComponent = null;
 
@@ -25,31 +23,30 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ containerElement, eventsModel }) {
-    //! Одинаково у всех презенторов, можно выделить в абстарктный презентор
-    this.#containerElement = containerElement;
+  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel }) {
     this.#eventsModel = eventsModel;
+    this.#tripEventsElement = tripEventsElement;
 
-    const headerContainerElement = containerElement.querySelector('.page-header__container');
-    const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
-    this.#headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
-    this.#tripEventsElement = containerElement.querySelector('.trip-events');
-    const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn'); //! убрать либо в main, либо отдельный компонет
-
-    this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
+    this.#infoPresenter = new InfoPresenter({
+      containerElement: headerTripMainElement,
+      eventsModel
+    });
+    this.#filterPresenter = new FilterPresenter({
+      containerElement: headerTripFiltersElement,
+      eventsModel
+    });
     this.#eventsPresenter = new EventsPresenter({
-      containerElement: this.#tripEventsElement,
+      containerElement: tripEventsElement,
       eventsModel,
       onAddNewEventClose: this.#onAddNewEventClose
     });
 
-    this.#filtersComponent = new FiltersView(eventsModel.events);
     this.#sortingComponent = new SortingView(this.#onSortingChange);
     this.#addEventButtonComponent = new ButtonView(addEventButtonElement, this.#onAddEventClick);
   }
 
   init() {
-    this.#events = [...this.#eventsModel.events];
+    this.#events = [...this.#eventsModel.events]; //! временно
     this.#render();
   }
 
@@ -65,8 +62,7 @@ export default class TripPresenter {
   }
 
   #renderFilter() {
-    //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны, или не так!
-    render(this.#filtersComponent, this.#headerTripFiltersElement);
+    this.#filterPresenter.init();
   }
 
   #renderEvents() {

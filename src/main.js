@@ -1,17 +1,27 @@
 import TripPresenter from './presenter/trip-presenter.js';
 import EventsModel from './model/events-model.js';
 
+const headerContainerElement = document.body.querySelector('.page-header__container');
+const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
+const headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
+const tripEventsElement = document.body.querySelector('.trip-events');
+const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
+
 const eventsModel = new EventsModel();
-const tripPresenter = new TripPresenter({ containerElement: document.body, eventsModel });
+const tripPresenter = new TripPresenter({
+  headerTripMainElement,
+  headerTripFiltersElement,
+  tripEventsElement,
+  addEventButtonElement,
+  eventsModel
+});
 
 tripPresenter.init();
 
 /*
  * Вопросы:
- *   1. Был коментарий о взаимодействии с DOM, querySelector тоже взаимодействие?
- *       Основной презентор (TripPresenter) ищет элементы, что бы расставить... этот поиск сделать в main.js И передать в презентор?
- *   2. Компонент без отрисовки? можно ли создать компонет на основе имеющейся разметки без "get template", сделал так для кнопки добавления события
- *   3. Обязательно ли однотипно инициализировать компонеты?
+ *   1. Компонент без отрисовки? можно ли создать компонет на основе имеющейся разметки без "get template", сделал так для кнопки добавления события
+ *   2. Обязательно ли однотипно инициализировать компонеты? или удалить кномпу добавления из "public\index.html"
  *        есть простые new FiltersView(eventsModel.events), new SortingView(this.#onSortingChange)
  *        есть сложные new EventFormView({ event, destinationInfo, ..., onFormSubmit: this.#onFormSubmit, onDelete: this.#onDelete, ...});
  *
