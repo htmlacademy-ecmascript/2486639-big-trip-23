@@ -81,13 +81,4 @@ const generateMockData = (types) => {
   return { destinations, offers, events };
 };
 
-const getMockTripInfo = (destinations) => {
-  const randomDestinations = getRandomArrayElements(Array.from(destinations, ([, value]) => (value)), INFO_DESTINATIONS_COUNT, INFO_DESTINATIONS_COUNT);
-  const title = randomDestinations.map((destination) => destination.name).join(' — ');
-  const { dateFrom, dateTo } = getRandomDatePeriod(EventDate.MIN, EventDate.MAX);
-  const cost = getRandomNumber(InfoCost.MIN, InfoCost.MAX);
-
-  return { title, dateFrom, dateTo, cost };
-};
-
-export { generateMockData, getMockTripInfo };
+export { generateMockData };

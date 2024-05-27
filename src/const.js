@@ -68,8 +68,8 @@ const DEFAULT_FLATPICKR_CONFIG = {
 export {
   EVENT_TYPES,
   DEFAULT_NEW_EVENT,
-  filterTypes,
   FilterType,
+  filterTypes,
   DEFAULT_FILTER_TYPE,
   DEFAULT_DISABLE_FILTER_TYPES,
   SortingType,

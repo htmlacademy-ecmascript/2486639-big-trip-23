@@ -1,5 +1,5 @@
 import { render, RenderPosition } from '../framework/render.js';
-import { getMockTripInfo } from '../mock/events.js'; //! временно
+import { getTripInfo } from '../utils/event.js';
 import InfoView from '../view/info-view.js';
 
 export default class InfoPresenter {
@@ -12,10 +12,9 @@ export default class InfoPresenter {
   }
 
   init() {
-    //! временно, разный текст в зависмости от фильтра, и обработка нажатий
-    const { events, destinations } = this.#eventsModel; //! считать либо тут - взять все данные или в модели
+    const { events } = this.#eventsModel;
     if (events.length) {
-      render(new InfoView(getMockTripInfo(destinations)), this.#containerElement, RenderPosition.AFTERBEGIN);
+      render(new InfoView(getTripInfo(events)), this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }
