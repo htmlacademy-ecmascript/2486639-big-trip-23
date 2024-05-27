@@ -24,6 +24,13 @@ const filterTypes = Object.entries(FilterType).map(([, filter]) => filter);
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
 
+const filterEmptyMessage = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now',
+};
+
 const SortingType = {
   DAY: 'day',
   EVENT: 'event',
@@ -44,7 +51,6 @@ const DEFAULT_SORTING_TYPE = SortingType.DAY;
 const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
 const MessageType = {
-  NEW_EVENT: 'Click New Event to create your first point',
   LOADING: 'Loading...',
   FAILEAD: 'Failed to load latest route information'
 };
@@ -72,6 +78,7 @@ export {
   filterTypes,
   DEFAULT_FILTER_TYPE,
   DEFAULT_DISABLE_FILTER_TYPES,
+  filterEmptyMessage,
   SortingType,
   sortingTypeLabelText,
   DEFAULT_SORTING_TYPE,

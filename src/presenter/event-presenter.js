@@ -5,8 +5,9 @@ import EventFormView from '../view/event-form-view.js';
 
 export default class EventPresenter {
   #containerElement = null;
-  #eventsModel = null;
 
+  #destinations = null;
+  #offers = null;
   #event = null;
 
   #itemComponent = null;
@@ -17,9 +18,10 @@ export default class EventPresenter {
   #onEventChange = null;
   #onEventDelete = null;
 
-  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
+  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#containerElement = containerElement;
-    this.#eventsModel = eventsModel;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
@@ -58,12 +60,11 @@ export default class EventPresenter {
     //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
 
     const event = this.#event;
-    const { destinations, offers } = this.#eventsModel;
 
     this.#formComponent = new EventFormView({
       event,
-      destinations,
-      offers,
+      destinations: this.#destinations,
+      offers: this.#offers,
       onFormSubmit: this.#onFormSubmit,
       onDelete: this.#onDelete,
       onFormClose: this.#onFormClose

@@ -1,43 +1,47 @@
-import { remove, render } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import { deleteItemByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import MessageView from '../view/message-view.js';
-import { DEFAULT_NEW_EVENT, MessageType } from '../const.js';
+import { DEFAULT_NEW_EVENT } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
-  #eventsModel = null;
 
+  #destinations = null;
+  #offers = null;
   #events = [];
+
   #isOpenNewEvent = false; //! сделать наследование презенторов и формы редактирования
 
   #eventPresenters = new Map();
   #activeEventPresenter = null;
 
-  #emptyEventsMessageComponent = new MessageView(MessageType.NEW_EVENT);
   #eventsListComponent = new EventsListView();
 
   #onAddNewEventClose = null;
 
-  constructor({ containerElement, eventsModel, onAddNewEventClose }) {
+  constructor({ destinations, offers, containerElement, onAddNewEventClose }) {
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#containerElement = containerElement;
-    this.#eventsModel = eventsModel;
     this.#onAddNewEventClose = onAddNewEventClose;
+  }
+
+  clear() {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
   }
 
   init(events) {
     this.#events = events;
 
-    this.#clearEventsList();
     this.#renderEventsList();
   }
 
-  addEvent() {
+  addEvent() { //! будет в свое презенторе или общем
     this.#isOpenNewEvent = true;
 
     if (!this.#events.length) {
-      remove(this.#emptyEventsMessageComponent);
       render(this.#eventsListComponent, this.#containerElement);
     }
 
@@ -45,24 +49,18 @@ export default class EventsPresenter {
     this.#renderEventItem(DEFAULT_NEW_EVENT);
   }
 
-  #clearEventsList() {
-    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
-    this.#eventPresenters.clear();
-  }
-
   #renderEventsList() {
     if (this.#events.length) {
       this.#events.forEach((event) => this.#renderEventItem(event));
       render(this.#eventsListComponent, this.#containerElement);
-    } else {
-      render(this.#emptyEventsMessageComponent, this.#containerElement);
     }
   }
 
   #renderEventItem(event) {
     const eventPresenter = new EventPresenter({
+      destinations: this.#destinations,
+      offers: this.#offers,
       containerElement: this.#eventsListComponent.element,
-      eventsModel: this.#eventsModel,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
       onEventChange: this.#onEventChange,
@@ -98,9 +96,6 @@ export default class EventsPresenter {
       this.#isOpenNewEvent = false;
       this.#eventPresenters.get(DEFAULT_NEW_EVENT.id).destroy(); //! еще варианты по замене null из DEFAULT_NEW_EVENT.id
       this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
-      if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
-        render(this.#emptyEventsMessageComponent, this.#containerElement);
-      }
       this.#onAddNewEventClose();
     }
   };
@@ -124,8 +119,9 @@ export default class EventsPresenter {
       this.#eventPresenters.set(id, eventPresenter);
       this.#onAddNewEventClose();
     } else {
-      this.#eventsModel.updateEvent(updatedEvent);
-      this.#events = this.#eventsModel.events;
+      //!! передать основному презентеру
+      //this.#eventsModel.updateEvent(updatedEvent);
+      //this.#events = this.#eventsModel.events;
       //! тут нужно вызать пересчет Info через основного презентора
       //! оповестить презентер фильтров и применить сортировку
     }
@@ -135,11 +131,8 @@ export default class EventsPresenter {
 
   #onEventDelete = (eventId) => {
     deleteItemByKey(this.#events, eventId);
-    //! в модели не забыть удалить
+    //! в модели не забыть удалить и общему презентору сособщить
     this.#eventPresenters.get(eventId).destroy();
-    if (!this.#events.length) { //! похожий вызов отрисовки сообщения, может сделать функцию
-      render(this.#emptyEventsMessageComponent, this.#containerElement);
-    }
     //! тут нужно вызать пересчет Info через основного презентора
   };
 }

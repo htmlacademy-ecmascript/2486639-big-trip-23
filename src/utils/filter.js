@@ -1,9 +1,7 @@
 import dayjs from 'dayjs';
 import { FilterType, filterTypes, DEFAULT_DISABLE_FILTER_TYPES } from '../const.js';
 
-//! у каждого фильтра свое сообщение в ТЗ поискать
-
-const checksEventDates = {
+const filterEvents = {
   [FilterType.EVERYTHING]: () => true,
   [FilterType.FUTURE]: (dateFrom, _, date) => dayjs(dateFrom).isAfter(date),
   [FilterType.PRESENT]: (dateFrom, dateTo, date) => (dayjs(dateFrom).isBefore(date) && dayjs(dateTo).isAfter(date)),
@@ -11,7 +9,7 @@ const checksEventDates = {
 };
 
 const existFilteredEvents = (events, filter, now) => {
-  const checkEvents = checksEventDates[filter];
+  const checkEvents = filterEvents[filter];
   return events.some((event) => {
     const { dateFrom, dateTo } = event;
 
@@ -27,12 +25,6 @@ const getDisabledFilters = (events) => {
   const now = Date.now();
 
   return filterTypes.filter((filter) => !existFilteredEvents(events, filter, now));
-};
-
-const filterEvents = (events, filterType) => {
-  const now = Date.now();
-
-  return events.filter(({ dateFrom, dateTo }) => checksEventDates[filterType](dateFrom, dateTo, now));
 };
 
 export { filterEvents, getDisabledFilters };
