@@ -1,5 +1,5 @@
 import { remove, render } from '../framework/render.js';
-import { deleteItemByKey, findItemIndexByKey } from '../utils/utils.js';
+import { deleteItemByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
 import MessageView from '../view/message-view.js';
@@ -124,8 +124,8 @@ export default class EventsPresenter {
       this.#eventPresenters.set(id, eventPresenter);
       this.#onAddNewEventClose();
     } else {
-      this.#events[findItemIndexByKey(this.#events, id)] = updatedEvent;
-      //! в модели не забыть изменить
+      this.#eventsModel.updateEvent(updatedEvent);
+      this.#events = this.#eventsModel.events;
     }
 
     this.#eventPresenters.get(id).init(updatedEvent);

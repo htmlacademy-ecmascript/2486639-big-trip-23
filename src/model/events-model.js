@@ -1,3 +1,4 @@
+import { findItemIndexByKey } from '../utils/utils.js';
 import { makeExtendedEvent } from '../utils/event.js';
 import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
@@ -41,5 +42,15 @@ export default class EventsModel {
 
   get events() {
     return this.#events;
+  }
+
+  //! удалить, если не понадобиться, добавил по домашке 15 - Добавьте в модель для точек маршрута 2 метода: один для получения точек маршрута, другой для их записи.
+  set events(newEvents) {
+    this.#events = newEvents;
+  }
+
+  updateEvent(updatedEvent) {
+    this.#events[findItemIndexByKey(this.#events, updatedEvent.id)] = updatedEvent;
+    //! проверить, нужно ли обновить дополнительную информацию
   }
 }
