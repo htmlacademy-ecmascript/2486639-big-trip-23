@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { DateFormat, getStringDate } from '../utils/date.js';
+import { getStringDate } from '../utils/date.js';
+import { DateFormat } from '../const.js';
 
 const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
   //! почитать ТЗ и посмотреть как выводить, если в одном месяце?, если в разных? и т.д.?
@@ -20,7 +21,7 @@ const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 export default class InfoView extends AbstractView {
   #tripInfo = null;
 
-  constructor(tripInfo) {
+  constructor({ tripInfo }) {
     super();
     //! временно
     this.#tripInfo = tripInfo;

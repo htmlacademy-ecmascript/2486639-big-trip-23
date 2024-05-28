@@ -6,13 +6,22 @@ const isInputElement = (element) => element.tagName === 'INPUT';
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
 
-const findItemByKey = (items, keyValue, keyName = 'id') => items[findItemIndexByKey(items, keyValue, keyName)];
+const updateItemByKey = (items, item, keyName = 'id') => {
+  items[findItemIndexByKey(items, item[keyName], keyName)] = item;
+};
 
-const deleteItem = (items, item) => {
-  const index = items.indexOf(item);
-  if (index !== -1) {
+const addItem = (items, item) => {
+  items[items.length] = item;
+};
+
+const deleteItemByIndex = (items, index) => {
+  if (index >= 0) {
     items.splice(index, 1);
   }
 };
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, findItemByKey, deleteItem };
+const deleteItemByKey = (items, item, keyName = 'id') => {
+  deleteItemByIndex(items, findItemIndexByKey(items, item[keyName], keyName));
+};
+
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };

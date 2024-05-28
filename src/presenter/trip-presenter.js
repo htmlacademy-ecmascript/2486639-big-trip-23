@@ -1,100 +1,161 @@
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
+import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
-import FiltersView from '../view/filters-view.js';
 import SortingView from '../view/sorting-view.js';
-import { DEFAULT_SORTING_TYPE } from '../const.js';
+import ButtonView from '../view/button-view.js';
+import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
+import { filterEvents } from '../utils/filter.js';
+import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE } from '../const.js';
+import { updateItemByKey } from '../utils/utils.js';
 
 export default class TripPresenter {
-  #containerElement = null; //! удалить, если не будет использоваться нигде кроме конструктора
+  #filterModel = null;
   #eventsModel = null;
 
   #infoPresenter = null;
+  #filterPresenter = null;
   #eventsPresenter = null;
 
-  #headerTripFiltersElement = null;
   #tripEventsElement = null;
-  #AddEventButtonElement = null;
 
-  #filtersComponent = null;
   #sortingComponent = null;
+  #emptyEventsMessageComponent = null;
+  #addEventButtonComponent = null;
 
   #events = [];
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ containerElement, eventsModel }) {
-    //! Одинаково у всех презенторов, можно выделить в абстарктный презентор
-    this.#containerElement = containerElement;
+  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
+    this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
+    this.#tripEventsElement = tripEventsElement;
 
-    const headerContainerElement = containerElement.querySelector('.page-header__container');
-    const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
-    this.#headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
-    this.#tripEventsElement = containerElement.querySelector('.trip-events');
-
-    this.#infoPresenter = new InfoPresenter({ containerElement: headerTripMainElement, eventsModel });
+    this.#infoPresenter = new InfoPresenter({
+      containerElement: headerTripMainElement,
+      eventsModel
+    });
+    this.#filterPresenter = new FilterPresenter({
+      containerElement: headerTripFiltersElement,
+      filterModel,
+      eventsModel
+    });
     this.#eventsPresenter = new EventsPresenter({
-      containerElement: this.#tripEventsElement,
+      containerElement: tripEventsElement,
       eventsModel,
       onAddNewEventClose: this.#onAddNewEventClose
     });
 
-    this.#filtersComponent = new FiltersView(eventsModel.events);
-    this.#sortingComponent = new SortingView(this.#onSortingChange);
+    this.#addEventButtonComponent = new ButtonView({ buttonElement: addEventButtonElement, onClick: this.#onAddEventClick });
 
-    this.#AddEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
-    this.#AddEventButtonElement.addEventListener('click', this.#onEventAddButtonElementClick);
+    eventsModel.addObserver(this.#onModelsChange);
+    filterModel.addObserver(this.#onModelsChange);
   }
 
   init() {
-    this.#events = this.#eventsModel.events;
+    this.#filterPresenter.init();//! скорее всего при плучении данных с сервера будет первый init
     this.#render();
   }
 
+  #clear({ isResetSortingType } = { isResetSortingType: false }) {
+    remove(this.#sortingComponent);
+
+    if (isResetSortingType) {
+      this.#currentSortingType = DEFAULT_SORTING_TYPE;
+    }
+
+    if (this.#emptyEventsMessageComponent) {
+      remove(this.#emptyEventsMessageComponent);
+    }
+  }
+
   #render() {
-    this.#renderInfo();
-    this.#renderFilter();
+    this.#infoPresenter.init();
     this.#renderEvents();
   }
 
-  #renderInfo() {
-    //! нужно будет вызывать при изменении данных
-    this.#infoPresenter.init();
+  #renderSorting() {
+    this.#sortingComponent = new SortingView({ currentSortingType: this.#currentSortingType, onSortingChange: this.#onSortingChange });
+    render(this.#sortingComponent, this.#tripEventsElement);
   }
 
-  #renderFilter() {
-    //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны
-    render(this.#filtersComponent, this.#headerTripFiltersElement);
-  }
+  #renderEvents({ isRenderSorting, isApplyFilter } = { isRenderSorting: true, isApplyFilter: true }) {
+    const now = Date.now();
 
-  #renderEvents() {
-    //! нужно будет вызывать и при изменении фильтра, добавлении нового события
-    //! и сортировать и фильтровать дабавленное новое событие
-    if (this.#events.length) {
-      render(this.#sortingComponent, this.#tripEventsElement);
+    //! нужно будет проверить вызов при добавлении нового события, или не так!
+    //! и сортировать и фильтровать дабавленное новое событие, или не так!
+    //! при сортировке заново фильтровались
+    const filteredEvents = (!isApplyFilter) ? this.#events : filterEvents(this.#eventsModel.events, this.#filterModel.filterType, now);
 
-      this.#events.filter(() => true); //! временно, как будет готова фильтрация, то отфильтровать this.#events.filter(filterEvents(this.#currentFilterType))
-      this.#events.sort(sortEvents[this.#currentSortingType]);
+    this.#eventsPresenter.clear();
+
+    if (!filteredEvents.length) {
+      this.#renderEmptyEventsMessage();
+      return;
     }
 
-    this.#eventsPresenter.init(this.#events);
+    if (isRenderSorting) {
+      this.#renderSorting();
+    }
+
+    filteredEvents.sort(sortEvents[this.#currentSortingType]);
+
+    //! а нужно ли...
+    this.#events = filteredEvents;
+    this.#eventsPresenter.init(filteredEvents);
   }
 
-  #onAddNewEventClose = () => {
-    this.#AddEventButtonElement.disabled = false;
+  #renderEmptyEventsMessage() {
+    this.#emptyEventsMessageComponent = new MessageView({ message: filterEmptyMessage[this.#filterModel.filterType] });
+    render(this.#emptyEventsMessageComponent, this.#tripEventsElement);
+  }
+
+  #removeEmptyEventsMessage() {
+    remove(this.#emptyEventsMessageComponent);
+    this.#emptyEventsMessageComponent = null;
+  }
+
+  #onModelsChange = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#eventsPresenter.updateEvent(data); //! проверить
+        updateItemByKey(this.#events, data); //! т.к. нет фильтрации при сортировке
+        break;
+      case UpdateType.MINOR:
+        this.#clear();
+        this.#render();
+        break;
+      case UpdateType.MAJOR:
+        this.#clear({ isResetSortingType: true });
+        this.#render();
+        break;
+    }
   };
 
-  #onEventAddButtonElementClick = (evt) => {
-    evt.preventDefault();
-    this.#AddEventButtonElement.disabled = true;
-    //! посмотреть в ТЗ, если собитий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
-    this.#eventsPresenter.AddEvent();
+  #onAddNewEventClose = () => {
+    this.#addEventButtonComponent.enable();
+
+    //! может сразу this.#renderEvents(); или через событие
+    if (!this.#events.length) {
+      this.#renderEmptyEventsMessage();
+    }
+  };
+
+  #onAddEventClick = () => {
+    //! посмотреть в ТЗ
+    //! 1. Если событий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
+    //! 2. Сбросить фильтр и сортировку при добавлении нового
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE; //!
+    if (!this.#events.length) {
+      this.#removeEmptyEventsMessage();
+    }
+    this.#eventsPresenter.addEvent();
   };
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;
-    this.#renderEvents();
+    this.#renderEvents({ isRenderSorting: false, isApplyFilter: false });
   };
 }

@@ -29,12 +29,6 @@ const Description = {
   MAX_COUNT: 5
 };
 
-const INFO_DESTINATIONS_COUNT = 3;
-const InfoCost = {
-  MIN: 10000,
-  MAX: 20000
-};
-
 export {
   EventPrice,
   EventDate,
@@ -42,7 +36,5 @@ export {
   DESTINATIONS,
   Offer,
   PhotoNumber,
-  Description,
-  INFO_DESTINATIONS_COUNT,
-  InfoCost
+  Description
 };

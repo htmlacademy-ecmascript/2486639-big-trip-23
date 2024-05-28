@@ -1,10 +1,11 @@
-import { render, RenderPosition } from '../framework/render.js';
-import { getMockTripInfo } from '../mock/events.js'; //! временно
+import { render, remove, RenderPosition } from '../framework/render.js';
 import InfoView from '../view/info-view.js';
+import { getTripInfo } from '../utils/event.js';
 
 export default class InfoPresenter {
   #containerElement = null;
   #eventsModel = null;
+  #infoComponent = null;
 
   constructor({ containerElement, eventsModel }) {
     this.#containerElement = containerElement;
@@ -12,10 +13,15 @@ export default class InfoPresenter {
   }
 
   init() {
-    //! временно, разный текст в зависмости от фильтра, и обработка нажатий
-    const { events, destinations } = this.#eventsModel; //! считать либо тут - взять все данные или в модели
+    if (this.#infoComponent) {
+      remove(this.#infoComponent);
+    }
+
+    const { events } = this.#eventsModel;
+
     if (events.length) {
-      render(new InfoView(getMockTripInfo(destinations)), this.#containerElement, RenderPosition.AFTERBEGIN);
+      this.#infoComponent = new InfoView({ tripInfo: getTripInfo(events) });
+      render(this.#infoComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

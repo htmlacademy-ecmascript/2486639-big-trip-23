@@ -1,12 +1,15 @@
-import { render, replace, remove, RenderPosition } from '../framework/render.js';
-import { isEscapeKey, findItemByKey } from '../utils/utils.js';
+import { replace, remove } from '../framework/render.js';
+import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
+import { UserAction, UpdateType } from '../const.js';
+import { renderOrReplace } from '../utils/dom.js';
 
 export default class EventPresenter {
   #containerElement = null;
-  #eventsModel = null;
 
+  #destinations = null;
+  #offers = null;
   #event = null;
 
   #itemComponent = null;
@@ -15,15 +18,14 @@ export default class EventPresenter {
   #onEventFormOpen = null;
   #onEventFormClose = null;
   #onEventChange = null;
-  #onEventDelete = null;
 
-  constructor({ containerElement, eventsModel, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
+  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#containerElement = containerElement;
-    this.#eventsModel = eventsModel;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
-    this.#onEventDelete = onEventDelete;
   }
 
   destroy() {
@@ -33,69 +35,55 @@ export default class EventPresenter {
 
   init(event) {
     this.#event = event;
+    const storedItemComponent = this.#itemComponent;
 
-    // Подготовим недостющие данные для отображения события в списке и при редактировании
-    const { destinations } = this.#eventsModel;
-    const { type, offers: eventOfferIds } = event;
-    const destination = findItemByKey(destinations, event.destination);
-    const typeOffers = this.#eventsModel.getTypeOffers(type); //! можно вызвать this.#onGetTypeOffers(type) как будет определено название
-    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форм в режиме добавления,
-    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
+    this.#makeComponents();
 
-    const prevFormComponent = this.#formComponent;
+    renderOrReplace(this.#itemComponent, storedItemComponent, this.#containerElement);
+  }
+
+  resetEventForm() {
+    this.#formComponent.resetForm();
+  }
+
+  closeEventForm() {
+    this.#replaceFormToItem();
+    this.#onEventFormClose();
+  }
+
+  #makeComponents() {
+    const event = this.#event;
+
     this.#formComponent = new EventFormView({
-      event: { ...event, destination, typeOffers },
-      destinations,
-      onGetTypeOffers: this.#onGetTypeOffers, //? getTypeOffer? как же правильно оформить получение уточняющих данных с презентора?, все действия с презентора передаем обработчиками
-      onGetDestinationByName: this.#onGetDestinationByName, //? тоже
+      event,
+      destinations: this.#destinations,
+      offers: this.#offers,
       onFormSubmit: this.#onFormSubmit,
-      onDelete: this.#onDelete,
+      onResetButtonClick: this.#onDelete,
       onFormClose: this.#onFormClose
     });
 
-    const prevItemComponent = this.#itemComponent;
     this.#itemComponent = new EventItemView({
       event,
-      destinationName: destination?.name, //! как то покрасивее обойти при добавлении DEFAULT_EVENT.destination === null
-      eventOffers: typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id)),
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
     });
-
-    if (!prevItemComponent || !prevFormComponent) {
-      const isAddingNewEvent = !event.id;
-      const place = (isAddingNewEvent) ? RenderPosition.AFTERBEGIN : undefined;
-      render(this.#itemComponent, this.#containerElement, place);
-      if (isAddingNewEvent) {
-        this.#openForm();
-      }
-    } else {
-      replace(this.#itemComponent, prevItemComponent);
-
-      remove(prevItemComponent);
-      remove(prevFormComponent); //! удалить если будет ли использоваться
-    }
   }
 
   #openForm() {
-    replace(this.#formComponent, this.#itemComponent);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    this.#replaceItemToForm();
     this.#onEventFormOpen(this);
   }
 
-  resetEventForm = () => {
-    this.#formComponent.resetForm();
-  };
+  #replaceItemToForm() {
+    replace(this.#formComponent, this.#itemComponent);
+    document.addEventListener('keydown', this.#onDocumentKeyDown);
+  }
 
-  closeEventForm = () => {
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
-  };
-
-  #replaceFormToItem = () => {
+  #replaceFormToItem() {
     replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-  };
+  }
 
   #onEditClick = () => {
     this.#openForm();
@@ -103,25 +91,24 @@ export default class EventPresenter {
 
   #onFavoriteClick = () => {
     const isFavorite = !this.#event.isFavorite;
-    this.#onEventChange({ ...this.#event, isFavorite });
+    this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.PATCH, { ...this.#event, isFavorite });
   };
-
-  #onGetTypeOffers = (type) => this.#eventsModel.getTypeOffers(type);
-
-  #onGetDestinationByName = (name) => findItemByKey(this.#eventsModel.destinations, name, 'name');
 
   #onFormSubmit = (event) => {
+    //! не все изменения UpdateType.MINOR, может быть и PATCH, только сумма изменена, может доавбить ключ...
+    this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
+
+    //! навеное не нужно, буде перерисовка при изменениях
     this.#replaceFormToItem();
-    this.#onEventChange({ ...event });
-    this.#onEventFormClose();
+    this.#onEventFormClose(); //!
   };
 
-  #onDelete = (eventId) => {
-    //! выше есть такие же две строки...
+  #onDelete = (event) => {
+    this.#onEventChange(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
+
+    //! выше есть такие же две строки... //! тоже скорее всего не нужно
     this.#replaceFormToItem();
     this.#onEventFormClose();
-
-    this.#onEventDelete(eventId);
   };
 
   #onFormClose = () => {

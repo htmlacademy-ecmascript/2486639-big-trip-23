@@ -1,16 +1,6 @@
 import dayjs from 'dayjs';
 import { getTwoDigitString } from '../utils/string.js';
 
-const DateFormat = {
-  SHORT_DATE_TIME: 'DD/MM/YY HH:mm',
-  SHORT_DATE_TIME_FLATPICKR: 'd/m/y H:i',
-  DATE: 'YYYY-MM-DD',
-  MONTH_DAY: 'MMM DD',
-  DAY_MONTH: 'DD MMM',
-  DATE_TIME: 'YYYY-MM-DDTHH:mm',
-  TIME: 'HH:mm'
-};
-
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;
 
@@ -38,4 +28,4 @@ const getDurationString = (dateStart, dateEnd) => {
   return strings.join('');
 };
 
-export { DateFormat, getStringDate, getDurationMinutes, getDurationString };
+export { getStringDate, getDurationMinutes, getDurationString };

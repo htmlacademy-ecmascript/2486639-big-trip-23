@@ -1,23 +1,32 @@
-import { FilterType } from '../const.js';
+import dayjs from 'dayjs';
+import { FilterType, filterTypes, DEFAULT_DISABLE_FILTER_TYPES } from '../const.js';
 
-//! у каждого фильтра свое сообщение в ТЗ поискать
-
-//! сделать (events) => {} и для проверок и для фильтрации, сортивки!
-//! применить dayjs isBefore isAfter
-const tripDatePeriodChecks = { //! trip -> events?
+const filterTypeEvents = {
   [FilterType.EVERYTHING]: () => true,
-  [FilterType.FUTURE]: (dateFrom, _, date) => (dateFrom > date),
-  [FilterType.PRESENT]: (dateFrom, dateTo, date) => ((dateFrom <= date) && (dateTo >= date)),
-  [FilterType.PAST]: (_, dateTo, date) => (dateTo < date),
+  [FilterType.FUTURE]: (dateFrom, _, date) => dayjs(dateFrom).isAfter(date),
+  [FilterType.PRESENT]: (dateFrom, dateTo, date) => (dayjs(dateFrom).isBefore(date) && dayjs(dateTo).isAfter(date)),
+  [FilterType.PAST]: (_, dateTo, date) => dayjs(dateTo).isBefore(date),
 };
 
 const existFilteredEvents = (events, filter, now) => {
-  const tripDatePeriodCheck = tripDatePeriodChecks[filter];
+  const checkEvents = filterTypeEvents[filter];
   return events.some((event) => {
     const { dateFrom, dateTo } = event;
 
-    return tripDatePeriodCheck(dateFrom, dateTo, now);
+    return checkEvents(dateFrom, dateTo, now);
   });
 };
 
-export { existFilteredEvents };
+const getDisabledFilters = (events) => {
+  if (!events.length) {
+    return DEFAULT_DISABLE_FILTER_TYPES;
+  }
+
+  const now = Date.now();
+
+  return filterTypes.filter((filter) => !existFilteredEvents(events, filter, now));
+};
+
+const filterEvents = (events, filterType, now) => events.filter(({ dateFrom, dateTo }) => filterTypeEvents[filterType](dateFrom, dateTo, now));
+
+export { filterEvents, getDisabledFilters };

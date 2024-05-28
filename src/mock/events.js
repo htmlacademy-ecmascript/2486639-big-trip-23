@@ -1,5 +1,5 @@
 import { getRandomNumber, getRandomBoolean, getRandomDatePeriod, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
-import { EventPrice, EventDate, EVENTS_MAX_COUNT, DESTINATIONS, Offer, PhotoNumber, Description, INFO_DESTINATIONS_COUNT, InfoCost } from './const.js';
+import { EventPrice, EventDate, EVENTS_MAX_COUNT, DESTINATIONS, Offer, PhotoNumber, Description } from './const.js';
 
 const getOfferIdsByType = (offers, type) => {
   const typeOffers = offers.filter((offer) => offer.type === type)[0]?.offers;
@@ -81,13 +81,4 @@ const generateMockData = (types) => {
   return { destinations, offers, events };
 };
 
-const getMockTripInfo = (destinations) => {
-  const randomDestinations = getRandomArrayElements(destinations, INFO_DESTINATIONS_COUNT, INFO_DESTINATIONS_COUNT);
-  const title = randomDestinations.map((destination) => destination.name).join(' — ');
-  const { dateFrom, dateTo } = getRandomDatePeriod(EventDate.MIN, EventDate.MAX);
-  const cost = getRandomNumber(InfoCost.MIN, InfoCost.MAX);
-
-  return { title, dateFrom, dateTo, cost };
-};
-
-export { generateMockData, getMockTripInfo };
+export { generateMockData };
