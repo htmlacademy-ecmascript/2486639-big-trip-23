@@ -156,7 +156,7 @@ export default class EventFormView extends AbstractStatefulView {
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
     //! тут добавить проверку, что пункт назначения не выбран, потрясти формой
-    this.#onFormSubmit(this._state);
+    this.#onFormSubmit(this._state); //! а если не бьыло изменний...
   };
 
   #onEventFormElementReset = (evt) => {
