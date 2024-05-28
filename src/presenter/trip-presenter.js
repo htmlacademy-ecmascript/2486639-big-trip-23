@@ -5,9 +5,10 @@ import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
-import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
+import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType } from '../const.js';
+import { updateItemByKey } from '../utils/utils.js';
 
 export default class TripPresenter {
   #filterModel = null;
@@ -120,6 +121,7 @@ export default class TripPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#eventsPresenter.updateEvent(data); //! проверить
+        updateItemByKey(this.#events, data); //! т.к. нет фильтрации при сортировке
         break;
       case UpdateType.MINOR:
         this.#clear();

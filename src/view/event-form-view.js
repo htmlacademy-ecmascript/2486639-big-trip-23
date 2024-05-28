@@ -1,10 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import { createEventFormTemplate } from '../template/event-form-template.js';
 import { isInputElement } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
-import { createEventFormTemplate } from '../template/event-form-template.js';
-import flatpickr from 'flatpickr';
-
-import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EventFormView extends AbstractStatefulView {
   #event = null;

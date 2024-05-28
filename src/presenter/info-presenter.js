@@ -1,6 +1,6 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { getTripInfo } from '../utils/event.js';
 import InfoView from '../view/info-view.js';
+import { getTripInfo } from '../utils/event.js';
 
 export default class InfoPresenter {
   #containerElement = null;
@@ -13,16 +13,14 @@ export default class InfoPresenter {
   }
 
   init() {
-    const storedInfoComponent = this.#infoComponent;
-    const { events } = this.#eventsModel;
-
-    this.#infoComponent = (events.length) ? new InfoView({ tripInfo: getTripInfo(events) }) : null;
-
-    if (storedInfoComponent) {
-      remove(storedInfoComponent);
+    if (this.#infoComponent) {
+      remove(this.#infoComponent);
     }
 
-    if (this.#infoComponent) {
+    const { events } = this.#eventsModel;
+
+    if (events.length) {
+      this.#infoComponent = new InfoView({ tripInfo: getTripInfo(events) });
       render(this.#infoComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }

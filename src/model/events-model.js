@@ -59,6 +59,10 @@ export default class EventsModel extends Observable {
   }
 
   addEvent(updateType, newEvent) {
+    //! временно новый id
+    const id = this.#events.length + 1;
+    newEvent.id = id;
+
     addItem(this.#events, newEvent);
 
     this._notify(updateType, newEvent);

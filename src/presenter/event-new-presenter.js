@@ -1,16 +1,18 @@
-import { replace } from '../framework/render.js';
-import EventItemPresenter from './event-item-presenter.js';
-import EventEditPresenter from './event-edit-presenter.js';
+import { render, replace, remove, RenderPosition } from '../framework/render.js';
+import EventItemView from '../view/event-item-view.js';
+import EventFormView from '../view/event-form-view.js';
 import { isEscapeKey } from '../utils/utils.js';
 import { UserAction, UpdateType } from '../const.js';
 
 export default class EventPresenter {
+  #containerElement = null;
+
   #destinations = null;
   #offers = null;
   #event = null;
 
-  #eventItemPresenter = null;
-  #eventEditPresenter = null;
+  #itemComponent = null;
+  #formComponent = null;
 
   #onEventFormOpen = null;
   #onEventFormClose = null;
@@ -19,43 +21,69 @@ export default class EventPresenter {
   constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#containerElement = containerElement;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
-
-    this.#eventItemPresenter = new EventItemPresenter({
-      containerElement,
-      onEditClick: this.#onEditClick,
-      onEventChange: this.#onFavoriteClick
-    });
-    this.#eventEditPresenter = new EventEditPresenter({
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onEventFormOpen: this.#onEventFormOpen,
-      onEventFormClose: this.#onEventFormClose,
-      onEventChange: this.#onEventChange
-    });
   }
 
   destroy() {
-    this.#eventItemPresenter.destroy();
-    this.#eventEditPresenter.destroy();
+    remove(this.#itemComponent);
+    remove(this.#formComponent);
   }
 
   init(event) {
     this.#event = event;
-    this.#eventItemPresenter.init(event);
+    const storedFormComponent = this.#formComponent;
+    const storedItemComponent = this.#itemComponent;
+
+    this.#makeComponents();
+
+    if (!storedItemComponent || !storedFormComponent) {
+      const isAddingNewEvent = !event.id;
+      const place = (isAddingNewEvent) ? RenderPosition.AFTERBEGIN : undefined;
+      render(this.#itemComponent, this.#containerElement, place);
+      if (isAddingNewEvent) {
+        this.#openForm();
+      }
+    } else {
+      replace(this.#itemComponent, storedItemComponent);
+
+      remove(storedItemComponent);
+      remove(storedFormComponent);
+    }
+  }
+
+  #makeComponents() {
+    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форма в режиме добавления,
+    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
+
+    const event = this.#event;
+
+    this.#formComponent = new EventFormView({
+      event,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onFormSubmit: this.#onFormSubmit,
+      onDelete: this.#onDelete,
+      onFormClose: this.#onFormClose
+    });
+
+    this.#itemComponent = new EventItemView({
+      event,
+      onFavoriteClick: this.#onFavoriteClick,
+      onEditClick: this.#onEditClick
+    });
   }
 
   #openForm() {
-    this.#eventEditPresenter.init(this.#event);
-    replace(this.#eventEditPresenter.component, this.#eventItemPresenter.component);
+    replace(this.#formComponent, this.#itemComponent);
     document.addEventListener('keydown', this.#onDocumentKeyDown);
     this.#onEventFormOpen(this);
   }
 
   resetEventForm = () => {
-    //!this.#formComponent.resetForm();
+    this.#formComponent.resetForm();
   };
 
   closeEventForm = () => {
@@ -64,7 +92,7 @@ export default class EventPresenter {
   };
 
   #replaceFormToItem = () => {
-    replace(this.#eventItemPresenter.component, this.#eventEditPresenter.component);
+    replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
   };
 

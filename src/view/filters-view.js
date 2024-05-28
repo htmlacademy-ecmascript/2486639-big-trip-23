@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { FilterType, DEFAULT_FILTER_TYPE } from '../const.js';
 import { getDisabledFilters } from '../utils/filter.js';
+import { FilterType, DEFAULT_FILTER_TYPE } from '../const.js';
 
 const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
