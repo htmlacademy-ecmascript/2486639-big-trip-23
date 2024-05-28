@@ -1,5 +1,6 @@
 import { render, remove } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
+import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
@@ -13,6 +14,7 @@ export default class TripPresenter {
   #eventsModel = null;
 
   #infoPresenter = null;
+  #filterPresenter = null;
   #eventsPresenter = null;
 
   #tripEventsElement = null;
@@ -25,26 +27,28 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ headerTripMainElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
+  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
     this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
-    const { destinations, offers } = eventsModel;
     this.#tripEventsElement = tripEventsElement;
 
     this.#infoPresenter = new InfoPresenter({
       containerElement: headerTripMainElement,
       eventsModel
     });
+    this.#filterPresenter = new FilterPresenter({
+      containerElement: headerTripFiltersElement,
+      filterModel,
+      eventsModel
+    });
     this.#eventsPresenter = new EventsPresenter({
-      destinations,
-      offers,
       containerElement: tripEventsElement,
       eventsModel,
       onAddNewEventClose: this.#onAddNewEventClose
     });
 
-    this.#sortingComponent = new SortingView(this.#onSortingChange);
-    this.#addEventButtonComponent = new ButtonView(addEventButtonElement, this.#onAddEventClick);
+    this.#sortingComponent = new SortingView({ onSortingChange: this.#onSortingChange });
+    this.#addEventButtonComponent = new ButtonView({ buttonElement: addEventButtonElement, onClick: this.#onAddEventClick });
   }
 
   init() {
@@ -54,12 +58,17 @@ export default class TripPresenter {
 
   #render() {
     this.#renderInfo();
+    this.#renderFilter();
     this.#renderEvents();
   }
 
   #renderInfo() {
     //! нужно будет вызывать при изменении данных
     this.#infoPresenter.init();
+  }
+
+  #renderFilter() {
+    this.#filterPresenter.init();
   }
 
   #renderEvents() {
@@ -82,7 +91,7 @@ export default class TripPresenter {
   }
 
   #renderEmptyEventsMessage() {
-    this.#emptyEventsMessageComponent = new MessageView(filterEmptyMessage[this.#filterModel.filterType]);
+    this.#emptyEventsMessageComponent = new MessageView({ message: filterEmptyMessage[this.#filterModel.filterType] });
     render(this.#emptyEventsMessageComponent, this.#tripEventsElement);
   }
 

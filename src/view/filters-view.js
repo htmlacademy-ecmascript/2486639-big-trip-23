@@ -21,7 +21,7 @@ export default class FiltersView extends AbstractView {
   #events = [];
   #onFilterChange = null;
 
-  constructor(events, onFilterChange) {
+  constructor({ events, onFilterChange }) {
     super();
 
     this.#events = events;

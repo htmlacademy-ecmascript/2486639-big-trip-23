@@ -14,7 +14,7 @@ export default class InfoPresenter {
   init() {
     const { events } = this.#eventsModel;
     if (events.length) {
-      render(new InfoView(getTripInfo(events)), this.#containerElement, RenderPosition.AFTERBEGIN);
+      render(new InfoView({ tripInfo: getTripInfo(events) }), this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }
 }

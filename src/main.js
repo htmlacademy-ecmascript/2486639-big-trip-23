@@ -1,7 +1,7 @@
 import FilterModel from './model/filter-model.js';
 import EventsModel from './model/events-model.js';
-import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
+import { UpdateType } from './const.js';
 
 const headerContainerElement = document.body.querySelector('.page-header__container');
 const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
@@ -9,23 +9,18 @@ const headerTripFiltersElement = headerContainerElement.querySelector('.trip-con
 const tripEventsElement = document.body.querySelector('.trip-events');
 const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
 
-const filterModel = new FilterModel();
+const filterModel = new FilterModel({ updateType: UpdateType.MAJOR });
 const eventsModel = new EventsModel();
-const filterPresenter = new FilterPresenter({
-  containerElement: headerTripFiltersElement,
-  filterModel,
-  eventsModel
-});
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
+  headerTripFiltersElement,
   tripEventsElement,
   addEventButtonElement,
   filterModel,
   eventsModel
 });
 
-filterPresenter.init();
 tripPresenter.init();
 
 /*

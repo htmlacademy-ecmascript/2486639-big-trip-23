@@ -19,7 +19,7 @@ const createSortingTemplate = (activeSorting, tripDisableSortings) => `<form cla
 export default class SortingView extends AbstractView {
   #onSortingChange = null;
 
-  constructor(onSortingChange) {
+  constructor({ onSortingChange }) {
     super();
 
     this.#onSortingChange = onSortingChange;

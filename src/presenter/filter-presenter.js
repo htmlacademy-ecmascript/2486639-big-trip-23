@@ -15,7 +15,7 @@ export default class FilterPresenter {
 
   init() {
     //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны, или не так!
-    render(new FiltersView(this.#eventsModel.events, this.#onFilterChange), this.#containerElement);
+    render(new FiltersView({ events: this.#eventsModel.events, onFilterChange: this.#onFilterChange }), this.#containerElement);
   }
 
   #onFilterChange = (filterType) => {

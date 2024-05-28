@@ -21,7 +21,7 @@ const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
 export default class InfoView extends AbstractView {
   #tripInfo = null;
 
-  constructor(tripInfo) {
+  constructor({ tripInfo }) {
     super();
     //! временно
     this.#tripInfo = tripInfo;

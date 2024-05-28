@@ -2,7 +2,7 @@ export default class ButtonView {
   #buttonElement = null;
   #onClick = null;
 
-  constructor(buttonElement, onClick) {
+  constructor({ buttonElement, onClick }) {
     this.#buttonElement = buttonElement;
     this.#onClick = onClick;
 

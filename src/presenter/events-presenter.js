@@ -6,9 +6,8 @@ import { DEFAULT_NEW_EVENT } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
+  #eventsModel;
 
-  #destinations = null;
-  #offers = null;
   #events = [];
 
   #isOpenNewEvent = false; //! сделать наследование презенторов и формы редактирования
@@ -20,9 +19,8 @@ export default class EventsPresenter {
 
   #onAddNewEventClose = null;
 
-  constructor({ destinations, offers, containerElement, onAddNewEventClose }) {
-    this.#destinations = destinations;
-    this.#offers = offers;
+  constructor({ eventsModel, containerElement, onAddNewEventClose }) {
+    this.#eventsModel = eventsModel;
     this.#containerElement = containerElement;
     this.#onAddNewEventClose = onAddNewEventClose;
   }
@@ -57,9 +55,11 @@ export default class EventsPresenter {
   }
 
   #renderEventItem(event) {
+    const { destinations, offers } = this.#eventsModel;
+
     const eventPresenter = new EventPresenter({
-      destinations: this.#destinations,
-      offers: this.#offers,
+      destinations,
+      offers,
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
