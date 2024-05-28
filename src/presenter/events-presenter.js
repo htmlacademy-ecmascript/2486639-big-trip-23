@@ -73,7 +73,7 @@ export default class EventsPresenter {
     this.#eventPresenters.set(event.id, eventPresenter);
   }
 
-  #closeEventForm = () => {
+  #closeEventForm() {
     if (this.#activeEventPresenter) {
       //! как то спраятать все #activeEventPresenter.destroy(); #activeEventPresenter.resetEventForm(); #activeEventPresenter.closeEventForm();
       //! и больше логики передать EventPresenter
@@ -85,7 +85,7 @@ export default class EventsPresenter {
       }
       this.#onEventFormClose();
     }
-  };
+  }
 
   #onEventFormOpen = (eventPresenter) => {
     //! ошибка при окрытом редактировании и добавлнении нового, проверить и наоборот, и только на редактируемых

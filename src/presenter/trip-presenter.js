@@ -86,8 +86,8 @@ export default class TripPresenter {
 
     //! нужно будет проверить вызов при добавлении нового события, или не так!
     //! и сортировать и фильтровать дабавленное новое событие, или не так!
-    //! при сортировке заново фильтруеться... попробовать убрать лишний вызов или параметром или свойством
-    const filteredEvents = (!isApplyFilter) ? this.#events : this.#eventsModel.events.filter(({ dateFrom, dateTo }) => filterEvents[this.#filterModel.filterType](dateFrom, dateTo, now));
+    //! при сортировке заново фильтровались
+    const filteredEvents = (!isApplyFilter) ? this.#events : filterEvents(this.#eventsModel.events, this.#filterModel.filterType, now);
 
     this.#eventsPresenter.clear();
 
