@@ -5,7 +5,7 @@ import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
-import { filterEmptyMessage, DEFAULT_SORTING_TYPE } from '../const.js';
+import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType } from '../const.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
 
@@ -19,8 +19,8 @@ export default class TripPresenter {
 
   #tripEventsElement = null;
 
-  #emptyEventsMessageComponent = null;
   #sortingComponent = null;
+  #emptyEventsMessageComponent = null;
   #addEventButtonComponent = null;
 
   #events = [];
@@ -47,18 +47,32 @@ export default class TripPresenter {
       onAddNewEventClose: this.#onAddNewEventClose
     });
 
-    this.#sortingComponent = new SortingView({ onSortingChange: this.#onSortingChange });
     this.#addEventButtonComponent = new ButtonView({ buttonElement: addEventButtonElement, onClick: this.#onAddEventClick });
+
+    eventsModel.addObserver(this.#onModelsChange);
+    filterModel.addObserver(this.#onModelsChange);
   }
 
   init() {
-    this.#events = [...this.#eventsModel.events]; //! временно
     this.#render();
+  }
+
+  #clear({ isResetSortingType } = { isResetSortingType: false }) {
+    remove(this.#sortingComponent);
+
+    if (isResetSortingType) {
+      this.#currentSortingType = DEFAULT_SORTING_TYPE;
+    }
+
+    if (this.#emptyEventsMessageComponent) {
+      remove(this.#emptyEventsMessageComponent);
+    }
   }
 
   #render() {
     this.#renderInfo();
     this.#renderFilter();
+    this.#renderSorting();
     this.#renderEvents();
   }
 
@@ -71,23 +85,29 @@ export default class TripPresenter {
     this.#filterPresenter.init();
   }
 
+  #renderSorting() {
+    this.#sortingComponent = new SortingView({ currentSortingType: this.#currentSortingType, onSortingChange: this.#onSortingChange });
+    render(this.#sortingComponent, this.#tripEventsElement);
+  }
+
   #renderEvents() {
+    const { events } = this.#eventsModel;
+
     this.#eventsPresenter.clear();
 
-    if (!this.#events.length) {
+    if (!events.length) {
       this.#renderEmptyEventsMessage();
       return;
     }
 
-    render(this.#sortingComponent, this.#tripEventsElement);
-
-    //! нужно будет вызывать и при изменении фильтра, добавлении нового события, или не так!
+    //! нужно будет проверить вызов при добавлении нового события, или не так!
     //! и сортировать и фильтровать дабавленное новое событие, или не так!
     const now = Date.now();
-    this.#events.filter(({ dateFrom, dateTo }) => filterEvents[this.#filterModel.filterType](dateFrom, dateTo, now));
-    this.#events.sort(sortEvents[this.#currentSortingType]);
+    const filteredEvents = events.filter(({ dateFrom, dateTo }) => filterEvents[this.#filterModel.filterType](dateFrom, dateTo, now));
+    filteredEvents.sort(sortEvents[this.#currentSortingType]);
 
-    this.#eventsPresenter.init(this.#events);
+    this.#events = filteredEvents;
+    this.#eventsPresenter.init(filteredEvents);
   }
 
   #renderEmptyEventsMessage() {
@@ -100,9 +120,27 @@ export default class TripPresenter {
     this.#emptyEventsMessageComponent = null;
   }
 
+  #onModelsChange = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#eventsPresenter.updateEvent(data); //! проверить
+        this.#renderInfo();//! проверить
+        break;
+      case UpdateType.MINOR:
+        this.#clear();
+        this.#render();
+        break;
+      case UpdateType.MAJOR:
+        this.#clear({ isResetSortingType: true });
+        this.#render();
+        break;
+    }
+  };
+
   #onAddNewEventClose = () => {
     this.#addEventButtonComponent.enable();
 
+    //! может сразу this.#renderEvents(); или через событие
     if (!this.#events.length) {
       this.#renderEmptyEventsMessage();
     }

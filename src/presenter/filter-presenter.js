@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import FiltersView from '../view/filters-view.js';
 
 export default class FilterPresenter {
@@ -6,6 +6,7 @@ export default class FilterPresenter {
   #containerElement = null;
   #filterModel = null;
   #eventsModel = null;
+  #filterComponent = null;
 
   constructor({ containerElement, filterModel, eventsModel }) {
     this.#containerElement = containerElement;
@@ -14,8 +15,20 @@ export default class FilterPresenter {
   }
 
   init() {
-    //! после добавления нового события пересчитать фильтры и отрисовать заново, если не все фильтры были активны, или не так!
-    render(new FiltersView({ events: this.#eventsModel.events, onFilterChange: this.#onFilterChange }), this.#containerElement);
+    //! похожий похдход у нескольких классов, попробовать выделить код
+    const prevFilterComponent = this.#filterComponent;
+    this.#filterComponent = new FiltersView({
+      currentFilterType: this.#filterModel.filterType,
+      events: this.#eventsModel.events,
+      onFilterChange: this.#onFilterChange
+    });
+
+    if (!prevFilterComponent) {
+      render(this.#filterComponent, this.#containerElement);
+    } else {
+      replace(this.#filterComponent, prevFilterComponent);
+      remove(prevFilterComponent);
+    }
   }
 
   #onFilterChange = (filterType) => {

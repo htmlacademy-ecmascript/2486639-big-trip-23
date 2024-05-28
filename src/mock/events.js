@@ -1,5 +1,5 @@
 import { getRandomNumber, getRandomBoolean, getRandomDatePeriod, getRandomNumbers, getRandomArrayElement, getRandomArrayElements } from '../utils/random.js';
-import { EventPrice, EventDate, EVENTS_MAX_COUNT, DESTINATIONS, Offer, PhotoNumber, Description, INFO_DESTINATIONS_COUNT, InfoCost } from './const.js';
+import { EventPrice, EventDate, EVENTS_MAX_COUNT, DESTINATIONS, Offer, PhotoNumber, Description } from './const.js';
 
 const getOfferIdsByType = (offers, type) => {
   const typeOffers = offers.filter((offer) => offer.type === type)[0]?.offers;

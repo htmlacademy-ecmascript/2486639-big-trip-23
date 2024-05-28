@@ -36,6 +36,11 @@ export default class EventsPresenter {
     this.#renderEventsList();
   }
 
+  updateEvent(updatedEvent) { //! будет в свое презенторе или общем
+    this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
+    //! посмотреть вызовы в других функциях
+  }
+
   addEvent() { //! будет в свое презенторе или общем
     this.#isOpenNewEvent = true;
 
