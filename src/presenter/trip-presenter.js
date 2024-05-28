@@ -7,7 +7,7 @@ import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
-import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType } from '../const.js';
+import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE } from '../const.js';
 import { updateItemByKey } from '../utils/utils.js';
 
 export default class TripPresenter {
@@ -147,6 +147,7 @@ export default class TripPresenter {
     //! посмотреть в ТЗ
     //! 1. Если событий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
     //! 2. Сбросить фильтр и сортировку при добавлении нового
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE; //!
     if (!this.#events.length) {
       this.#removeEmptyEventsMessage();
     }

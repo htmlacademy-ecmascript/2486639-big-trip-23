@@ -6,23 +6,20 @@ import { DEFAULT_NEW_EVENT, UserAction, UpdateType, } from '../const.js';
 export default class NewEventPresenter {
   #containerElement = null;
 
-  //! частичто похож на EventPresenter
   #destinations = null;
   #offers = null;
   #event = null;
 
   #formComponent = null;
 
-  #onEventFormOpen = null;
-  #onEventFormClose = null;
+  #onNewEventFormClose = null;
   #onEventChange = null;
 
-  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
+  constructor({ destinations, offers, containerElement, onNewEventFormClose, onEventChange }) {
     this.#destinations = destinations;
     this.#offers = offers;
     this.#containerElement = containerElement;
-    this.#onEventFormOpen = onEventFormOpen;
-    this.#onEventFormClose = onEventFormClose;
+    this.#onNewEventFormClose = onNewEventFormClose;
     this.#onEventChange = onEventChange;
   }
 
@@ -47,15 +44,12 @@ export default class NewEventPresenter {
 
   closeEventForm() {
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-    this.#onEventFormClose();
+    this.#onNewEventFormClose();
   }
 
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.ADD_EVENT, UpdateType.MINOR, event);
-
-    //! навеное не нужно, буде перерисовка при изменениях
-    //this.#replaceFormToItem();
-    this.#onEventFormClose(); //!
+    this.closeEventForm(); //! а будет перерисовка? события остались?
   };
 
   #onFormClose = () => {

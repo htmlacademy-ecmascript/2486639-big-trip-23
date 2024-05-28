@@ -39,30 +39,30 @@ export default class EventsPresenter {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
-  addEvent() { //! будет в свое презенторе или общем
-    //!!!!!
+  addEvent() {
     const { destinations, offers } = this.#eventsModel;
 
-    const newEventPresenter = new NewEventPresenter({
+    this.#closeEventForm();
+    if (!this.#events.length) {
+      render(this.#eventsListComponent, this.#containerElement);
+    }
+
+    this.#newEventPresenter = new NewEventPresenter({
       destinations,
       offers,
       containerElement: this.#eventsListComponent.element,
-      onEventFormOpen: this.#onEventFormOpen,
-      onEventFormClose: this.#onEventFormClose,
+      onNewEventFormClose: this.#onNewEventFormClose,
       onEventChange: this.#onEventChange
     });
-    newEventPresenter.init();
+    this.#newEventPresenter.init();
+  }
 
-    /*
-        this.#isOpenNewEvent = true;
-
-        if (!this.#events.length) {
-          render(this.#eventsListComponent, this.#containerElement);
-        }
-
-        //! будет отдельный презентер
-        this.#renderEventItem(DEFAULT_NEW_EVENT);
-      */
+  #closeNewEventForm() {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+      this.#newEventPresenter = null;
+      this.#onAddNewEventClose();
+    }
   }
 
   #renderEventsList() {
@@ -89,18 +89,12 @@ export default class EventsPresenter {
 
   #closeEventForm() {
     if (this.#activeEventPresenter) {
-      //! как то спраятать все #activeEventPresenter.destroy(); #activeEventPresenter.resetEventForm(); #activeEventPresenter.closeEventForm();
-      //! и больше логики передать EventPresenter
-      /*
-      if (this.#isOpenNewEvent) {
-        this.#activeEventPresenter.destroy();
-      } else {
-      */
       this.#activeEventPresenter.resetEventForm();
       this.#activeEventPresenter.closeEventForm();
-      /*}*/
       this.#onEventFormClose();
     }
+
+    this.#closeNewEventForm();
   }
 
   #onEventFormOpen = (eventPresenter) => {
@@ -109,17 +103,13 @@ export default class EventsPresenter {
     this.#activeEventPresenter = eventPresenter;
   };
 
+  #onNewEventFormClose = () => {
+    this.#closeNewEventForm();
+  };
+
   #onEventFormClose = () => {
     //! навеное не нужно, буде перерисовка при изменениях
     this.#activeEventPresenter = null;
-    /*
-    if (this.#isOpenNewEvent) {
-      this.#isOpenNewEvent = false;
-      this.#eventPresenters.get(DEFAULT_NEW_EVENT.id).destroy(); //! еще варианты по замене null из DEFAULT_NEW_EVENT.id
-      this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
-      this.#onAddNewEventClose();
-    }
-    */
   };
 
   #onEventChange = (actionType, updateType, event) => {
