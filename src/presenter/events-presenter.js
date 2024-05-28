@@ -1,7 +1,7 @@
 import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { DEFAULT_NEW_EVENT, UpdateType, UserAction } from '../const.js';
+import { DEFAULT_NEW_EVENT, UserAction } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -35,7 +35,7 @@ export default class EventsPresenter {
     this.#renderEventsList();
   }
 
-  updateEvent(updatedEvent) { //! будет в свое презенторе или общем
+  updateEvent(updatedEvent) { //! будет в своем презенторе или общем
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
     //! посмотреть вызовы в других функциях
   }
@@ -105,11 +105,8 @@ export default class EventsPresenter {
   };
 
   #onEventChange = (actionType, updateType, event) => {
-    this.#eventsModel.updateEvent(UpdateType.MINOR, event);
-
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        //! не все изменения UpdateType.MINOR, может быть и PATCH
         this.#eventsModel.updateEvent(updateType, event);
         break;
       case UserAction.ADD_EVENT:
@@ -120,9 +117,6 @@ export default class EventsPresenter {
         break;
     }
     /*
-    //! временно новый id
-    const id = (this.#isOpenNewEvent) ? this.#events.length + 1 : updatedEvent.id;
-
     //! для нового сделать отдельный обработчик onNewEvent
     if (this.#isOpenNewEvent) {
       //! скорее всего будет полная отрисовка заново и придеться все удалить

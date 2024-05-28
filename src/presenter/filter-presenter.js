@@ -1,3 +1,4 @@
+import { UpdateType } from '../const.js';
 import { render, replace, remove } from '../framework/render.js';
 import FiltersView from '../view/filters-view.js';
 
@@ -12,6 +13,8 @@ export default class FilterPresenter {
     this.#containerElement = containerElement;
     this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
+
+    eventsModel.addObserver(this.#onEventsModelChange);
   }
 
   init() {
@@ -31,6 +34,12 @@ export default class FilterPresenter {
       remove(storedFilterComponent);
     }
   }
+
+  #onEventsModelChange = (updateType) => {
+    if (updateType !== UpdateType.PATCH) {
+      this.init();
+    }
+  };
 
   #onFilterChange = (filterType) => {
     this.#filterModel.filterType = filterType;

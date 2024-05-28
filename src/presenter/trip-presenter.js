@@ -54,6 +54,7 @@ export default class TripPresenter {
   }
 
   init() {
+    this.#filterPresenter.init();//! скорее всего при плучении данных с сервера будет первый init
     this.#render();
   }
 
@@ -71,7 +72,6 @@ export default class TripPresenter {
 
   #render() {
     this.#infoPresenter.init();
-    this.#filterPresenter.init();
     this.#renderEvents();
   }
 

@@ -107,6 +107,7 @@ export default class EventPresenter {
   };
 
   #onFormSubmit = (event) => {
+    //! не все изменения UpdateType.MINOR, может быть и PATCH, только сумма изменена, может доавбить ключ...
     this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
 
     //! навеное не нужно, буде перерисовка при изменениях
