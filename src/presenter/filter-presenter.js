@@ -16,18 +16,19 @@ export default class FilterPresenter {
 
   init() {
     //! похожий похдход у нескольких классов, попробовать выделить код
-    const prevFilterComponent = this.#filterComponent;
+    //! или сделать в util какую то функцию...
+    const storedFilterComponent = this.#filterComponent;
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
       events: this.#eventsModel.events,
       onFilterChange: this.#onFilterChange
     });
 
-    if (!prevFilterComponent) {
+    if (!storedFilterComponent) {
       render(this.#filterComponent, this.#containerElement);
     } else {
-      replace(this.#filterComponent, prevFilterComponent);
-      remove(prevFilterComponent);
+      replace(this.#filterComponent, storedFilterComponent);
+      remove(storedFilterComponent);
     }
   }
 

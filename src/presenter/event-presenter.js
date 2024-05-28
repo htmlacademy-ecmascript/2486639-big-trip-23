@@ -2,6 +2,7 @@ import { render, replace, remove, RenderPosition } from '../framework/render.js'
 import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class EventPresenter {
   #containerElement = null;
@@ -18,14 +19,13 @@ export default class EventPresenter {
   #onEventChange = null;
   #onEventDelete = null;
 
-  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange, onEventDelete }) {
+  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
     this.#destinations = destinations;
     this.#offers = offers;
     this.#containerElement = containerElement;
     this.#onEventFormOpen = onEventFormOpen;
     this.#onEventFormClose = onEventFormClose;
     this.#onEventChange = onEventChange;
-    this.#onEventDelete = onEventDelete;
   }
 
   destroy() {
@@ -35,12 +35,12 @@ export default class EventPresenter {
 
   init(event) {
     this.#event = event;
-    const prevFormComponent = this.#formComponent;
-    const prevItemComponent = this.#itemComponent;
+    const storedFormComponent = this.#formComponent;
+    const storedItemComponent = this.#itemComponent;
 
     this.#makeComponents();
 
-    if (!prevItemComponent || !prevFormComponent) {
+    if (!storedItemComponent || !storedFormComponent) {
       const isAddingNewEvent = !event.id;
       const place = (isAddingNewEvent) ? RenderPosition.AFTERBEGIN : undefined;
       render(this.#itemComponent, this.#containerElement, place);
@@ -48,10 +48,10 @@ export default class EventPresenter {
         this.#openForm();
       }
     } else {
-      replace(this.#itemComponent, prevItemComponent);
+      replace(this.#itemComponent, storedItemComponent);
 
-      remove(prevItemComponent);
-      remove(prevFormComponent);
+      remove(storedItemComponent);
+      remove(storedFormComponent);
     }
   }
 
@@ -103,21 +103,23 @@ export default class EventPresenter {
 
   #onFavoriteClick = () => {
     const isFavorite = !this.#event.isFavorite;
-    this.#onEventChange({ ...this.#event, isFavorite });
+    this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.PATCH, { ...this.#event, isFavorite });
   };
 
   #onFormSubmit = (event) => {
+    this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
+
+    //! навеное не нужно, буде перерисовка при изменениях
     this.#replaceFormToItem();
-    this.#onEventChange({ ...event });
-    this.#onEventFormClose();
+    this.#onEventFormClose(); //!
   };
 
   #onDelete = (event) => {
-    //! выше есть такие же две строки...
+    this.#onEventChange(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
+
+    //! выше есть такие же две строки... //! тоже скорее всего не нужно
     this.#replaceFormToItem();
     this.#onEventFormClose();
-
-    this.#onEventDelete(event);
   };
 
   #onFormClose = () => {

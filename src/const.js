@@ -71,6 +71,18 @@ const DEFAULT_FLATPICKR_CONFIG = {
   dateFormat: DateFormat.SHORT_DATE_TIME_FLATPICKR,
 };
 
+const UserAction = {
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   EVENT_TYPES,
   DEFAULT_NEW_EVENT,
@@ -85,5 +97,7 @@ export {
   DISABLE_SORTING_TYPES,
   MessageType,
   DateFormat,
-  DEFAULT_FLATPICKR_CONFIG
+  DEFAULT_FLATPICKR_CONFIG,
+  UserAction,
+  UpdateType
 };

@@ -13,13 +13,13 @@ export default class InfoPresenter {
   }
 
   init() {
-    const prevInfoComponent = this.#infoComponent;
+    const storedInfoComponent = this.#infoComponent;
     const { events } = this.#eventsModel;
 
     this.#infoComponent = (events.length) ? new InfoView({ tripInfo: getTripInfo(events) }) : null;
 
-    if (prevInfoComponent) {
-      remove(prevInfoComponent);
+    if (storedInfoComponent) {
+      remove(storedInfoComponent);
     }
 
     if (this.#infoComponent) {

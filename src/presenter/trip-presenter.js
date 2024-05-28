@@ -70,18 +70,9 @@ export default class TripPresenter {
   }
 
   #render() {
-    this.#renderInfo();
-    this.#renderFilter();
-    this.#renderEvents();
-  }
-
-  #renderInfo() {
-    //! нужно будет вызывать при изменении данных
     this.#infoPresenter.init();
-  }
-
-  #renderFilter() {
     this.#filterPresenter.init();
+    this.#renderEvents();
   }
 
   #renderSorting() {
@@ -89,24 +80,28 @@ export default class TripPresenter {
     render(this.#sortingComponent, this.#tripEventsElement);
   }
 
-  #renderEvents() {
-    const { events } = this.#eventsModel;
+  #renderEvents({ isRenderSorting, isApplyFilter } = { isRenderSorting: true, isApplyFilter: true }) {
+    const now = Date.now();
+
+    //! нужно будет проверить вызов при добавлении нового события, или не так!
+    //! и сортировать и фильтровать дабавленное новое событие, или не так!
+    //! при сортировке заново фильтруеться... попробовать убрать лишний вызов или параметром или свойством
+    const filteredEvents = (!isApplyFilter) ? this.#events : this.#eventsModel.events.filter(({ dateFrom, dateTo }) => filterEvents[this.#filterModel.filterType](dateFrom, dateTo, now));
 
     this.#eventsPresenter.clear();
 
-    if (!events.length) {
+    if (!filteredEvents.length) {
       this.#renderEmptyEventsMessage();
       return;
     }
 
-    this.#renderSorting();
+    if (isRenderSorting) {
+      this.#renderSorting();
+    }
 
-    //! нужно будет проверить вызов при добавлении нового события, или не так!
-    //! и сортировать и фильтровать дабавленное новое событие, или не так!
-    const now = Date.now();
-    const filteredEvents = events.filter(({ dateFrom, dateTo }) => filterEvents[this.#filterModel.filterType](dateFrom, dateTo, now));
     filteredEvents.sort(sortEvents[this.#currentSortingType]);
 
+    //! а нужно ли...
     this.#events = filteredEvents;
     this.#eventsPresenter.init(filteredEvents);
   }
@@ -158,6 +153,6 @@ export default class TripPresenter {
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;
-    this.#renderEvents();
+    this.#renderEvents({ isRenderSorting: false, isApplyFilter: false });
   };
 }

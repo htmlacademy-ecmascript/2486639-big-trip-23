@@ -1,7 +1,7 @@
 import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { DEFAULT_NEW_EVENT, UpdateType } from '../const.js';
+import { DEFAULT_NEW_EVENT, UpdateType, UserAction } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -67,8 +67,7 @@ export default class EventsPresenter {
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
-      onEventChange: this.#onEventChange,
-      onEventDelete: this.#onEventDelete
+      onEventChange: this.#onEventChange
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
@@ -95,6 +94,7 @@ export default class EventsPresenter {
   };
 
   #onEventFormClose = () => {
+    //! навеное не нужно, буде перерисовка при изменениях
     this.#activeEventPresenter = null;
     if (this.#isOpenNewEvent) {
       this.#isOpenNewEvent = false;
@@ -104,7 +104,22 @@ export default class EventsPresenter {
     }
   };
 
-  #onEventChange = (updatedEvent) => {
+  #onEventChange = (actionType, updateType, event) => {
+    this.#eventsModel.updateEvent(UpdateType.MINOR, event);
+
+    switch (actionType) {
+      case UserAction.UPDATE_EVENT:
+        //! не все изменения UpdateType.MINOR, может быть и PATCH
+        this.#eventsModel.updateEvent(updateType, event);
+        break;
+      case UserAction.ADD_EVENT:
+        this.#eventsModel.addEvent(updateType, event);
+        break;
+      case UserAction.DELETE_EVENT:
+        this.#eventsModel.deleteEvent(updateType, event);
+        break;
+    }
+    /*
     //! временно новый id
     const id = (this.#isOpenNewEvent) ? this.#events.length + 1 : updatedEvent.id;
 
@@ -123,14 +138,9 @@ export default class EventsPresenter {
       this.#eventPresenters.set(id, eventPresenter);
       this.#onAddNewEventClose();
     } else {
-      //! не все изменения UpdateType.MINOR, может быть и PATCH
-      this.#eventsModel.updateEvent(UpdateType.MINOR, updatedEvent);
-    }
+  }
+  */
 
     //this.#eventPresenters.get(id).init(updatedEvent);
-  };
-
-  #onEventDelete = (event) => {
-    this.#eventsModel.deleteEvent(UpdateType.MINOR, event);
   };
 }
