@@ -1,8 +1,9 @@
-import { render, replace, remove, RenderPosition } from '../framework/render.js';
+import { replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import { UserAction, UpdateType } from '../const.js';
+import { renderOrReplace } from '../utils/dom.js';
 
 export default class EventPresenter {
   #containerElement = null;
@@ -34,30 +35,23 @@ export default class EventPresenter {
 
   init(event) {
     this.#event = event;
-    const storedFormComponent = this.#formComponent;
     const storedItemComponent = this.#itemComponent;
 
     this.#makeComponents();
 
-    if (!storedItemComponent || !storedFormComponent) {
-      const isAddingNewEvent = !event.id;
-      const place = (isAddingNewEvent) ? RenderPosition.AFTERBEGIN : undefined;
-      render(this.#itemComponent, this.#containerElement, place);
-      if (isAddingNewEvent) {
-        this.#openForm();
-      }
-    } else {
-      replace(this.#itemComponent, storedItemComponent);
+    renderOrReplace(this.#itemComponent, storedItemComponent, this.#containerElement);
+  }
 
-      remove(storedItemComponent);
-      remove(storedFormComponent);
-    }
+  resetEventForm() {
+    this.#formComponent.resetForm();
+  }
+
+  closeEventForm() {
+    this.#replaceFormToItem();
+    this.#onEventFormClose();
   }
 
   #makeComponents() {
-    //! Предусмотреть вариант с добавлением нового события, будет Item, Form по умолчанию, но форма в режиме добавления,
-    //! а при отмене на форме или из главного презетора удалить оба елемента, скорее всего путем полной перерисовки.
-
     const event = this.#event;
 
     this.#formComponent = new EventFormView({
@@ -65,7 +59,7 @@ export default class EventPresenter {
       destinations: this.#destinations,
       offers: this.#offers,
       onFormSubmit: this.#onFormSubmit,
-      onDelete: this.#onDelete,
+      onResetButtonClick: this.#onDelete,
       onFormClose: this.#onFormClose
     });
 
@@ -77,24 +71,19 @@ export default class EventPresenter {
   }
 
   #openForm() {
-    replace(this.#formComponent, this.#itemComponent);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    this.#replaceItemToForm();
     this.#onEventFormOpen(this);
   }
 
-  resetEventForm = () => {
-    this.#formComponent.resetForm();
-  };
+  #replaceItemToForm() {
+    replace(this.#formComponent, this.#itemComponent);
+    document.addEventListener('keydown', this.#onDocumentKeyDown);
+  }
 
-  closeEventForm = () => {
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
-  };
-
-  #replaceFormToItem = () => {
+  #replaceFormToItem() {
     replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
-  };
+  }
 
   #onEditClick = () => {
     this.#openForm();

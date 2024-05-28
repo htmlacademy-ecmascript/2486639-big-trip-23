@@ -1,7 +1,8 @@
 import { render } from '../framework/render.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { DEFAULT_NEW_EVENT, UserAction } from '../const.js';
+import { UserAction } from '../const.js';
+import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -9,10 +10,9 @@ export default class EventsPresenter {
 
   #events = [];
 
-  #isOpenNewEvent = false; //! сделать наследование презенторов и формы редактирования
-
   #eventPresenters = new Map();
   #activeEventPresenter = null;
+  #newEventPresenter = null;
 
   #eventsListComponent = new EventsListView();
 
@@ -35,20 +35,34 @@ export default class EventsPresenter {
     this.#renderEventsList();
   }
 
-  updateEvent(updatedEvent) { //! будет в своем презенторе или общем
+  updateEvent(updatedEvent) {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
-    //! посмотреть вызовы в других функциях
   }
 
   addEvent() { //! будет в свое презенторе или общем
-    this.#isOpenNewEvent = true;
+    //!!!!!
+    const { destinations, offers } = this.#eventsModel;
 
-    if (!this.#events.length) {
-      render(this.#eventsListComponent, this.#containerElement);
-    }
+    const newEventPresenter = new NewEventPresenter({
+      destinations,
+      offers,
+      containerElement: this.#eventsListComponent.element,
+      onEventFormOpen: this.#onEventFormOpen,
+      onEventFormClose: this.#onEventFormClose,
+      onEventChange: this.#onEventChange
+    });
+    newEventPresenter.init();
 
-    //! будет отдельный презентер
-    this.#renderEventItem(DEFAULT_NEW_EVENT);
+    /*
+        this.#isOpenNewEvent = true;
+
+        if (!this.#events.length) {
+          render(this.#eventsListComponent, this.#containerElement);
+        }
+
+        //! будет отдельный презентер
+        this.#renderEventItem(DEFAULT_NEW_EVENT);
+      */
   }
 
   #renderEventsList() {
@@ -77,12 +91,14 @@ export default class EventsPresenter {
     if (this.#activeEventPresenter) {
       //! как то спраятать все #activeEventPresenter.destroy(); #activeEventPresenter.resetEventForm(); #activeEventPresenter.closeEventForm();
       //! и больше логики передать EventPresenter
+      /*
       if (this.#isOpenNewEvent) {
         this.#activeEventPresenter.destroy();
       } else {
-        this.#activeEventPresenter.resetEventForm();
-        this.#activeEventPresenter.closeEventForm();
-      }
+      */
+      this.#activeEventPresenter.resetEventForm();
+      this.#activeEventPresenter.closeEventForm();
+      /*}*/
       this.#onEventFormClose();
     }
   }
@@ -96,12 +112,14 @@ export default class EventsPresenter {
   #onEventFormClose = () => {
     //! навеное не нужно, буде перерисовка при изменениях
     this.#activeEventPresenter = null;
+    /*
     if (this.#isOpenNewEvent) {
       this.#isOpenNewEvent = false;
       this.#eventPresenters.get(DEFAULT_NEW_EVENT.id).destroy(); //! еще варианты по замене null из DEFAULT_NEW_EVENT.id
       this.#eventPresenters.delete(DEFAULT_NEW_EVENT.id);
       this.#onAddNewEventClose();
     }
+    */
   };
 
   #onEventChange = (actionType, updateType, event) => {

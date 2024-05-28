@@ -12,13 +12,13 @@ export default class EventFormView extends AbstractStatefulView {
   #offers = null;
 
   #onFormSubmit = null;
-  #onDelete = null;
+  #onResetButtonClick = null;
   #onFormClose = null;
 
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  constructor({ event, destinations, offers, onFormSubmit, onDelete, onFormClose }) {
+  constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
 
     this.#event = event;
@@ -30,7 +30,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.#offers = offers;
 
     this.#onFormSubmit = onFormSubmit;
-    this.#onDelete = onDelete;
+    this.#onResetButtonClick = onResetButtonClick;
     this.#onFormClose = onFormClose;
 
     this._restoreHandlers();
@@ -170,7 +170,7 @@ export default class EventFormView extends AbstractStatefulView {
       this.resetForm();
       this.#onFormClose();
     } else {
-      this.#onDelete(this.#event);
+      this.#onResetButtonClick(this.#event);
     }
   };
 
