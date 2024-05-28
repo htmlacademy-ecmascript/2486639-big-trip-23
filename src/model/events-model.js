@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { updateItemByKey, addItem, deleteItem } from '../utils/utils.js';
+import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
 import { makeExtendedEvent } from '../utils/event.js';
 import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
@@ -65,7 +65,7 @@ export default class EventsModel extends Observable {
   }
 
   deleteEvent(updateType, event) {
-    deleteItem(this.#events, event);
+    deleteItemByKey(this.#events, event);
 
     this._notify(updateType);
   }

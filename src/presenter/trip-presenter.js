@@ -72,7 +72,6 @@ export default class TripPresenter {
   #render() {
     this.#renderInfo();
     this.#renderFilter();
-    this.#renderSorting();
     this.#renderEvents();
   }
 
@@ -100,6 +99,8 @@ export default class TripPresenter {
       return;
     }
 
+    this.#renderSorting();
+
     //! нужно будет проверить вызов при добавлении нового события, или не так!
     //! и сортировать и фильтровать дабавленное новое событие, или не так!
     const now = Date.now();
@@ -124,7 +125,6 @@ export default class TripPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#eventsPresenter.updateEvent(data); //! проверить
-        this.#renderInfo();//! проверить
         break;
       case UpdateType.MINOR:
         this.#clear();

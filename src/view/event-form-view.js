@@ -171,7 +171,7 @@ export default class EventFormView extends AbstractStatefulView {
       this.resetForm();
       this.#onFormClose();
     } else {
-      this.#onDelete(this._state.id);
+      this.#onDelete(this.#event);
     }
   };
 

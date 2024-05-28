@@ -6,10 +6,13 @@ const isInputElement = (element) => element.tagName === 'INPUT';
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
 
-//! удалить если не будет использоваться
-/*
-const findItemByKey = (items, keyValue, keyName = 'id') => items[findItemIndexByKey(items, keyValue, keyName)];
-*/
+const updateItemByKey = (items, item, keyName = 'id') => {
+  items[findItemIndexByKey(items, item[keyName], keyName)] = item;
+};
+
+const addItem = (items, item) => {
+  items[items.length] = item;
+};
 
 const deleteItemByIndex = (items, index) => {
   if (index >= 0) {
@@ -17,15 +20,8 @@ const deleteItemByIndex = (items, index) => {
   }
 };
 
-const deleteItemByKey = (items, keyValue, keyName = 'id') => {
-  deleteItemByIndex(items, findItemIndexByKey(items, keyValue, keyName));
+const deleteItemByKey = (items, item, keyName = 'id') => {
+  deleteItemByIndex(items, findItemIndexByKey(items, item[keyName], keyName));
 };
 
-//! удалить если не пригодится
-/*
-const deleteItem = (items, item) => {
-  deleteItemByIndex(items, items.indexOf(item));
-};
-*/
-
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey /*//! ,findItemByKey*/, deleteItemByKey/*//! ,deleteItem*/ };
+export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };

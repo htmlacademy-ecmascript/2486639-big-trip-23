@@ -112,12 +112,12 @@ export default class EventPresenter {
     this.#onEventFormClose();
   };
 
-  #onDelete = (eventId) => {
+  #onDelete = (event) => {
     //! выше есть такие же две строки...
     this.#replaceFormToItem();
     this.#onEventFormClose();
 
-    this.#onEventDelete(eventId);
+    this.#onEventDelete(event);
   };
 
   #onFormClose = () => {

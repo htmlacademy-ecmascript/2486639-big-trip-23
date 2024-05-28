@@ -1,8 +1,7 @@
 import { render } from '../framework/render.js';
-import { deleteItemByKey } from '../utils/utils.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { DEFAULT_NEW_EVENT } from '../const.js';
+import { DEFAULT_NEW_EVENT, UpdateType } from '../const.js';
 
 export default class EventsPresenter {
   #containerElement = null;
@@ -124,20 +123,14 @@ export default class EventsPresenter {
       this.#eventPresenters.set(id, eventPresenter);
       this.#onAddNewEventClose();
     } else {
-      //!! передать основному презентеру
-      //this.#eventsModel.updateEvent(updatedEvent);
-      //this.#events = this.#eventsModel.events;
-      //! тут нужно вызать пересчет Info через основного презентора
-      //! оповестить презентер фильтров и применить сортировку
+      //! не все изменения UpdateType.MINOR, может быть и PATCH
+      this.#eventsModel.updateEvent(UpdateType.MINOR, updatedEvent);
     }
 
-    this.#eventPresenters.get(id).init(updatedEvent);
+    //this.#eventPresenters.get(id).init(updatedEvent);
   };
 
-  #onEventDelete = (eventId) => {
-    deleteItemByKey(this.#events, eventId);
-    //! в модели не забыть удалить и общему презентору сособщить
-    this.#eventPresenters.get(eventId).destroy();
-    //! тут нужно вызать пересчет Info через основного презентора
+  #onEventDelete = (event) => {
+    this.#eventsModel.deleteEvent(UpdateType.MINOR, event);
   };
 }
