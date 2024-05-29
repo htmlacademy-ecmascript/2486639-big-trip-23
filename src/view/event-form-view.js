@@ -8,7 +8,8 @@ import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 export default class EventFormView extends AbstractStatefulView {
   #event = null;
   #isAddingNewEvent = false;
-  #destinations = [];
+  #destinations = null;
+  #destinationById = null;
   #offers = null;
 
   #onFormSubmit = null;
@@ -18,15 +19,16 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFromFlatpickr = null;
   #dateToFlatpickr = null;
 
-  constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
+  constructor({ event, destinationsById, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
 
     this.#event = event;
-    this._setState({ ...event });
+    this._setState(EventFormView.parseEventToState(event, destinationsById, offers));
 
     this.#isAddingNewEvent = !(event.id || false); //! !Object.hasOwn(event, 'id');
 
     this.#destinations = destinations;
+    this.#destinationById = destinationsById;
     this.#offers = offers;
 
     this.#onFormSubmit = onFormSubmit;
@@ -99,9 +101,9 @@ export default class EventFormView extends AbstractStatefulView {
     evt.preventDefault();
     const type = evt.target.value;
     const typeOffers = this.#offers.get(type);
-    const offers = new Set();
+    const eventOfferIds = new Set();
 
-    this.updateElement({ type, typeOffers, offers });
+    this.updateElement({ type, typeOffers, eventOfferIds });
   };
 
   #onEventDestanationInputElementChange = (evt) => {
@@ -142,26 +144,26 @@ export default class EventFormView extends AbstractStatefulView {
     }
 
     const { checked, dataset: { offerId } } = evt.target;
-    const { offers } = this._state;
+    const { eventOfferIds } = this._state;
 
     if (checked) {
-      offers.add(offerId);
+      eventOfferIds.add(offerId);
     } else {
-      offers.delete(offerId);
+      eventOfferIds.delete(offerId);
     }
 
-    this._setState({ offers });
+    this._setState({ eventOfferIds });
   };
 
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
     //! тут добавить проверку, что пункт назначения не выбран, потрясти формой
-    this.#onFormSubmit(this._state); //! а если не бьыло изменний...
+    this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 
   #onEventFormElementReset = (evt) => {
     evt.preventDefault();
-    this.updateElement({ ...this.#event });
+    this.updateElement(EventFormView.parseEventToState(this.#event, this.#destinationById, this.#offers));
   };
 
   #onEventResetButtonElementClick = (evt) => {
@@ -179,4 +181,29 @@ export default class EventFormView extends AbstractStatefulView {
     this.resetForm();
     this.#onFormClose();
   };
+
+  static parseEventToState(event, destinationById, offers) {
+    const { destination, type, offers: eventOffers } = event;
+    const destinationInfo = destinationById.get(destination);
+    const eventOfferIds = new Set(eventOffers);
+    const typeOffers = offers.get(type);
+
+    return {
+      ...event,
+      destinationInfo,
+      eventOfferIds,
+      typeOffers
+    };
+  }
+
+  static parseStateToEvent(state) {
+    const offers = [...state.eventOfferIds];
+    const event = { ...state, offers };
+
+    delete event.destinationInfo;
+    delete event.eventOfferIds;
+    delete event.typeOffers;
+
+    return event;
+  }
 }

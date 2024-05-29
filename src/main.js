@@ -24,11 +24,7 @@ const tripPresenter = new TripPresenter({
 tripPresenter.init();
 
 /*
- * Вопросы:
- *   1. Компонент без отрисовки? можно ли создать компонет на основе имеющейся разметки без "get template", сделал так для кнопки добавления события
- *   2. Обязательно ли однотипно инициализировать компонеты? или удалить кномпу добавления из "public\index.html"
- *        есть простые new FiltersView(eventsModel.events), new SortingView(this.#onSortingChange)
- *        есть сложные new EventFormView({ event, destinationInfo, ..., onFormSubmit: this.#onFormSubmit, onDelete: this.#onDelete, ...});
+ * Вопросы: нет
  *
  * Заметки:
  *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презенторов
@@ -44,5 +40,6 @@ tripPresenter.init();
  *   3. flatpickr обработка Esc, сейчас закрываеться форма редактирования. Не особо понятен аглоритм оконяния выбора даты...
  *   4. Выдавать весь список городов, на форме редактирования события или при очистке поля добавить пробел для вывода полного списка, т.к. без проблеа три города в списке.
  *   5. Обработать на форме нажатие Enter в src\presenter\event-presenter.js EventPresenter.#onDocumentKeyDown
+ *   6. Обработать форму если не было изменений
  *
  */

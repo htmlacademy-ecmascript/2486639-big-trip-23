@@ -1,14 +1,14 @@
-import { replace, remove } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import { UserAction, UpdateType } from '../const.js';
-import { renderOrReplace } from '../utils/dom.js';
 
 export default class EventPresenter {
   #containerElement = null;
 
   #destinations = null;
+  #destinationsById = null;
   #offers = null;
   #event = null;
 
@@ -19,8 +19,9 @@ export default class EventPresenter {
   #onEventFormClose = null;
   #onEventChange = null;
 
-  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
+  constructor({ destinations, destinationsById, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
     this.#destinations = destinations;
+    this.#destinationsById = destinationsById;
     this.#offers = offers;
     this.#containerElement = containerElement;
     this.#onEventFormOpen = onEventFormOpen;
@@ -36,10 +37,34 @@ export default class EventPresenter {
   init(event) {
     this.#event = event;
     const storedItemComponent = this.#itemComponent;
+    const storedFormComponent = this.#formComponent;
 
-    this.#makeComponents();
+    this.#itemComponent = new EventItemView({
+      event,
+      destinationsById: this.#destinationsById,
+      offers: this.#offers,
+      onFavoriteClick: this.#onFavoriteClick,
+      onEditClick: this.#onEditClick
+    });
 
-    renderOrReplace(this.#itemComponent, storedItemComponent, this.#containerElement);
+    this.#formComponent = new EventFormView({
+      event,
+      destinationsById: this.#destinationsById,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onFormSubmit: this.#onFormSubmit,
+      onResetButtonClick: this.#onDelete,
+      onFormClose: this.#onFormClose
+    });
+
+    if (!storedItemComponent || !storedFormComponent) {
+      render(this.#itemComponent, this.#containerElement);
+    } else {
+      replace(this.#itemComponent, storedItemComponent);
+
+      remove(storedItemComponent);
+      remove(storedFormComponent);
+    }
   }
 
   resetEventForm() {
@@ -49,25 +74,6 @@ export default class EventPresenter {
   closeEventForm() {
     this.#replaceFormToItem();
     this.#onEventFormClose();
-  }
-
-  #makeComponents() {
-    const event = this.#event;
-
-    this.#formComponent = new EventFormView({
-      event,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onFormSubmit: this.#onFormSubmit,
-      onResetButtonClick: this.#onDelete,
-      onFormClose: this.#onFormClose
-    });
-
-    this.#itemComponent = new EventItemView({
-      event,
-      onFavoriteClick: this.#onFavoriteClick,
-      onEditClick: this.#onEditClick
-    });
   }
 
   #openForm() {

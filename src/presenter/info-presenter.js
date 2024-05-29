@@ -17,10 +17,10 @@ export default class InfoPresenter {
       remove(this.#infoComponent);
     }
 
-    const { events } = this.#eventsModel;
+    const { events, destinationsById, offers } = this.#eventsModel;
 
     if (events.length) {
-      this.#infoComponent = new InfoView({ tripInfo: getTripInfo(events) });
+      this.#infoComponent = new InfoView({ tripInfo: getTripInfo(events, destinationsById, offers) });
       render(this.#infoComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
     }
   }

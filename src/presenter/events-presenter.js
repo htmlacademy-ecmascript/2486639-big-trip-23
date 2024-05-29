@@ -73,10 +73,11 @@ export default class EventsPresenter {
   }
 
   #renderEventItem(event) {
-    const { destinations, offers } = this.#eventsModel;
+    const { destinations, destinationsById, offers } = this.#eventsModel;
 
     const eventPresenter = new EventPresenter({
       destinations,
+      destinationsById,
       offers,
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,
