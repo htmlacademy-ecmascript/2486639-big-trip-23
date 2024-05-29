@@ -16,8 +16,8 @@ export default class EventFormView extends AbstractStatefulView {
   #onResetButtonClick = null;
   #onFormClose = null;
 
-  #dateFromFlatpickr = null;
-  #dateToFlatpickr = null;
+  #dateFrom = null;
+  #dateTo = null;
 
   constructor({ event, destinationsById, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
@@ -25,7 +25,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.#event = event;
     this._setState(EventFormView.parseEventToState(event, destinationsById, offers));
 
-    this.#isAddingNewEvent = !(event.id || false); //! !Object.hasOwn(event, 'id');
+    this.#isAddingNewEvent = !event.id;
 
     this.#destinations = destinations;
     this.#destinationById = destinationsById;
@@ -45,7 +45,7 @@ export default class EventFormView extends AbstractStatefulView {
   removeElement() {
     super.removeElement();
 
-    [this.#dateFromFlatpickr, this.#dateToFlatpickr].forEach((dateFlatpickr) => {
+    [this.#dateFrom, this.#dateTo].forEach((dateFlatpickr) => {
       dateFlatpickr.destroy();
       dateFlatpickr = null;
     });
@@ -75,21 +75,21 @@ export default class EventFormView extends AbstractStatefulView {
   #setDateFlatpickrs = () => {
     const { dateFrom, dateTo } = this._state;
 
-    this.#dateFromFlatpickr = flatpickr(
+    this.#dateFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateFrom,
-        onChange: this.#onDateFromDatepickerElementChange
+        onChange: this.#onDateFromChange
       });
 
-    this.#dateToFlatpickr = flatpickr(
+    this.#dateTo = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateFrom,
         minDate: dateTo,
-        onChange: this.#onDateToDatepickerElementChange
+        onChange: this.#onDateToChange
       });
   };
 
@@ -113,22 +113,17 @@ export default class EventFormView extends AbstractStatefulView {
 
     evt.preventDefault();
     const destinationInfo = this.#destinations.get(evt.target.value);
-    const destination = destinationInfo?.id; // так как destinationInfo может быть пусто, поле ощищено //! может другому обработать...
+    const destination = destinationInfo?.id;
 
     this.updateElement({ destination, destinationInfo });
   };
 
-  #onDateFromDatepickerElementChange = ([dateFrom]) => {
-    this.#dateToFlatpickr.config.minDate = dateFrom;
-    // обработка сброса даты во втором flatpickr, если текущая дата меньше новой minDate, то дата сбрасывается
-    //! когда новое событие, то можно оставить как есть...
-    if (!this.#dateToFlatpickr.selectedDates.length) {
-      this.#dateToFlatpickr.setDate(dateFrom);
-    }
+  #onDateFromChange = ([dateFrom]) => {
+    this.#dateTo.config.minDate = dateFrom;
     this._setState({ dateFrom });
   };
 
-  #onDateToDatepickerElementChange = ([dateTo]) => {
+  #onDateToChange = ([dateTo]) => {
     this._setState({ dateTo });
   };
 
