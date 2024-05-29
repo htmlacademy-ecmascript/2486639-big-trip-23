@@ -57,11 +57,12 @@ export default class EventsPresenter {
   }
 
   #renderNewEvent() {
-    const { destinations, destinationsById, offers } = this.#eventsModel;
+    const { destinations, destinationsById, destinationNames, offers } = this.#eventsModel;
 
     this.#newEventPresenter = new NewEventPresenter({
       destinations,
       destinationsById,
+      destinationNames,
       offers,
       containerElement: this.#eventsListComponent.element,
       onNewEventFormClose: this.#onNewEventFormClose,
@@ -78,11 +79,12 @@ export default class EventsPresenter {
   }
 
   #renderEventItem(event) {
-    const { destinations, destinationsById, offers } = this.#eventsModel;
+    const { destinations, destinationsById, destinationNames, offers } = this.#eventsModel;
 
     const eventPresenter = new EventPresenter({
       destinations,
       destinationsById,
+      destinationNames,
       offers,
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,

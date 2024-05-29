@@ -34,6 +34,10 @@ export default class EventsModel extends Observable {
     return this.#destinationsById;
   }
 
+  get destinationNames() {
+    return [...this.#destinationsByName.keys()];
+  }
+
   get offers() {
     return this.#offers;
   }

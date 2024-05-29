@@ -10,6 +10,7 @@ export default class EventFormView extends AbstractStatefulView {
   #isAddingNewEvent = false;
   #destinations = null;
   #destinationById = null;
+  #destinationNames = null;
   #offers = null;
 
   #onFormSubmit = null;
@@ -19,7 +20,7 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFrom = null;
   #dateTo = null;
 
-  constructor({ event, destinationsById, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
+  constructor({ event, destinationsById, destinations, destinationNames, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
 
     this.#event = event;
@@ -29,6 +30,7 @@ export default class EventFormView extends AbstractStatefulView {
 
     this.#destinations = destinations;
     this.#destinationById = destinationsById;
+    this.#destinationNames = destinationNames;
     this.#offers = offers;
 
     this.#onFormSubmit = onFormSubmit;
@@ -39,7 +41,7 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventFormTemplate(this._state, this.#destinations, this.#isAddingNewEvent);
+    return createEventFormTemplate(this._state, this.#destinationNames, this.#isAddingNewEvent);
   }
 
   removeElement() {
@@ -52,19 +54,21 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
+    const destanationInputElement = this.element.querySelector('.event__input--destination');
+    destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
+    destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
     this.#prepareDates();
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOffersDivElementChange);
     }
     const eventFormElement = this.element.querySelector('.event--edit');
-    eventFormElement.addEventListener('submit', this.#onEventFormElementSubmit);
-    eventFormElement.addEventListener('reset', this.#onEventFormElementReset);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onEventResetButtonElementClick);
+    eventFormElement.addEventListener('submit', this.#onFormElementSubmit);
+    eventFormElement.addEventListener('reset', this.#onFormElementReset);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onResetButtonElementClick);
     if (!this.#isAddingNewEvent) { // кнопка будет скрыта и событие не добавляю
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEventRollupButtonElementClick);
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onRollupButtonElementClick);
     }
   }
 
@@ -97,7 +101,7 @@ export default class EventFormView extends AbstractStatefulView {
       });
   }
 
-  #onEventTypeListElementClick = (evt) => {
+  #onTypeListElementClick = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -110,7 +114,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.updateElement({ type, typeOffers, eventOfferIds });
   };
 
-  #onEventDestanationInputElementChange = (evt) => {
+  #onDestanationInputElementChange = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -122,6 +126,14 @@ export default class EventFormView extends AbstractStatefulView {
     this.updateElement({ destination, destinationInfo });
   };
 
+  #onDestanationInputElementInput = (evt) => {
+    //!!
+    evt.target.value = evt.target.value.trim();
+    //console.log(evt.target.value);
+
+    //console.log(this.#destinationNames.some((value) => value.includes(evt.target.value.trim()))); //! lowerCase
+  };
+
   #onDateFromChange = ([dateFrom]) => {
     this.#dateTo.config.minDate = dateFrom;
     this._setState({ dateFrom });
@@ -131,14 +143,14 @@ export default class EventFormView extends AbstractStatefulView {
     this._setState({ dateTo });
   };
 
-  #onEventPriceInputElementInput = (evt) => {
+  #onPriceInputElementInput = (evt) => {
     const basePrice = getNumber(evt.target.value);
     evt.target.value = basePrice;
 
     this._setState({ basePrice });
   };
 
-  #onEventOffersDivElementChange = (evt) => {
+  #onOffersDivElementChange = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -155,17 +167,17 @@ export default class EventFormView extends AbstractStatefulView {
     this._setState({ eventOfferIds });
   };
 
-  #onEventFormElementSubmit = (evt) => {
+  #onFormElementSubmit = (evt) => {
     evt.preventDefault();
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 
-  #onEventFormElementReset = (evt) => {
+  #onFormElementReset = (evt) => {
     evt.preventDefault();
     this.updateElement(EventFormView.parseEventToState(this.#event, this.#destinationById, this.#offers));
   };
 
-  #onEventResetButtonElementClick = (evt) => {
+  #onResetButtonElementClick = (evt) => {
     evt.preventDefault();
     if (this.#isAddingNewEvent) {
       this.resetForm();
@@ -175,7 +187,7 @@ export default class EventFormView extends AbstractStatefulView {
     }
   };
 
-  #onEventRollupButtonElementClick = (evt) => {
+  #onRollupButtonElementClick = (evt) => {
     evt.preventDefault();
     this.resetForm();
     this.#closeForm();
