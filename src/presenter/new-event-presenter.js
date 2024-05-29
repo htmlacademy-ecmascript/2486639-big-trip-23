@@ -52,7 +52,6 @@ export default class NewEventPresenter {
 
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.ADD_EVENT, UpdateType.MINOR, event);
-    this.closeNewEventForm(); //! а будет перерисовка? события остались? или this.#onNewEventFormClose();
   };
 
   #onFormClose = () => {

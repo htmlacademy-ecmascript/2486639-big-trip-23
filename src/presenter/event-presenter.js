@@ -102,18 +102,10 @@ export default class EventPresenter {
 
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
-
-    //! проверить, навеное не нужно, буде перерисовка при изменениях
-    this.#replaceFormToItem();
-    this.#onEventFormClose(); //!
   };
 
   #onDelete = (event) => {
     this.#onEventChange(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
-
-    //! проверить, выше есть такие же две строки... //! тоже скорее всего не нужно
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
   };
 
   #onFormClose = () => {

@@ -108,14 +108,12 @@ export default class EventsPresenter {
   }
 
   #onEventFormOpen = (eventPresenter) => {
-    //! ошибка при окрытом редактировании и добавлнении нового, проверить и наоборот, и только на редактируемых
     this.#closeEventForm();
     this.#closeNewEventForm();
     this.#activeEventPresenter = eventPresenter;
   };
 
   #onEventFormClose = () => {
-    //! навеное не нужно, буде перерисовка при изменениях
     this.#activeEventPresenter = null;
   };
 

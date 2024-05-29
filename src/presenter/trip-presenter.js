@@ -63,19 +63,12 @@ export default class TripPresenter {
   }
 
   #clear() {
-    // очистка
     this.#removeSorting();
     this.#removeEmptyEventsMessage();
     this.#removeEvents();
   }
 
   #render() {
-    // очистка
-    this.#removeSorting();
-    this.#removeEmptyEventsMessage();
-    this.#removeEvents();
-
-    // отрисовка
     this.#infoPresenter.init();
 
     this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, Date.now());

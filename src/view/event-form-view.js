@@ -54,7 +54,7 @@ export default class EventFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onEventTypeListElementClick);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#onEventDestanationInputElementChange);
-    this.#setDateFlatpickrs();
+    this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#onEventOffersDivElementChange);
@@ -76,7 +76,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.#onFormClose();
   }
 
-  #setDateFlatpickrs = () => {
+  #prepareDates() {
     const { dateFrom, dateTo } = this._state;
 
     this.#dateFrom = flatpickr(
@@ -95,7 +95,7 @@ export default class EventFormView extends AbstractStatefulView {
         minDate: dateFrom,
         onChange: this.#onDateToChange
       });
-  };
+  }
 
   #onEventTypeListElementClick = (evt) => {
     if (!isInputElement(evt.target)) {
