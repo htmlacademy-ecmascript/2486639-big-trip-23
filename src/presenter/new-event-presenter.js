@@ -45,24 +45,24 @@ export default class NewEventPresenter {
     document.addEventListener('keydown', this.#onDocumentKeyDown);
   }
 
-  closeEventForm() {
+  closeNewEventForm() {
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
     this.#onNewEventFormClose();
   }
 
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.ADD_EVENT, UpdateType.MINOR, event);
-    this.closeEventForm(); //! а будет перерисовка? события остались?
+    this.closeNewEventForm(); //! а будет перерисовка? события остались? или this.#onNewEventFormClose();
   };
 
   #onFormClose = () => {
-    this.closeEventForm();
+    this.closeNewEventForm();
   };
 
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.closeEventForm();
+      this.closeNewEventForm();
     }
   };
 }

@@ -46,7 +46,7 @@ export default class TripPresenter {
     this.#eventsPresenter = new EventsPresenter({
       containerElement: tripEventsElement,
       eventsModel,
-      onAddNewEventClose: this.#onAddNewEventClose
+      onNewEventClose: this.#onNewEventClose
     });
 
     this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
@@ -56,19 +56,26 @@ export default class TripPresenter {
   }
 
   init() {
-    this.#filterPresenter.init(); // отрисовать один раз //! скорее всего при получении данных с сервера будет первый init при обработке изменений модели
+    this.#filterPresenter.init(); //! скорее всего при получении данных с сервера будет первый init при обработке изменений модели
     render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND); // отрисовать один раз
 
     this.#render();
   }
 
   #clear() {
+    // очистка
     this.#removeSorting();
     this.#removeEmptyEventsMessage();
     this.#removeEvents();
   }
 
   #render() {
+    // очистка
+    this.#removeSorting();
+    this.#removeEmptyEventsMessage();
+    this.#removeEvents();
+
+    // отрисовка
     this.#infoPresenter.init();
 
     this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, Date.now());
@@ -133,17 +140,21 @@ export default class TripPresenter {
     }
   };
 
-  #onAddNewEventClose = () => {
+  #onNewEventClose = () => {
     this.#addEventButtonComponent.enable();
 
     if (!this.#events.length) {
+      this.#removeSorting();
       this.#renderEmptyEventsMessage();
     }
   };
 
   #onAddEventClick = () => {
     this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
-    this.#removeEmptyEventsMessage();
+    if (!this.#events.length) {
+      this.#removeEmptyEventsMessage();
+      this.#renderSorting();
+    }
     this.#eventsPresenter.addEvent();
   };
 

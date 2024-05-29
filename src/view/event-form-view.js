@@ -72,6 +72,10 @@ export default class EventFormView extends AbstractStatefulView {
     this.element.firstElementChild.reset();
   }
 
+  #closeForm() {
+    this.#onFormClose();
+  }
+
   #setDateFlatpickrs = () => {
     const { dateFrom, dateTo } = this._state;
 
@@ -87,8 +91,8 @@ export default class EventFormView extends AbstractStatefulView {
       this.element.querySelector('#event-end-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
-        defaultDate: dateFrom,
-        minDate: dateTo,
+        defaultDate: dateTo,
+        minDate: dateFrom,
         onChange: this.#onDateToChange
       });
   };
@@ -152,7 +156,6 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onEventFormElementSubmit = (evt) => {
     evt.preventDefault();
-    //! тут добавить проверку, что пункт назначения не выбран, потрясти формой
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 
@@ -165,7 +168,7 @@ export default class EventFormView extends AbstractStatefulView {
     evt.preventDefault();
     if (this.#isAddingNewEvent) {
       this.resetForm();
-      this.#onFormClose();
+      this.#closeForm();
     } else {
       this.#onResetButtonClick(this.#event);
     }
@@ -174,7 +177,7 @@ export default class EventFormView extends AbstractStatefulView {
   #onEventRollupButtonElementClick = (evt) => {
     evt.preventDefault();
     this.resetForm();
-    this.#onFormClose();
+    this.#closeForm();
   };
 
   static parseEventToState(event, destinationById, offers) {

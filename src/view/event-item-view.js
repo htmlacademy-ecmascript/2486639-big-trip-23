@@ -28,8 +28,7 @@ export default class EventItemView extends AbstractView {
     return createEventItemTemplate(this.#event, this.#destinationName, this.#typeOffers);
   }
 
-  #onFavoriteButtonElementClick = (evt) => {
-    evt.preventDefault(); //! мигает при нажатии, но можно убрать
+  #onFavoriteButtonElementClick = () => {
     this.#onFavoriteClick();
   };
 
