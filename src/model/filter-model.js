@@ -9,8 +9,12 @@ export default class FilterModel extends Observable {
   }
 
   set filterType(newFilterType) {
+    if (this.#filterType === newFilterType) {
+      return;
+    }
+
     this.#filterType = newFilterType;
 
-    this._notify(UpdateType.MAJOR, newFilterType); //! нужно сбросить сортировку DEFAULT_SORTING_TYPE
+    this._notify(UpdateType.MAJOR, newFilterType);
   }
 }

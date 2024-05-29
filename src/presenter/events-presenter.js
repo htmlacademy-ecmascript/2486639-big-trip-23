@@ -25,6 +25,7 @@ export default class EventsPresenter {
   }
 
   clear() {
+    this.#closeEventForm();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
@@ -42,7 +43,7 @@ export default class EventsPresenter {
   addEvent() {
     const { destinations, destinationsById, offers } = this.#eventsModel;
 
-    this.#closeEventForm();
+    this.#closeEventForm(); //!! не вызывать обработчик!!!!
     if (!this.#events.length) {
       render(this.#eventsListComponent, this.#containerElement);
     }
