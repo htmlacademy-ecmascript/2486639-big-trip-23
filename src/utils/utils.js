@@ -4,6 +4,20 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const isInputElement = (element) => element.tagName === 'INPUT';
 
+const getNumber = (string) => {
+  if (!string) {
+    return null;
+  }
+
+  const number = parseInt(string, 10);
+  //! if (isNaN(number) || (number < 0)) { //getNumber->getPositiveNumber
+  if (isNaN(number)) {
+    return null;
+  }
+
+  return number;
+};
+
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
 
 const updateItemByKey = (items, item, keyName = 'id') => {
@@ -24,4 +38,4 @@ const deleteItemByKey = (items, item, keyName = 'id') => {
   deleteItemByIndex(items, findItemIndexByKey(items, item[keyName], keyName));
 };
 
-export { isEmptyArray, isEscapeKey, isInputElement, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };
+export { isEmptyArray, isEscapeKey, isInputElement, getNumber, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };

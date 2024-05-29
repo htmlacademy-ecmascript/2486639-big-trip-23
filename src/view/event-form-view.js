@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
-import { isInputElement } from '../utils/utils.js';
+import { isInputElement, getNumber } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 
 export default class EventFormView extends AbstractStatefulView {
@@ -132,7 +132,8 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onEventPriceInputElementInput = (evt) => {
-    const basePrice = parseInt(evt.target.value, 10);
+    const basePrice = getNumber(evt.target.value);
+    evt.target.value = basePrice;
 
     this._setState({ basePrice });
   };
@@ -195,8 +196,9 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   static parseStateToEvent(state) {
+    const basePrice = state.basePrice || 0;
     const offers = [...state.eventOfferIds];
-    const event = { ...state, offers };
+    const event = { ...state, basePrice, offers };
 
     delete event.destinationInfo;
     delete event.eventOfferIds;
