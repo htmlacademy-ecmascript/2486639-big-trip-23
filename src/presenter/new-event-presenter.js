@@ -7,6 +7,7 @@ export default class NewEventPresenter {
   #containerElement = null;
 
   #destinations = null;
+  #destinationsById = null;
   #offers = null;
   #event = null;
 
@@ -15,8 +16,9 @@ export default class NewEventPresenter {
   #onNewEventFormClose = null;
   #onEventChange = null;
 
-  constructor({ destinations, offers, containerElement, onNewEventFormClose, onEventChange }) {
+  constructor({ destinations, destinationsById, offers, containerElement, onNewEventFormClose, onEventChange }) {
     this.#destinations = destinations;
+    this.#destinationsById = destinationsById;
     this.#offers = offers;
     this.#containerElement = containerElement;
     this.#onNewEventFormClose = onNewEventFormClose;
@@ -32,6 +34,7 @@ export default class NewEventPresenter {
 
     this.#formComponent = new EventFormView({
       event: this.#event,
+      destinationsById: this.#destinationsById,
       destinations: this.#destinations,
       offers: this.#offers,
       onFormSubmit: this.#onFormSubmit,

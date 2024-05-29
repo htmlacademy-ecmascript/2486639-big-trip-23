@@ -40,7 +40,7 @@ export default class EventsPresenter {
   }
 
   addEvent() {
-    const { destinations, offers } = this.#eventsModel;
+    const { destinations, destinationsById, offers } = this.#eventsModel;
 
     this.#closeEventForm();
     if (!this.#events.length) {
@@ -49,6 +49,7 @@ export default class EventsPresenter {
 
     this.#newEventPresenter = new NewEventPresenter({
       destinations,
+      destinationsById,
       offers,
       containerElement: this.#eventsListComponent.element,
       onNewEventFormClose: this.#onNewEventFormClose,

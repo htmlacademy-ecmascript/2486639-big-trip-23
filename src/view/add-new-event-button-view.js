@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
 export default class AddNewEventButtonView extends AbstractView {
-  #buttonElement = null;
   #onClick = null;
 
   constructor({ onClick }) {
@@ -17,11 +16,11 @@ export default class AddNewEventButtonView extends AbstractView {
   }
 
   enable() {
-    this.#buttonElement.disabled = false;
+    this.element.disabled = false;
   }
 
   #disable() {
-    this.#buttonElement.disabled = true;
+    this.element.disabled = true;
   }
 
   #onButtonElementClick = (evt) => {
