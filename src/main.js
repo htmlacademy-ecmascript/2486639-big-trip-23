@@ -36,6 +36,7 @@ tripPresenter.init();
  *   3. event-presenter.js и new-event-presenter.js немного похожи... попробовать выделить общего предка
  *   4. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView !!! о может тут быть пброблема с тряской формы после отмены...
  *        li+item/form init+render
+ *        this.#activeEventPresenter = null; // тут может тряска не работать корректно!!!
  *   5. event-presenter.js, попробовать убрать создание формы сразу, а содвавать в момент переключения и в дальнейшем не удалять, пока не будет перерисовки
  *   6. не вызывать обработчки напрямую!
  *   7. В презентер похожий код, можно попробовать вынести в базовый класс (FilterPresenter, TripPresenter)
