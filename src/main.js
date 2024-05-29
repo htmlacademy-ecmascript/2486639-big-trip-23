@@ -1,22 +1,20 @@
 import FilterModel from './model/filter-model.js';
 import EventsModel from './model/events-model.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import { UpdateType } from './const.js';
 
 const headerContainerElement = document.body.querySelector('.page-header__container');
 const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
 const headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.body.querySelector('.trip-events');
-const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
+headerTripMainElement.querySelector('.trip-main__event-add-btn').remove(); // удалю здесь кнопку, чтобы не менять /public/index.html
 
-const filterModel = new FilterModel({ updateType: UpdateType.MAJOR });
+const filterModel = new FilterModel();
 const eventsModel = new EventsModel();
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
   headerTripFiltersElement,
   tripEventsElement,
-  addEventButtonElement,
   filterModel,
   eventsModel
 });
@@ -32,6 +30,7 @@ tripPresenter.init();
  *   3. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView
  *   4. src\presenter\event-presenter.js попробовать сделать наследование для добавления события
  *   5. typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id)), а если офферы типа(typeOffers) сделать Map, то как подружить Map и Set... подумать
+ *   6. event-presenter.js, попробовать убрать создание формы сразу, а содвавать в момент переключения и в дальнейшем не удалять, пока не будет перерисовки
  *
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):
  *   1. При открытии формы редактирования события, расположенных снизу, прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области

@@ -21,7 +21,7 @@ const FilterType = {
   PAST: 'past'
 };
 
-const filterTypes = Object.entries(FilterType).map(([, filter]) => filter);
+const filterTypes = Object.values(FilterType);
 
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];

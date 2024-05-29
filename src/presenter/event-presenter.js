@@ -101,10 +101,9 @@ export default class EventPresenter {
   };
 
   #onFormSubmit = (event) => {
-    //! не все изменения UpdateType.MINOR, может быть и PATCH, только сумма изменена, может доавбить ключ...
     this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
 
-    //! навеное не нужно, буде перерисовка при изменениях
+    //! проверить, навеное не нужно, буде перерисовка при изменениях
     this.#replaceFormToItem();
     this.#onEventFormClose(); //!
   };
@@ -112,7 +111,7 @@ export default class EventPresenter {
   #onDelete = (event) => {
     this.#onEventChange(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
 
-    //! выше есть такие же две строки... //! тоже скорее всего не нужно
+    //! проверить, выше есть такие же две строки... //! тоже скорее всего не нужно
     this.#replaceFormToItem();
     this.#onEventFormClose();
   };

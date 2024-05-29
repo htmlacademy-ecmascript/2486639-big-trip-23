@@ -1,9 +1,9 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
 import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
-import ButtonView from '../view/button-view.js';
+import AddNewEventButtonView from '../view/add-new-event-button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
@@ -18,6 +18,7 @@ export default class TripPresenter {
   #filterPresenter = null;
   #eventsPresenter = null;
 
+  #headerTripMainElement = null;
   #tripEventsElement = null;
 
   #sortingComponent = null;
@@ -28,9 +29,10 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
+  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, eventsModel, filterModel }) {
     this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
+    this.#headerTripMainElement = headerTripMainElement;
     this.#tripEventsElement = tripEventsElement;
 
     this.#infoPresenter = new InfoPresenter({
@@ -48,7 +50,7 @@ export default class TripPresenter {
       onAddNewEventClose: this.#onAddNewEventClose
     });
 
-    this.#addEventButtonComponent = new ButtonView({ buttonElement: addEventButtonElement, onClick: this.#onAddEventClick });
+    this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
 
     eventsModel.addObserver(this.#onModelsChange);
     filterModel.addObserver(this.#onModelsChange);
@@ -73,6 +75,7 @@ export default class TripPresenter {
 
   #render() {
     this.#infoPresenter.init();
+    render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND);
     this.#renderEvents();
   }
 
