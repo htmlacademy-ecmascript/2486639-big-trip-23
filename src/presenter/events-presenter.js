@@ -16,15 +16,17 @@ export default class EventsPresenter {
 
   #eventsListComponent = new EventsListView();
 
-  #onAddNewEventClose = null;
+  #onNewEventClose = null;
 
-  constructor({ eventsModel, containerElement, onAddNewEventClose }) {
+  constructor({ eventsModel, containerElement, onNewEventClose }) {
     this.#eventsModel = eventsModel;
     this.#containerElement = containerElement;
-    this.#onAddNewEventClose = onAddNewEventClose;
+    this.#onNewEventClose = onNewEventClose;
   }
 
   clear() {
+    this.#closeEventForm();
+    this.#closeNewEventForm();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
@@ -40,12 +42,22 @@ export default class EventsPresenter {
   }
 
   addEvent() {
-    const { destinations, offers } = this.#eventsModel;
-
     this.#closeEventForm();
     if (!this.#events.length) {
       render(this.#eventsListComponent, this.#containerElement);
     }
+    this.#renderNewEvent();
+  }
+
+  #removeNewEvent() {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+      this.#newEventPresenter = null;
+    }
+  }
+
+  #renderNewEvent() {
+    const { destinations, offers } = this.#eventsModel;
 
     this.#newEventPresenter = new NewEventPresenter({
       destinations,
@@ -55,14 +67,6 @@ export default class EventsPresenter {
       onEventChange: this.#onEventChange
     });
     this.#newEventPresenter.init();
-  }
-
-  #closeNewEventForm() {
-    if (this.#newEventPresenter) {
-      this.#newEventPresenter.destroy();
-      this.#newEventPresenter = null;
-      this.#onAddNewEventClose();
-    }
   }
 
   #renderEventsList() {
@@ -93,23 +97,27 @@ export default class EventsPresenter {
       this.#activeEventPresenter.closeEventForm();
       this.#onEventFormClose();
     }
+  }
 
-    this.#closeNewEventForm();
+  #closeNewEventForm() {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.closeNewEventForm();
+    }
   }
 
   #onEventFormOpen = (eventPresenter) => {
-    //! ошибка при окрытом редактировании и добавлнении нового, проверить и наоборот, и только на редактируемых
     this.#closeEventForm();
+    this.#closeNewEventForm();
     this.#activeEventPresenter = eventPresenter;
   };
 
-  #onNewEventFormClose = () => {
-    this.#closeNewEventForm();
+  #onEventFormClose = () => {
+    this.#activeEventPresenter = null;
   };
 
-  #onEventFormClose = () => {
-    //! навеное не нужно, буде перерисовка при изменениях
-    this.#activeEventPresenter = null;
+  #onNewEventFormClose = () => {
+    this.#removeNewEvent();
+    this.#onNewEventClose();
   };
 
   #onEventChange = (actionType, updateType, event) => {

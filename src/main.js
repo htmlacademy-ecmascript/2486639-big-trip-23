@@ -1,22 +1,20 @@
 import FilterModel from './model/filter-model.js';
 import EventsModel from './model/events-model.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import { UpdateType } from './const.js';
 
 const headerContainerElement = document.body.querySelector('.page-header__container');
 const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
 const headerTripFiltersElement = headerContainerElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.body.querySelector('.trip-events');
-const addEventButtonElement = headerContainerElement.querySelector('.trip-main__event-add-btn');
+headerTripMainElement.querySelector('.trip-main__event-add-btn').remove(); // удалю здесь кнопку, чтобы не менять /public/index.html
 
-const filterModel = new FilterModel({ updateType: UpdateType.MAJOR });
+const filterModel = new FilterModel();
 const eventsModel = new EventsModel();
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
   headerTripFiltersElement,
   tripEventsElement,
-  addEventButtonElement,
   filterModel,
   eventsModel
 });
@@ -25,17 +23,31 @@ tripPresenter.init();
 
 /*
  * Вопросы:
- *   1. Компонент без отрисовки? можно ли создать компонет на основе имеющейся разметки без "get template", сделал так для кнопки добавления события
- *   2. Обязательно ли однотипно инициализировать компонеты? или удалить кномпу добавления из "public\index.html"
- *        есть простые new FiltersView(eventsModel.events), new SortingView(this.#onSortingChange)
- *        есть сложные new EventFormView({ event, destinationInfo, ..., onFormSubmit: this.#onFormSubmit, onDelete: this.#onDelete, ...});
+ *   1. проверить: фильтр не по дням, удалить все события, фильтр должен остать который есть, но собщение..., но его делает не активным функция доступных фильтров
+ *      или в событие поменяли дату и оно теперь будет в другом фильтре, а в это фильтре пусто
+ *       const disabled = (disabledFilters.includes(filter) && activeFilter !== filter) ? 'disabled' : '';
+ *   2. now в при отрисовке фильтров... обновляеться только при изменнии модели... а нужно ли обновлять при сортировке или другом действии? в ТЗ что то есть?
+ *         а фильтрацию к данным мы применяем каждый раз с новой датой...
+ *         или в фильтрации применять старую дату или обновлять доступные фильтры...
+ *   3. при сохранении basePrice = state.basePrice || 0... при отрисовке (basePrice === null) ? '' : basePrice
+ *   4. отрицательная цена?
+ *   5. нужен he? использую преобразование к числу и поиск строковый поиск по городам
  *
  * Заметки:
- *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презенторов
+ *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презентеров
  *   2. Не использовать '?.()' для проверки перед выполнением this.#onEditClick?.()
- *   3. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView
- *   4. src\presenter\event-presenter.js попробовать сделать наследование для добавления события
- *   5. typeOffers.filter((typeOffer) => eventOfferIds.has(typeOffer.id)), а если офферы типа(typeOffers) сделать Map, то как подружить Map и Set... подумать
+ *   3. event-presenter.js и new-event-presenter.js немного похожи... попробовать выделить общего предка
+ *   4. Выделить общее <li class="trip-events__item"> у EventFormView и EventItemView !!! о может тут быть пброблема с тряской формы после отмены...
+ *        li+item/form init+render
+ *        this.#activeEventPresenter = null; // тут может тряска не работать корректно!!!
+ *   5. event-presenter.js, попробовать убрать создание формы сразу, а содвавать в момент переключения и в дальнейшем не удалять, пока не будет перерисовки
+ *   6. не вызывать обработчки напрямую!
+ *   7. В презентер похожий код, можно попробовать вынести в базовый класс (FilterPresenter, TripPresenter)
+ *   8. проверить перерисовку при добавлении нового события
+ *   9. проверить сортировату и фильтрацию дабавленного события
+ *   10. почитать ТЗ что делать с открытым добавление/редактирование события, при нажатии на фильтрацию и сортировку, закрывать?
+ *   11. перепроверить методы _ # и обычные их сортировку и вызов
+ *
  *
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):
  *   1. При открытии формы редактирования события, расположенных снизу, прокрутить страницу немного вниз, если форма отрисовалась ниже видимой области
@@ -44,5 +56,6 @@ tripPresenter.init();
  *   3. flatpickr обработка Esc, сейчас закрываеться форма редактирования. Не особо понятен аглоритм оконяния выбора даты...
  *   4. Выдавать весь список городов, на форме редактирования события или при очистке поля добавить пробел для вывода полного списка, т.к. без проблеа три города в списке.
  *   5. Обработать на форме нажатие Enter в src\presenter\event-presenter.js EventPresenter.#onDocumentKeyDown
+ *   6. Обработать форму если не было изменений
  *
  */

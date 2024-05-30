@@ -1,9 +1,8 @@
-import { renderOrReplace } from '../utils/dom.js';
+import { render, remove } from '../framework/render.js';
 import FiltersView from '../view/filters-view.js';
 import { UpdateType } from '../const.js';
 
 export default class FilterPresenter {
-  //! похоже у нескольких презенторов, вынести в базовый класс + конструктор
   #containerElement = null;
   #filterModel = null;
   #eventsModel = null;
@@ -18,14 +17,17 @@ export default class FilterPresenter {
   }
 
   init() {
-    const storedFilterComponent = this.#filterComponent;
+    if (this.#filterComponent) {
+      remove(this.#filterComponent);
+    }
+
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
       events: this.#eventsModel.events,
       onFilterChange: this.#onFilterChange
     });
 
-    renderOrReplace(this.#filterComponent, storedFilterComponent, this.#containerElement);
+    render(this.#filterComponent, this.#containerElement);
   }
 
   #onEventsModelChange = (updateType) => {

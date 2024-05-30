@@ -1,14 +1,13 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import InfoPresenter from './info-presenter.js';
 import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
-import ButtonView from '../view/button-view.js';
+import AddNewEventButtonView from '../view/add-new-event-button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
 import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE } from '../const.js';
-import { updateItemByKey } from '../utils/utils.js';
 
 export default class TripPresenter {
   #filterModel = null;
@@ -18,6 +17,7 @@ export default class TripPresenter {
   #filterPresenter = null;
   #eventsPresenter = null;
 
+  #headerTripMainElement = null;
   #tripEventsElement = null;
 
   #sortingComponent = null;
@@ -28,9 +28,10 @@ export default class TripPresenter {
 
   #currentSortingType = DEFAULT_SORTING_TYPE;
 
-  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, addEventButtonElement, eventsModel, filterModel }) {
+  constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, eventsModel, filterModel }) {
     this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
+    this.#headerTripMainElement = headerTripMainElement;
     this.#tripEventsElement = tripEventsElement;
 
     this.#infoPresenter = new InfoPresenter({
@@ -45,35 +46,49 @@ export default class TripPresenter {
     this.#eventsPresenter = new EventsPresenter({
       containerElement: tripEventsElement,
       eventsModel,
-      onAddNewEventClose: this.#onAddNewEventClose
+      onNewEventClose: this.#onNewEventClose
     });
 
-    this.#addEventButtonComponent = new ButtonView({ buttonElement: addEventButtonElement, onClick: this.#onAddEventClick });
+    this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
 
     eventsModel.addObserver(this.#onModelsChange);
     filterModel.addObserver(this.#onModelsChange);
   }
 
   init() {
-    this.#filterPresenter.init();//! скорее всего при плучении данных с сервера будет первый init
+    this.#filterPresenter.init(); //! скорее всего при получении данных с сервера будет первый init при обработке изменений модели
+    render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND); // отрисовать один раз
+
     this.#render();
   }
 
-  #clear({ isResetSortingType } = { isResetSortingType: false }) {
-    remove(this.#sortingComponent);
-
-    if (isResetSortingType) {
-      this.#currentSortingType = DEFAULT_SORTING_TYPE;
-    }
-
-    if (this.#emptyEventsMessageComponent) {
-      remove(this.#emptyEventsMessageComponent);
-    }
+  #clear() {
+    this.#removeSorting();
+    this.#removeEmptyEventsMessage();
+    this.#removeEvents();
   }
 
   #render() {
     this.#infoPresenter.init();
+
+    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, Date.now());
+
+    if (!this.#events.length) {
+      this.#renderEmptyEventsMessage();
+      return;
+    }
+
+    this.#renderSorting();
+
+    this.#events.sort(sortEvents[this.#currentSortingType]);
     this.#renderEvents();
+  }
+
+  #removeSorting() {
+    if (this.#sortingComponent) {
+      remove(this.#sortingComponent);
+      this.#sortingComponent = null;
+    }
   }
 
   #renderSorting() {
@@ -81,30 +96,12 @@ export default class TripPresenter {
     render(this.#sortingComponent, this.#tripEventsElement);
   }
 
-  #renderEvents({ isRenderSorting, isApplyFilter } = { isRenderSorting: true, isApplyFilter: true }) {
-    const now = Date.now();
-
-    //! нужно будет проверить вызов при добавлении нового события, или не так!
-    //! и сортировать и фильтровать дабавленное новое событие, или не так!
-    //! при сортировке заново фильтровались
-    const filteredEvents = (!isApplyFilter) ? this.#events : filterEvents(this.#eventsModel.events, this.#filterModel.filterType, now);
-
+  #removeEvents() {
     this.#eventsPresenter.clear();
+  }
 
-    if (!filteredEvents.length) {
-      this.#renderEmptyEventsMessage();
-      return;
-    }
-
-    if (isRenderSorting) {
-      this.#renderSorting();
-    }
-
-    filteredEvents.sort(sortEvents[this.#currentSortingType]);
-
-    //! а нужно ли...
-    this.#events = filteredEvents;
-    this.#eventsPresenter.init(filteredEvents);
+  #renderEvents() {
+    this.#eventsPresenter.init(this.#events);
   }
 
   #renderEmptyEventsMessage() {
@@ -113,49 +110,50 @@ export default class TripPresenter {
   }
 
   #removeEmptyEventsMessage() {
-    remove(this.#emptyEventsMessageComponent);
-    this.#emptyEventsMessageComponent = null;
+    if (this.#emptyEventsMessageComponent) {
+      remove(this.#emptyEventsMessageComponent);
+      this.#emptyEventsMessageComponent = null;
+    }
   }
 
   #onModelsChange = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#eventsPresenter.updateEvent(data); //! проверить
-        updateItemByKey(this.#events, data); //! т.к. нет фильтрации при сортировке
+        this.#eventsPresenter.updateEvent(data);
         break;
       case UpdateType.MINOR:
         this.#clear();
         this.#render();
         break;
       case UpdateType.MAJOR:
-        this.#clear({ isResetSortingType: true });
+        this.#currentSortingType = DEFAULT_SORTING_TYPE;
+        this.#clear();
         this.#render();
         break;
     }
   };
 
-  #onAddNewEventClose = () => {
+  #onNewEventClose = () => {
     this.#addEventButtonComponent.enable();
 
-    //! может сразу this.#renderEvents(); или через событие
     if (!this.#events.length) {
+      this.#removeSorting();
       this.#renderEmptyEventsMessage();
     }
   };
 
   #onAddEventClick = () => {
-    //! посмотреть в ТЗ
-    //! 1. Если событий, то нет компонета сортировки. но наверное нет смысла его рисовать, т.к. можно отменить добавление
-    //! 2. Сбросить фильтр и сортировку при добавлении нового
-    this.#filterModel.filterType = DEFAULT_FILTER_TYPE; //!
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
     if (!this.#events.length) {
       this.#removeEmptyEventsMessage();
+      this.#renderSorting();
     }
     this.#eventsPresenter.addEvent();
   };
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;
-    this.#renderEvents({ isRenderSorting: false, isApplyFilter: false });
+    this.#removeEvents();
+    this.#renderEvents();
   };
 }

@@ -3,7 +3,6 @@ import { getStringDate } from '../utils/date.js';
 import { DateFormat } from '../const.js';
 
 const createInfoTemplate = ({ title, dateFrom, dateTo, cost }) => {
-  //! почитать ТЗ и посмотреть как выводить, если в одном месяце?, если в разных? и т.д.?
   const tripDateFrom = getStringDate(dateFrom, DateFormat.DAY_MONTH);
   const tripDateTo = getStringDate(dateTo, DateFormat.DAY_MONTH);
 
@@ -23,7 +22,7 @@ export default class InfoView extends AbstractView {
 
   constructor({ tripInfo }) {
     super();
-    //! временно
+
     this.#tripInfo = tripInfo;
   }
 

@@ -2,7 +2,6 @@ import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { getDestinationName } from '../utils/event.js';
 import { EVENT_TYPES, DateFormat } from '../const.js';
 
 const createTypeItemTemplate = (type, currentType) => `<div class="event__type-item">
@@ -60,8 +59,8 @@ const createSectionDetailsTemplate = (typeOffers, offers, destination) => (!isEm
 </section>` : '';
 
 const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
-  const { type, basePrice, dateFrom, dateTo, offers, destinationInfo, typeOffers } = event;
-
+  const { type, basePrice, dateFrom, dateTo, eventOfferIds, destinationInfo, typeOffers } = event;
+  const destinationName = destinationInfo?.name || '';
   const resetButtonCaption = (isAddingNewEvent) ? 'Cancel' : 'Delete';
 
   return `<li class="trip-events__item">
@@ -80,7 +79,7 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getDestinationName(destinationInfo)}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
           ${createDestinationDatalistTemplate(destinations)}
       </div>
 
@@ -97,14 +96,14 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
           <span class="visually-hidden">Price</span>
           €
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${(basePrice === null) ? '' : basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
       ${(isAddingNewEvent) ? '' : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
     </header>
-    ${createSectionDetailsTemplate(typeOffers, offers, destinationInfo)}
+    ${createSectionDetailsTemplate(typeOffers, eventOfferIds, destinationInfo)}
   </form>
 <li>`;
 };

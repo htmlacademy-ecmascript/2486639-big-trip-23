@@ -1,3 +1,5 @@
+const INFO_DESTINATION_COUNT = 3;
+
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const DEFAULT_NEW_EVENT = {
@@ -19,7 +21,7 @@ const FilterType = {
   PAST: 'past'
 };
 
-const filterTypes = Object.entries(FilterType).map(([, filter]) => filter);
+const filterTypes = Object.values(FilterType);
 
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
@@ -84,6 +86,7 @@ const UpdateType = {
 };
 
 export {
+  INFO_DESTINATION_COUNT,
   EVENT_TYPES,
   DEFAULT_NEW_EVENT,
   FilterType,

@@ -1,9 +1,8 @@
-import { replace, remove } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import { UserAction, UpdateType } from '../const.js';
-import { renderOrReplace } from '../utils/dom.js';
 
 export default class EventPresenter {
   #containerElement = null;
@@ -36,23 +35,15 @@ export default class EventPresenter {
   init(event) {
     this.#event = event;
     const storedItemComponent = this.#itemComponent;
+    const storedFormComponent = this.#formComponent;
 
-    this.#makeComponents();
-
-    renderOrReplace(this.#itemComponent, storedItemComponent, this.#containerElement);
-  }
-
-  resetEventForm() {
-    this.#formComponent.resetForm();
-  }
-
-  closeEventForm() {
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
-  }
-
-  #makeComponents() {
-    const event = this.#event;
+    this.#itemComponent = new EventItemView({
+      event,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onFavoriteClick: this.#onFavoriteClick,
+      onEditClick: this.#onEditClick
+    });
 
     this.#formComponent = new EventFormView({
       event,
@@ -63,11 +54,23 @@ export default class EventPresenter {
       onFormClose: this.#onFormClose
     });
 
-    this.#itemComponent = new EventItemView({
-      event,
-      onFavoriteClick: this.#onFavoriteClick,
-      onEditClick: this.#onEditClick
-    });
+    if (!storedItemComponent || !storedFormComponent) {
+      render(this.#itemComponent, this.#containerElement);
+    } else {
+      replace(this.#itemComponent, storedItemComponent);
+
+      remove(storedItemComponent);
+      remove(storedFormComponent);
+    }
+  }
+
+  resetEventForm() {
+    this.#formComponent.resetForm();
+  }
+
+  closeEventForm() {
+    this.#replaceFormToItem();
+    this.#onEventFormClose();
   }
 
   #openForm() {
@@ -95,20 +98,11 @@ export default class EventPresenter {
   };
 
   #onFormSubmit = (event) => {
-    //! не все изменения UpdateType.MINOR, может быть и PATCH, только сумма изменена, может доавбить ключ...
     this.#onEventChange(UserAction.UPDATE_EVENT, UpdateType.MINOR, event);
-
-    //! навеное не нужно, буде перерисовка при изменениях
-    this.#replaceFormToItem();
-    this.#onEventFormClose(); //!
   };
 
   #onDelete = (event) => {
     this.#onEventChange(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
-
-    //! выше есть такие же две строки... //! тоже скорее всего не нужно
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
   };
 
   #onFormClose = () => {
