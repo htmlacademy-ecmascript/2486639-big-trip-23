@@ -1,0 +1,13 @@
+/*! https://mths.be/he v1.2.0 by @mathias | MIT license */
+
+//! if (isNaN(number) || (number < 0)) { //getNumber->getPositiveNumber
+
+//! возможно будут ошибки на автотестах
+
+//! временно новый id
+
+//! проверить что будет при автотестах и как сервер обработет null
+
+//! скорее всего при получении данных с сервера будет первый init при обработке изменений модели
+
+//! срабатывает onDestanationInputElementChange при reset и вызывает повторно updateElement
