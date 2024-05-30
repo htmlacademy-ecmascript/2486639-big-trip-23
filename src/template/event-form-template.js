@@ -16,7 +16,7 @@ const createTypeListTemplate = (types, currentType) => `<div class="event__type-
   </fieldset>
 </div>`;
 
-const createDestinationOptionTemplate = (destination) => `<option value="${destination}"></option>`;
+const createDestinationOptionTemplate = ({ name }) => `<option value="${name}"></option>`;
 
 const createDestinationDatalistTemplate = (destinations) => `<datalist id="destination-list-1">
     ${createElementsTemplate(destinations, createDestinationOptionTemplate)}

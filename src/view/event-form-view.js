@@ -1,17 +1,22 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
 import { isInputElement, getNumber } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
-import { getDestinationById, getDestinationNames } from '../utils/event.js';
+import { getDestinationById, getDestinationByName, getDestinationNames } from '../utils/event.js';
 
 export default class EventFormView extends AbstractStatefulView {
   #event = null;
   #isAddingNewEvent = false;
   #destinations = null;
-  #destinationNames = null;
   #offers = null;
+
+  #destinationNames = null;
+  #storedDestinationInputValue = '';
+
+  #destanationInputElement = null;
 
   #onFormSubmit = null;
   #onResetButtonClick = null;
@@ -29,8 +34,10 @@ export default class EventFormView extends AbstractStatefulView {
     this.#isAddingNewEvent = !event.id;
 
     this.#destinations = destinations;
-    this.#destinationNames = getDestinationNames(destinations);
     this.#offers = offers;
+
+    this.#destinationNames = getDestinationNames(destinations);
+    this.#storedDestinationInputValue = this._state.destinationInfo?.name;
 
     this.#onFormSubmit = onFormSubmit;
     this.#onResetButtonClick = onResetButtonClick;
@@ -40,7 +47,7 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventFormTemplate(this._state, this.#destinationNames, this.#isAddingNewEvent);
+    return createEventFormTemplate(this._state, this.#destinations, this.#isAddingNewEvent);
   }
 
   removeElement() {
@@ -54,9 +61,9 @@ export default class EventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
-    const destanationInputElement = this.element.querySelector('.event__input--destination');
-    destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
-    destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
+    this.#destanationInputElement = this.element.querySelector('.event__input--destination');
+    this.#destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
+    this.#destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
@@ -72,6 +79,8 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   resetForm() {
+    //! срабатывает onDestanationInputElementChange при reset и вызывает повторно updateElement
+    this.#destanationInputElement.removeEventListener('change', this.#onDestanationInputElementChange);
     this.element.firstElementChild.reset();
   }
 
@@ -119,18 +128,27 @@ export default class EventFormView extends AbstractStatefulView {
     }
 
     evt.preventDefault();
-    const destinationInfo = this.#destinations.get(evt.target.value);
+    const destinationInfo = getDestinationByName(this.#destinations, evt.target.value);
     const destination = destinationInfo?.id;
 
     this.updateElement({ destination, destinationInfo });
   };
 
   #onDestanationInputElementInput = (evt) => {
-    //!!
-    evt.target.value = evt.target.value.trim();
-    //console.log(evt.target.value);
+    const inputValue = he.encode(evt.target.value.trim().toLowerCase());
 
-    //console.log(this.#destinationNames.some((value) => value.includes(evt.target.value.trim()))); //! lowerCase
+    //! возможно будут ошибки на автотестах
+    if (!inputValue) {
+      this.#storedDestinationInputValue = '';
+      evt.target.value = ' '; // ' ' чтоб отобразился полный список городов
+      return;
+    }
+
+    if (this.#destinationNames.some((value) => value.includes(inputValue))) {
+      this.#storedDestinationInputValue = inputValue;
+    } else {
+      evt.target.value = this.#storedDestinationInputValue;
+    }
   };
 
   #onDateFromChange = ([dateFrom]) => {
@@ -143,7 +161,8 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onPriceInputElementInput = (evt) => {
-    const basePrice = getNumber(evt.target.value);
+    //! возможно будут ошибки на автотестах
+    const basePrice = getNumber(he.encode(evt.target.value));
     evt.target.value = basePrice;
 
     this._setState({ basePrice });
@@ -207,7 +226,7 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   static parseStateToEvent(state) {
-    const basePrice = state.basePrice || 0;
+    const basePrice = state.basePrice || 0; //! проверить что будет при автотестах и как сервер обработет null
     const offers = [...state.eventOfferIds];
     const event = { ...state, basePrice, offers };
 

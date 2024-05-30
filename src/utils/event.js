@@ -8,7 +8,7 @@ const getDestinationNameById = (destinations, id) => findItemByKey(destinations,
 
 const getDestinationByName = (destinations, name) => findItemByKey(destinations, name, 'name');
 
-const getDestinationNames = (destinations) => destinations.map(({ name }) => name);
+const getDestinationNames = (destinations) => destinations.map(({ name }) => name.toLowerCase());
 
 const getEventOffers = (typeOffers, eventOfferIds) => typeOffers.filter((typeOffer) => eventOfferIds.includes(typeOffer.id));
 
