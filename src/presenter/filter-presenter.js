@@ -16,13 +16,12 @@ export default class FilterPresenter {
     eventsModel.addObserver(this.#onEventsModelChange);
   }
 
-  init() {
-    if (this.#filterComponent) {
-      remove(this.#filterComponent);
-    }
+  init({ isAllFiltersDisabled } = { isAllFiltersDisabled: false }) {
+    remove(this.#filterComponent);
 
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
+      isAllFiltersDisabled,
       events: this.#eventsModel.events,
       onFilterChange: this.#onFilterChange
     });

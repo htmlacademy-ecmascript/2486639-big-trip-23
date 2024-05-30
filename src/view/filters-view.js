@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { getDisabledFilters } from '../utils/filter.js';
-import { FilterType } from '../const.js';
+import { FilterType, filterTypes } from '../const.js';
 
 const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
@@ -19,20 +19,23 @@ const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="t
 
 export default class FiltersView extends AbstractView {
   #currentFilterType = null;
+  #isAllFiltersDisabled = true;
   #events = [];
   #onFilterChange = null;
 
-  constructor({ currentFilterType, events, onFilterChange }) {
+  constructor({ currentFilterType, isAllFiltersDisabled, events, onFilterChange }) {
     super();
 
     this.#currentFilterType = currentFilterType;
+    this.#isAllFiltersDisabled = isAllFiltersDisabled;
     this.#events = events;
     this.#onFilterChange = onFilterChange;
     this.element.addEventListener('change', this.#onFormElementChange);
   }
 
   get template() {
-    return createFiltersTemplate(this.#currentFilterType, getDisabledFilters(this.#events));
+    const disabledFilters = (this.#isAllFiltersDisabled) ? filterTypes : getDisabledFilters(this.#events);
+    return createFiltersTemplate(this.#currentFilterType, disabledFilters);
   }
 
   #onFormElementChange = (evt) => {
