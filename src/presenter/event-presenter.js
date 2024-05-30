@@ -64,11 +64,8 @@ export default class EventPresenter {
     }
   }
 
-  resetEventForm() {
-    this.#formComponent.resetForm();
-  }
-
   closeEventForm() {
+    this.#formComponent.resetForm(this.#event);
     this.#replaceFormToItem();
     this.#onEventFormClose();
   }
@@ -112,7 +109,6 @@ export default class EventPresenter {
   #onDocumentKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.resetEventForm();
       this.closeEventForm();
     }
   };

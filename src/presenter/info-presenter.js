@@ -13,11 +13,9 @@ export default class InfoPresenter {
   }
 
   init() {
-    if (this.#infoComponent) {
-      remove(this.#infoComponent);
-    }
-
     const { events, destinations, offers } = this.#eventsModel;
+
+    remove(this.#infoComponent);
 
     if (events.length) {
       this.#infoComponent = new InfoView({ tripInfo: getTripInfo(events, destinations, offers) });

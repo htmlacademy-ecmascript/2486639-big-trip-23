@@ -8,15 +8,12 @@ import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import { getDestinationById, getDestinationByName, getDestinationNames } from '../utils/event.js';
 
 export default class EventFormView extends AbstractStatefulView {
-  #event = null;
   #isAddingNewEvent = false;
   #destinations = null;
   #offers = null;
 
   #destinationNames = null;
   #storedDestinationInputValue = '';
-
-  #destanationInputElement = null;
 
   #onFormSubmit = null;
   #onResetButtonClick = null;
@@ -28,7 +25,6 @@ export default class EventFormView extends AbstractStatefulView {
   constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
 
-    this.#event = event;
     this._setState(EventFormView.parseEventToState(event, destinations, offers));
 
     this.#isAddingNewEvent = !event.id;
@@ -61,27 +57,23 @@ export default class EventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
-    this.#destanationInputElement = this.element.querySelector('.event__input--destination');
-    this.#destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
-    this.#destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
+    const destanationInputElement = this.element.querySelector('.event__input--destination');
+    destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
+    destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOffersDivElementChange);
     }
-    const eventFormElement = this.element.querySelector('.event--edit');
-    eventFormElement.addEventListener('submit', this.#onFormElementSubmit);
-    eventFormElement.addEventListener('reset', this.#onFormElementReset);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onFormElementSubmit);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onResetButtonElementClick);
     if (!this.#isAddingNewEvent) { // кнопка будет скрыта и событие не добавляю
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onRollupButtonElementClick);
     }
   }
 
-  resetForm() {
-    //! срабатывает onDestanationInputElementChange при reset и вызывает повторно updateElement
-    this.#destanationInputElement.removeEventListener('change', this.#onDestanationInputElementChange);
-    this.element.firstElementChild.reset();
+  resetForm(event) {
+    this.updateElement(EventFormView.parseEventToState(event, this.#destinations, this.#offers));
   }
 
   #closeForm() {
@@ -190,24 +182,17 @@ export default class EventFormView extends AbstractStatefulView {
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
 
-  #onFormElementReset = (evt) => {
-    evt.preventDefault();
-    this.updateElement(EventFormView.parseEventToState(this.#event, this.#destinations, this.#offers));
-  };
-
   #onResetButtonElementClick = (evt) => {
     evt.preventDefault();
     if (this.#isAddingNewEvent) {
-      this.resetForm();
       this.#closeForm();
     } else {
-      this.#onResetButtonClick(this.#event);
+      this.#onResetButtonClick(EventFormView.parseStateToEvent(this._state));
     }
   };
 
   #onRollupButtonElementClick = (evt) => {
     evt.preventDefault();
-    this.resetForm();
     this.#closeForm();
   };
 

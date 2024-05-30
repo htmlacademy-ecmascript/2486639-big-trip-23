@@ -93,9 +93,8 @@ export default class EventsPresenter {
 
   #closeEventForm() {
     if (this.#activeEventPresenter) {
-      this.#activeEventPresenter.resetEventForm();
       this.#activeEventPresenter.closeEventForm();
-      this.#onEventFormClose();
+      this.#activeEventPresenter = null;
     }
   }
 
