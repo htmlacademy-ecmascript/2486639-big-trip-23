@@ -211,9 +211,8 @@ export default class EventFormView extends AbstractStatefulView {
   }
 
   static parseStateToEvent(state) {
-    const basePrice = state.basePrice || 0; //! проверить что будет при автотестах и как сервер обработет null
     const offers = [...state.eventOfferIds];
-    const event = { ...state, basePrice, offers };
+    const event = { ...state, offers };
 
     delete event.destinationInfo;
     delete event.eventOfferIds;

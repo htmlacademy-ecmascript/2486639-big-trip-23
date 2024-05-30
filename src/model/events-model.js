@@ -25,8 +25,7 @@ export default class EventsModel extends Observable {
 
       const events = await this.#eventsApiService.events;
       this.#events = events.map(this.#adaptToClient);
-
-    } catch (err) {
+    } catch (error) {
       this.#destinations = [];
       this.#offers = [];
       this.#events = [];
@@ -47,13 +46,20 @@ export default class EventsModel extends Observable {
     return this.#events;
   }
 
-  updateEvent(updateType, updatedEvent) {
-    updateItemByKey(this.#events, updatedEvent);
+  async updateEvent(updateType, event) {
+    try {
+      const response = await this.#eventsApiService.updateEvent(this.#adaptToServer(event));
+      const updatedEvent = this.#adaptToClient(response);
 
-    this._notify(updateType, updatedEvent);
+      updateItemByKey(this.#events, updatedEvent);
+
+      this._notify(updateType, updatedEvent);
+    } catch (error) {
+      throw new Error('Can\'t update event');
+    }
   }
 
-  addEvent(updateType, newEvent) {
+  addEvent(updateType, newEvent) { //adaptToServer(event)
     //! временно новый id
     const id = this.#events.length + 1;
     newEvent.id = id;
@@ -63,7 +69,7 @@ export default class EventsModel extends Observable {
     this._notify(updateType, newEvent);
   }
 
-  deleteEvent(updateType, event) {
+  deleteEvent(updateType, event) { //adaptToServer(event)
     deleteItemByKey(this.#events, event);
 
     this._notify(updateType);
@@ -82,6 +88,24 @@ export default class EventsModel extends Observable {
     delete adaptedEvent['date_from'];
     delete adaptedEvent['date_to'];
     delete adaptedEvent['is_favorite'];
+
+    return adaptedEvent;
+  }
+
+  #adaptToServer(event) {
+    const { basePrice, dateFrom, dateTo, isFavorite } = event;
+    const adaptedEvent = {
+      ...event,
+      ['base_price']: basePrice,
+      ['date_from']: dateFrom,
+      ['date_to']: dateTo,
+      ['is_favorite']: isFavorite
+    };
+
+    delete adaptedEvent.basePrice;
+    delete adaptedEvent.dateFrom;
+    delete adaptedEvent.dateTo;
+    delete adaptedEvent.isFavorite;
 
     return adaptedEvent;
   }

@@ -35,7 +35,7 @@ export default class EventsApiService extends ApiService {
     const response = await this._load({
       url: `${Route.POINTS}/${event.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(event)),
+      body: JSON.stringify(event),
       headers: new Headers(contentTypeHeader),
     });
 
@@ -48,7 +48,7 @@ export default class EventsApiService extends ApiService {
     const response = await this._load({
       url: Route.POINTS,
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(event)),
+      body: JSON.stringify(event),
       headers: new Headers(contentTypeHeader),
     });
 
@@ -64,13 +64,5 @@ export default class EventsApiService extends ApiService {
     });
 
     return response;
-  }
-
-  #adaptToServer(event) {
-    const adaptedEvent = {
-      ...event
-    };
-
-    return adaptedEvent;
   }
 }
