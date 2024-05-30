@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FilterType, filterTypes, DEFAULT_DISABLE_FILTER_TYPES } from '../const.js';
+import { FilterType, filterTypes } from '../const.js';
 
 const filterTypeEvents = {
   [FilterType.EVERYTHING]: () => true,
@@ -17,16 +17,8 @@ const existFilteredEvents = (events, filter, now) => {
   });
 };
 
-const getDisabledFilters = (events) => {
-  if (!events.length) {
-    return DEFAULT_DISABLE_FILTER_TYPES;
-  }
-
-  const now = Date.now();
-
-  return filterTypes.filter((filter) => !existFilteredEvents(events, filter, now));
-};
+const getEnabledFilters = (events, now) => filterTypes.filter((filter) => existFilteredEvents(events, filter, now));
 
 const filterEvents = (events, filterType, now) => events.filter(({ dateFrom, dateTo }) => filterTypeEvents[filterType](dateFrom, dateTo, now));
 
-export { filterEvents, getDisabledFilters };
+export { filterEvents, getEnabledFilters };

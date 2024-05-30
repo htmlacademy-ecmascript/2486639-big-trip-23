@@ -83,7 +83,7 @@ export default class TripPresenter {
     }
 
     this.#addEventButtonComponent.enable();
-    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, Date.now());
+    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, this.#filterPresenter.now);
 
     if (!this.#events.length) {
       this.#renderEmptyEventsMessage();

@@ -1,11 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { getDisabledFilters } from '../utils/filter.js';
-import { FilterType, filterTypes } from '../const.js';
+import { getEnabledFilters } from '../utils/filter.js';
+import { DEFAULT_ENABLED_FILTER_TYPES, FilterType } from '../const.js';
 
-const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
+const createFilterItemTemplate = (filter, _, activeFilter, enabledFilters) => {
   const checked = (filter === activeFilter) ? 'checked' : '';
-  const disabled = (disabledFilters.includes(filter)) ? 'disabled' : '';
+  const disabled = (!enabledFilters.includes(filter)) ? 'disabled' : '';
 
   return `<div class="trip-filters__filter">
   <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${checked} ${disabled}>
@@ -13,29 +13,42 @@ const createFilterItemTemplate = (filter, _, activeFilter, disabledFilters) => {
 </div>`;
 };
 
-const createFiltersTemplate = (activeFilter, disabledFilters) => `<form class="trip-filters" action="#" method="get">
-  ${createElementsTemplate(FilterType, createFilterItemTemplate, activeFilter, disabledFilters)}
+const createFiltersTemplate = (activeFilter, enabledFilters) => `<form class="trip-filters" action="#" method="get">
+  ${createElementsTemplate(FilterType, createFilterItemTemplate, activeFilter, enabledFilters)}
 </form>`;
 
 export default class FiltersView extends AbstractView {
   #currentFilterType = null;
   #isAllFiltersDisabled = true;
   #events = [];
+  #now;
   #onFilterChange = null;
 
-  constructor({ currentFilterType, isAllFiltersDisabled, events, onFilterChange }) {
+  constructor({ currentFilterType, isAllFiltersDisabled, events, now, onFilterChange }) {
     super();
 
     this.#currentFilterType = currentFilterType;
     this.#isAllFiltersDisabled = isAllFiltersDisabled;
     this.#events = events;
+    this.#now = now;
     this.#onFilterChange = onFilterChange;
     this.element.addEventListener('change', this.#onFormElementChange);
   }
 
   get template() {
-    const disabledFilters = (this.#isAllFiltersDisabled) ? filterTypes : getDisabledFilters(this.#events);
-    return createFiltersTemplate(this.#currentFilterType, disabledFilters);
+    return createFiltersTemplate(this.#currentFilterType, this.#getEnabledFilters());
+  }
+
+  #getEnabledFilters() {
+    if (this.#isAllFiltersDisabled) {
+      return [];
+    }
+
+    if (!this.#events.length) {
+      return DEFAULT_ENABLED_FILTER_TYPES;
+    }
+
+    return getEnabledFilters(this.#events, this.#now);
   }
 
   #onFormElementChange = (evt) => {

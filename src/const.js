@@ -24,7 +24,7 @@ const FilterType = {
 const filterTypes = Object.values(FilterType);
 
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
-const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
+const DEFAULT_ENABLED_FILTER_TYPES = [FilterType.EVERYTHING, FilterType.PRESENT];
 
 const filterEmptyMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
@@ -96,7 +96,7 @@ export {
   FilterType,
   filterTypes,
   DEFAULT_FILTER_TYPE,
-  DEFAULT_DISABLE_FILTER_TYPES,
+  DEFAULT_ENABLED_FILTER_TYPES,
   filterEmptyMessage,
   SortingType,
   sortingTypeLabelText,
