@@ -6,6 +6,7 @@ import { createEventFormTemplate } from '../template/event-form-template.js';
 import { isInputElement, getNumber } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import { getDestinationById, getDestinationByName, getDestinationNames } from '../utils/event.js';
+import { getISOString } from '../utils/date.js';
 
 export default class EventFormView extends AbstractStatefulView {
   #isAddingNewEvent = false;
@@ -197,22 +198,25 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   static parseEventToState(event, destinations, offers) {
-    const { destination, type, offers: eventOffers } = event;
-    const destinationInfo = getDestinationById(destinations, destination);
-    const eventOfferIds = new Set(eventOffers);
-    const typeOffers = offers.get(type);
+    const { type, destination, offers: eventOffers } = event;
 
     return {
       ...event,
-      destinationInfo,
-      eventOfferIds,
-      typeOffers
+      destinationInfo: getDestinationById(destinations, destination),
+      eventOfferIds: new Set(eventOffers),
+      typeOffers: offers.get(type),
     };
   }
 
   static parseStateToEvent(state) {
-    const offers = [...state.eventOfferIds];
-    const event = { ...state, offers };
+    const { dateFrom, dateTo, eventOfferIds } = state;
+    const event = {
+      ...state,
+      offers: [...eventOfferIds],
+      // по описанию API нужен ISO, но без преобразования сервер не выдает ошибки и обновление проходит успешно
+      dateFrom: getISOString(dateFrom),
+      dateTo: getISOString(dateTo)
+    };
 
     delete event.destinationInfo;
     delete event.eventOfferIds;
