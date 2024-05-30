@@ -83,7 +83,11 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
+
+const BASE_URL = 'https://23.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic id2486639';
 
 export {
   INFO_DESTINATION_COUNT,
@@ -102,5 +106,7 @@ export {
   DateFormat,
   DEFAULT_FLATPICKR_CONFIG,
   UserAction,
-  UpdateType
+  UpdateType,
+  BASE_URL,
+  AUTHORIZATION
 };

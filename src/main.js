@@ -1,6 +1,8 @@
 import FilterModel from './model/filter-model.js';
 import EventsModel from './model/events-model.js';
 import TripPresenter from './presenter/trip-presenter.js';
+import EventsApiService from './events-api-service.js';
+import { BASE_URL, AUTHORIZATION } from './const.js';
 
 const headerContainerElement = document.body.querySelector('.page-header__container');
 const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
@@ -9,7 +11,7 @@ const tripEventsElement = document.body.querySelector('.trip-events');
 headerTripMainElement.querySelector('.trip-main__event-add-btn').remove(); // удалю здесь кнопку, чтобы не менять /public/index.html
 
 const filterModel = new FilterModel();
-const eventsModel = new EventsModel();
+const eventsModel = new EventsModel({ eventsApiService: new EventsApiService(BASE_URL, AUTHORIZATION) });
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
@@ -20,6 +22,7 @@ const tripPresenter = new TripPresenter({
 });
 
 tripPresenter.init();
+eventsModel.init();
 
 /*
  * Вопросы:
@@ -32,6 +35,7 @@ tripPresenter.init();
  *   3. при сохранении basePrice = state.basePrice || 0... при отрисовке (basePrice === null) ? '' : basePrice
  *   4. отрицательная цена?
  *   5. нужен he? использую преобразование к числу и поиск строковый поиск по городам
+ *   6. поведение при редектировании/добавлении если очистить пункта назначения? очистить описание?
  *
  * Заметки:
  *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презентеров
@@ -45,8 +49,9 @@ tripPresenter.init();
  *   7. В презентер похожий код, можно попробовать вынести в базовый класс (FilterPresenter, TripPresenter)
  *   8. проверить перерисовку при добавлении нового события
  *   9. проверить сортировату и фильтрацию дабавленного события
- *   10. почитать ТЗ что делать с открытым добавление/редактирование события, при нажатии на фильтрацию и сортировку, закрывать?
  *   11. перепроверить методы _ # и обычные их сортировку и вызов
+ *   12. сменить название EventFormView-> EventEditView и имя файла
+ *   13. если вопрос 6, то попробовать объеденить логику this.#onDestanationInputElementChange и this.#onDestanationInputElementInput
  *
  *
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):

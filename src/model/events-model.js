@@ -1,25 +1,38 @@
 import Observable from '../framework/observable.js';
 import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
-import { generateMockData } from '../mock/events.js';
-import { EVENT_TYPES } from '../const.js';
+import { UpdateType } from '../const.js';
 
 export default class EventsModel extends Observable {
+  #eventsApiService = null;
   #destinations = [];
   #offers = new Map();
   #events = [];
 
-  constructor() {
+  constructor({ eventsApiService }) {
     super();
 
-    const { destinations, offers, events } = generateMockData(EVENT_TYPES);
+    this.#eventsApiService = eventsApiService;
+  }
 
-    this.#destinations = destinations;
+  async init() {
+    try {
+      this.#destinations = await this.#eventsApiService.destinations;
 
-    offers.forEach(({ type, offers: typeOffers }) => {
-      this.#offers.set(type, typeOffers);
-    });
+      const offers = await this.#eventsApiService.offers;
+      offers.forEach(({ type, offers: typeOffers }) => {
+        this.#offers.set(type, typeOffers);
+      });
 
-    this.#events = events;
+      const events = await this.#eventsApiService.events;
+      this.#events = events.map(this.#adaptToClient);
+
+    } catch (err) {
+      this.#destinations = [];
+      this.#offers = [];
+      this.#events = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   get destinations() {
@@ -54,5 +67,22 @@ export default class EventsModel extends Observable {
     deleteItemByKey(this.#events, event);
 
     this._notify(updateType);
+  }
+
+  #adaptToClient(event) {
+    const adaptedEvent = {
+      ...event,
+      basePrice: event['base_price'],
+      dateFrom: event['date_from'],
+      dateTo: event['date_to'],
+      isFavorite: event['is_favorite']
+    };
+
+    delete adaptedEvent['base_price'];
+    delete adaptedEvent['date_from'];
+    delete adaptedEvent['date_to'];
+    delete adaptedEvent['is_favorite'];
+
+    return adaptedEvent;
   }
 }
