@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createEventItemTemplate } from '../template/event-item-template.js';
+import { getDestinationNameById } from '../utils/event.js';
 
 export default class EventItemView extends AbstractView {
   #event = null;
@@ -9,12 +10,12 @@ export default class EventItemView extends AbstractView {
   #onFavoriteClick = null;
   #onEditClick = null;
 
-  constructor({ event, destinationsById, offers, onFavoriteClick, onEditClick }) {
+  constructor({ event, destinations, offers, onFavoriteClick, onEditClick }) {
     super();
 
     const { destination, type } = event;
     this.#event = event;
-    this.#destinationName = destinationsById.get(destination).name;
+    this.#destinationName = getDestinationNameById(destinations, destination);
     this.#typeOffers = offers.get(type);
 
     this.#onFavoriteClick = onFavoriteClick;

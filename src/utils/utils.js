@@ -20,6 +20,8 @@ const getNumber = (string) => {
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
 
+const findItemByKey = (items, keyValue, keyName = 'id') => items.find((item) => item[keyName] === keyValue);
+
 const updateItemByKey = (items, item, keyName = 'id') => {
   items[findItemIndexByKey(items, item[keyName], keyName)] = item;
 };
@@ -38,4 +40,4 @@ const deleteItemByKey = (items, item, keyName = 'id') => {
   deleteItemByIndex(items, findItemIndexByKey(items, item[keyName], keyName));
 };
 
-export { isEmptyArray, isEscapeKey, isInputElement, getNumber, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };
+export { isEmptyArray, isEscapeKey, isInputElement, getNumber, findItemByKey, findItemIndexByKey, updateItemByKey, addItem, deleteItemByKey };

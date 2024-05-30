@@ -4,12 +4,12 @@ import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
 import { isInputElement, getNumber } from '../utils/utils.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
+import { getDestinationById, getDestinationNames } from '../utils/event.js';
 
 export default class EventFormView extends AbstractStatefulView {
   #event = null;
   #isAddingNewEvent = false;
   #destinations = null;
-  #destinationById = null;
   #destinationNames = null;
   #offers = null;
 
@@ -20,17 +20,16 @@ export default class EventFormView extends AbstractStatefulView {
   #dateFrom = null;
   #dateTo = null;
 
-  constructor({ event, destinationsById, destinations, destinationNames, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
+  constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
 
     this.#event = event;
-    this._setState(EventFormView.parseEventToState(event, destinationsById, offers));
+    this._setState(EventFormView.parseEventToState(event, destinations, offers));
 
     this.#isAddingNewEvent = !event.id;
 
     this.#destinations = destinations;
-    this.#destinationById = destinationsById;
-    this.#destinationNames = destinationNames;
+    this.#destinationNames = getDestinationNames(destinations);
     this.#offers = offers;
 
     this.#onFormSubmit = onFormSubmit;
@@ -174,7 +173,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onFormElementReset = (evt) => {
     evt.preventDefault();
-    this.updateElement(EventFormView.parseEventToState(this.#event, this.#destinationById, this.#offers));
+    this.updateElement(EventFormView.parseEventToState(this.#event, this.#destinations, this.#offers));
   };
 
   #onResetButtonElementClick = (evt) => {
@@ -193,9 +192,9 @@ export default class EventFormView extends AbstractStatefulView {
     this.#closeForm();
   };
 
-  static parseEventToState(event, destinationById, offers) {
+  static parseEventToState(event, destinations, offers) {
     const { destination, type, offers: eventOffers } = event;
-    const destinationInfo = destinationById.get(destination);
+    const destinationInfo = getDestinationById(destinations, destination);
     const eventOfferIds = new Set(eventOffers);
     const typeOffers = offers.get(type);
 

@@ -8,8 +8,6 @@ export default class EventPresenter {
   #containerElement = null;
 
   #destinations = null;
-  #destinationsById = null;
-  #destinationNames = null;
   #offers = null;
   #event = null;
 
@@ -20,10 +18,8 @@ export default class EventPresenter {
   #onEventFormClose = null;
   #onEventChange = null;
 
-  constructor({ destinations, destinationsById, destinationNames, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
+  constructor({ destinations, offers, containerElement, onEventFormOpen, onEventFormClose, onEventChange }) {
     this.#destinations = destinations;
-    this.#destinationsById = destinationsById;
-    this.#destinationNames = destinationNames;
     this.#offers = offers;
     this.#containerElement = containerElement;
     this.#onEventFormOpen = onEventFormOpen;
@@ -43,7 +39,7 @@ export default class EventPresenter {
 
     this.#itemComponent = new EventItemView({
       event,
-      destinationsById: this.#destinationsById,
+      destinations: this.#destinations,
       offers: this.#offers,
       onFavoriteClick: this.#onFavoriteClick,
       onEditClick: this.#onEditClick
@@ -51,9 +47,7 @@ export default class EventPresenter {
 
     this.#formComponent = new EventFormView({
       event,
-      destinationsById: this.#destinationsById,
       destinations: this.#destinations,
-      destinationNames: this.#destinationNames,
       offers: this.#offers,
       onFormSubmit: this.#onFormSubmit,
       onResetButtonClick: this.#onDelete,

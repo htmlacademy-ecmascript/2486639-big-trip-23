@@ -4,8 +4,7 @@ import { generateMockData } from '../mock/events.js';
 import { EVENT_TYPES } from '../const.js';
 
 export default class EventsModel extends Observable {
-  #destinationsByName = new Map();
-  #destinationsById = new Map();
+  #destinations = [];
   #offers = new Map();
   #events = [];
 
@@ -14,10 +13,7 @@ export default class EventsModel extends Observable {
 
     const { destinations, offers, events } = generateMockData(EVENT_TYPES);
 
-    destinations.forEach((destination) => {
-      this.#destinationsByName.set(destination.name, destination);
-      this.#destinationsById.set(destination.id, destination);
-    });
+    this.#destinations = destinations;
 
     offers.forEach(({ type, offers: typeOffers }) => {
       this.#offers.set(type, typeOffers);
@@ -27,15 +23,7 @@ export default class EventsModel extends Observable {
   }
 
   get destinations() {
-    return this.#destinationsByName;
-  }
-
-  get destinationsById() {
-    return this.#destinationsById;
-  }
-
-  get destinationNames() {
-    return [...this.#destinationsByName.keys()];
+    return this.#destinations;
   }
 
   get offers() {
