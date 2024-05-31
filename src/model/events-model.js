@@ -4,9 +4,9 @@ import { UpdateType } from '../const.js';
 
 export default class EventsModel extends Observable {
   #eventsApiService = null;
-  #destinations = [];
+  #destinations = []; //? Set/Map? нужны методы доступа по id и name
   #offers = new Map();
-  #events = [];
+  #events = []; //? Set/Map? нужны методы доступа по id
 
   constructor({ eventsApiService }) {
     super();

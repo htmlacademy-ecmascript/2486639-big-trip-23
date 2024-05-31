@@ -33,7 +33,7 @@ const filterEmptyMessage = {
   [FilterType.PAST]: 'There are no past events now',
 };
 
-const SortingType = {
+const SortingType = { //? columns + canSort или что то другое
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -41,7 +41,7 @@ const SortingType = {
   OFFER: 'offer'
 };
 
-const sortingTypeLabelText = {
+const sortingTypeLabelText = { //? columns
   [SortingType.DAY]: SortingType.DAY,
   [SortingType.EVENT]: SortingType.EVENT,
   [SortingType.TIME]: SortingType.TIME,
