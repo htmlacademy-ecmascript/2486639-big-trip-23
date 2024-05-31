@@ -31,8 +31,7 @@ const createOfferTemplate = ({ id, name, title, price }, offers) => `<div class=
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (typeOffers, offers) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
-  <section class="event__section  event__section--offers">
+const createSectionOffersTemplate = (typeOffers, offers) => (isEmptyArray(typeOffers)) ? '' : `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
       ${createElementsTemplate(typeOffers, createOfferTemplate, offers)}
