@@ -89,6 +89,11 @@ const UpdateType = {
 const BASE_URL = 'https://23.objects.htmlacademy.pro/big-trip';
 const AUTHORIZATION = 'Basic id2486639';
 
+const UiBlockerLimit = {
+  LOWER: 350,
+  UPPER: 1000
+};
+
 export {
   INFO_DESTINATION_COUNT,
   EVENT_TYPES,
@@ -108,5 +113,6 @@ export {
   UserAction,
   UpdateType,
   BASE_URL,
-  AUTHORIZATION
+  AUTHORIZATION,
+  UiBlockerLimit
 };

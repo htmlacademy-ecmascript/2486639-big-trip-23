@@ -1,7 +1,8 @@
 import { render } from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { UserAction } from '../const.js';
+import { UserAction, UiBlockerLimit } from '../const.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
@@ -15,6 +16,11 @@ export default class EventsPresenter {
   #newEventPresenter = null;
 
   #eventsListComponent = new EventsListView();
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: UiBlockerLimit.LOWER,
+    upperLimit: UiBlockerLimit.UPPER
+  });
 
   #onNewEventClose = null;
 
@@ -120,6 +126,8 @@ export default class EventsPresenter {
   };
 
   #onEventChange = async (actionType, updateType, event) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
         this.#eventPresenters.get(event.id).setSaving();
@@ -146,5 +154,7 @@ export default class EventsPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }
