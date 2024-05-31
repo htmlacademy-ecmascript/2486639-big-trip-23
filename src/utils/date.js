@@ -28,4 +28,6 @@ const getDurationString = (dateStart, dateEnd) => {
   return strings.join('');
 };
 
-export { getStringDate, getDurationMinutes, getDurationString };
+const getISOString = (date) => (date instanceof Date) ? date.toISOString() : date;
+
+export { getStringDate, getDurationMinutes, getDurationString, getISOString };

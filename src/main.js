@@ -1,6 +1,8 @@
 import FilterModel from './model/filter-model.js';
 import EventsModel from './model/events-model.js';
 import TripPresenter from './presenter/trip-presenter.js';
+import EventsApiService from './events-api-service.js';
+import { BASE_URL, AUTHORIZATION } from './const.js';
 
 const headerContainerElement = document.body.querySelector('.page-header__container');
 const headerTripMainElement = headerContainerElement.querySelector('.trip-main');
@@ -9,7 +11,7 @@ const tripEventsElement = document.body.querySelector('.trip-events');
 headerTripMainElement.querySelector('.trip-main__event-add-btn').remove(); // удалю здесь кнопку, чтобы не менять /public/index.html
 
 const filterModel = new FilterModel();
-const eventsModel = new EventsModel();
+const eventsModel = new EventsModel({ eventsApiService: new EventsApiService(BASE_URL, AUTHORIZATION) });
 
 const tripPresenter = new TripPresenter({
   headerTripMainElement,
@@ -20,18 +22,24 @@ const tripPresenter = new TripPresenter({
 });
 
 tripPresenter.init();
+eventsModel.init();
 
 /*
  * Вопросы:
  *   1. проверить: фильтр не по дням, удалить все события, фильтр должен остать который есть, но собщение..., но его делает не активным функция доступных фильтров
  *      или в событие поменяли дату и оно теперь будет в другом фильтре, а в это фильтре пусто
  *       const disabled = (disabledFilters.includes(filter) && activeFilter !== filter) ? 'disabled' : '';
- *   2. now в при отрисовке фильтров... обновляеться только при изменнии модели... а нужно ли обновлять при сортировке или другом действии? в ТЗ что то есть?
+ *   2. now() в при отрисовке фильтров... обновляеться только при изменнии модели... а нужно ли обновлять при сортировке или другом действии? в ТЗ что то есть?
  *         а фильтрацию к данным мы применяем каждый раз с новой датой...
  *         или в фильтрации применять старую дату или обновлять доступные фильтры...
- *   3. при сохранении basePrice = state.basePrice || 0... при отрисовке (basePrice === null) ? '' : basePrice
- *   4. отрицательная цена?
- *   5. нужен he? использую преобразование к числу и поиск строковый поиск по городам
+ *         getEnableFilters(events, date(сохраненная из перезетера например и обновляеться при init, её же использовать для фильтрации))
+ *   3. нужен he? использую преобразование к числу и поиск строковый поиск по городам
+ *   4. поведение при редектировании/добавлении если очистить пункта назначения? очистить описание?
+ *   5. ТЗ - На время загрузки, вместо списка точек маршрута, отображается сообщение: «Loading...».
+ *      Задание 16 - На время загрузки вместо списка выведите информирующее сообщение (разметку смотрите в /markup).
+ *                   Сообщение должно показываться единожды на старте приложения, пока данные загружаются.
+ *                   В случае, если при загрузке произошла ошибка, приложение должно отработать так, как будто данных нет, и показать соответствующую заглушку.
+ *      сделал как в markup и кнопку заблокировал и все фильтры
  *
  * Заметки:
  *   1. Смотреть где нужны деструкторы, там где есть перересовка и удаление сомпонентов и презентеров
@@ -45,8 +53,12 @@ tripPresenter.init();
  *   7. В презентер похожий код, можно попробовать вынести в базовый класс (FilterPresenter, TripPresenter)
  *   8. проверить перерисовку при добавлении нового события
  *   9. проверить сортировату и фильтрацию дабавленного события
- *   10. почитать ТЗ что делать с открытым добавление/редактирование события, при нажатии на фильтрацию и сортировку, закрывать?
  *   11. перепроверить методы _ # и обычные их сортировку и вызов
+ *   12. сменить название EventFormView-> EventEditView и имя файла
+ *   13. если вопрос 6, то попробовать объеденить логику this.#onDestanationInputElementChange и this.#onDestanationInputElementInput
+ *   14. если вопрос 5, то доступность кнопки добавить событие перепроверить.
+ *         при ошибке загрузки данных this.#addEventButtonComponent.enable() при render INIT поизойдет в любом случае
+ *         либо в презентере сделать метод и выполнить его в eventsModel.init().finaly(....)
  *
  *
  * Дополнительный функционал(отключить есть будут проблемы с автотестами):

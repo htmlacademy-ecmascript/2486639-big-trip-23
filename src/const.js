@@ -24,7 +24,7 @@ const FilterType = {
 const filterTypes = Object.values(FilterType);
 
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
-const DEFAULT_DISABLE_FILTER_TYPES = [FilterType.FUTURE, FilterType.PAST];
+const DEFAULT_ENABLED_FILTER_TYPES = [FilterType.EVERYTHING, FilterType.PRESENT];
 
 const filterEmptyMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
@@ -83,7 +83,11 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
+
+const BASE_URL = 'https://23.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic id2486639';
 
 export {
   INFO_DESTINATION_COUNT,
@@ -92,7 +96,7 @@ export {
   FilterType,
   filterTypes,
   DEFAULT_FILTER_TYPE,
-  DEFAULT_DISABLE_FILTER_TYPES,
+  DEFAULT_ENABLED_FILTER_TYPES,
   filterEmptyMessage,
   SortingType,
   sortingTypeLabelText,
@@ -102,5 +106,7 @@ export {
   DateFormat,
   DEFAULT_FLATPICKR_CONFIG,
   UserAction,
-  UpdateType
+  UpdateType,
+  BASE_URL,
+  AUTHORIZATION
 };

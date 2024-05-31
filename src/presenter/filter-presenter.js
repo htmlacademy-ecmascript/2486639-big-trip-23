@@ -7,6 +7,7 @@ export default class FilterPresenter {
   #filterModel = null;
   #eventsModel = null;
   #filterComponent = null;
+  #now = Date.now();
 
   constructor({ containerElement, filterModel, eventsModel }) {
     this.#containerElement = containerElement;
@@ -16,14 +17,19 @@ export default class FilterPresenter {
     eventsModel.addObserver(this.#onEventsModelChange);
   }
 
-  init() {
-    if (this.#filterComponent) {
-      remove(this.#filterComponent);
-    }
+  get now() {
+    return this.#now;
+  }
+
+  init({ isAllFiltersDisabled } = { isAllFiltersDisabled: false }) {
+    this.#now = Date.now();
+    remove(this.#filterComponent);
 
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
+      isAllFiltersDisabled,
       events: this.#eventsModel.events,
+      now: this.#now,
       onFilterChange: this.#onFilterChange
     });
 

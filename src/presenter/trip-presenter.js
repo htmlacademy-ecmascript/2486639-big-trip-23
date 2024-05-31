@@ -7,7 +7,7 @@ import AddNewEventButtonView from '../view/add-new-event-button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEvents } from '../utils/filter.js';
-import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE } from '../const.js';
+import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE, MessageType } from '../const.js';
 
 export default class TripPresenter {
   #filterModel = null;
@@ -20,6 +20,9 @@ export default class TripPresenter {
   #headerTripMainElement = null;
   #tripEventsElement = null;
 
+  #isLoading = true;
+
+  #loadingComponent = null;
   #sortingComponent = null;
   #emptyEventsMessageComponent = null;
   #addEventButtonComponent = null;
@@ -48,6 +51,7 @@ export default class TripPresenter {
       eventsModel,
       onNewEventClose: this.#onNewEventClose
     });
+    this.#loadingComponent = new MessageView({ message: MessageType.LOADING });
 
     this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
 
@@ -56,7 +60,7 @@ export default class TripPresenter {
   }
 
   init() {
-    this.#filterPresenter.init(); //! скорее всего при получении данных с сервера будет первый init при обработке изменений модели
+    this.#filterPresenter.init({ isAllFiltersDisabled: true });
     render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND); // отрисовать один раз
 
     this.#render();
@@ -64,6 +68,7 @@ export default class TripPresenter {
 
   #clear() {
     this.#removeSorting();
+    this.#removeLoading();
     this.#removeEmptyEventsMessage();
     this.#removeEvents();
   }
@@ -71,7 +76,14 @@ export default class TripPresenter {
   #render() {
     this.#infoPresenter.init();
 
-    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, Date.now());
+    if (this.#isLoading) {
+      this.#addEventButtonComponent.disable();
+      this.#renderLoading();
+      return;
+    }
+
+    this.#addEventButtonComponent.enable();
+    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, this.#filterPresenter.now);
 
     if (!this.#events.length) {
       this.#renderEmptyEventsMessage();
@@ -84,11 +96,16 @@ export default class TripPresenter {
     this.#renderEvents();
   }
 
+  #removeLoading() {
+    remove(this.#loadingComponent);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#tripEventsElement);
+  }
+
   #removeSorting() {
-    if (this.#sortingComponent) {
-      remove(this.#sortingComponent);
-      this.#sortingComponent = null;
-    }
+    remove(this.#sortingComponent);
   }
 
   #renderSorting() {
@@ -110,10 +127,7 @@ export default class TripPresenter {
   }
 
   #removeEmptyEventsMessage() {
-    if (this.#emptyEventsMessageComponent) {
-      remove(this.#emptyEventsMessageComponent);
-      this.#emptyEventsMessageComponent = null;
-    }
+    remove(this.#emptyEventsMessageComponent);
   }
 
   #onModelsChange = (updateType, data) => {
@@ -128,6 +142,11 @@ export default class TripPresenter {
       case UpdateType.MAJOR:
         this.#currentSortingType = DEFAULT_SORTING_TYPE;
         this.#clear();
+        this.#render();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#removeLoading();
         this.#render();
         break;
     }
