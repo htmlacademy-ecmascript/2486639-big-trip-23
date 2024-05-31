@@ -9,8 +9,8 @@ const DEFAULT_NEW_EVENT = {
   dateTo: null,
   isFavorite: false,
   offers: null,
-  destanation: null,
-  destanationInfo: null,
+  destination: null,
+  destinationInfo: null,
   typeOffers: []
 };
 

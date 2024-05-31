@@ -59,17 +59,20 @@ export default class EventsModel extends Observable {
     }
   }
 
-  addEvent(updateType, newEvent) { //adaptToServer(event)
-    //! временно новый id
-    const id = this.#events.length + 1;
-    newEvent.id = id;
+  async addEvent(updateType, event) {
+    try {
+      const response = await this.#eventsApiService.addEvent(this.#adaptToServer(event));
+      const newEvent = this.#adaptToClient(response);
 
-    addItem(this.#events, newEvent);
+      addItem(this.#events, newEvent);
 
-    this._notify(updateType, newEvent);
+      this._notify(updateType, newEvent);
+    } catch (err) {
+      throw new Error('Can\'t add event');
+    }
   }
 
-  deleteEvent(updateType, event) { //adaptToServer(event)
+  deleteEvent(updateType, event) {
     deleteItemByKey(this.#events, event);
 
     this._notify(updateType);
