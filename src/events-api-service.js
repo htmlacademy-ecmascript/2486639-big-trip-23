@@ -57,9 +57,9 @@ export default class EventsApiService extends ApiService {
     return parsedResponse;
   }
 
-  async deleteEvent(event) {
+  async deleteEventById(eventId) {
     const response = await this._load({
-      url: `${Route.POINTS}/${event.id}`,
+      url: `${Route.POINTS}/${eventId}`,
       method: Method.DELETE,
     });
 

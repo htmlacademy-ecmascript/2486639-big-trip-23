@@ -72,10 +72,16 @@ export default class EventsModel extends Observable {
     }
   }
 
-  deleteEvent(updateType, event) {
-    deleteItemByKey(this.#events, event);
+  async deleteEvent(updateType, event) {
+    try {
+      await this.#eventsApiService.deleteEventById(event.id);
 
-    this._notify(updateType);
+      deleteItemByKey(this.#events, event);
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\'t delete event');
+    }
   }
 
   #adaptToClient(event) {
