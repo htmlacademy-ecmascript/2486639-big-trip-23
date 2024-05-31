@@ -11,6 +11,8 @@ export default class EventPresenter {
   #offers = null;
   #event = null;
 
+  #isEditingMode = false;
+
   #itemComponent = null;
   #formComponent = null;
 
@@ -57,7 +59,12 @@ export default class EventPresenter {
     if (!storedItemComponent || !storedFormComponent) {
       render(this.#itemComponent, this.#containerElement);
     } else {
-      replace(this.#itemComponent, storedItemComponent);
+      if (!this.#isEditingMode) {
+        replace(this.#itemComponent, storedItemComponent);
+      } else {
+        replace(this.#formComponent, storedFormComponent);
+        this.#isEditingMode = false;
+      }
 
       remove(storedItemComponent);
       remove(storedFormComponent);
@@ -65,17 +72,34 @@ export default class EventPresenter {
   }
 
   closeEventForm() {
-    this.#formComponent.resetForm(this.#event);
-    this.#replaceFormToItem();
-    this.#onEventFormClose();
+    if (this.#isEditingMode) {
+      this.#formComponent.resetForm(this.#event);
+      this.#replaceFormToItem();
+      this.#onEventFormClose();
+    }
   }
 
   setSaving() {
-    this.#formComponent.updateElement({ isSaving: true });
+    if (this.#isEditingMode) {
+      this.#formComponent.updateElement({ isSaving: true });
+    }
   }
 
   setDeleting() {
-    this.#formComponent.updateElement({ isDeleting: true });
+    if (this.#isEditingMode) {
+      this.#formComponent.updateElement({ isDeleting: true });
+    }
+  }
+
+  setAborting() {
+    if (!this.#isEditingMode) {
+      this.#itemComponent.shake();
+      return;
+    }
+
+    this.#formComponent.shake(() => {
+      this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
+    });
   }
 
   #openForm() {
@@ -86,11 +110,13 @@ export default class EventPresenter {
   #replaceItemToForm() {
     replace(this.#formComponent, this.#itemComponent);
     document.addEventListener('keydown', this.#onDocumentKeyDown);
+    this.#isEditingMode = true;
   }
 
   #replaceFormToItem() {
     replace(this.#itemComponent, this.#formComponent);
     document.removeEventListener('keydown', this.#onDocumentKeyDown);
+    this.#isEditingMode = false;
   }
 
   #onEditClick = () => {

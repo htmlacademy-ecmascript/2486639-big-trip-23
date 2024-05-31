@@ -119,19 +119,31 @@ export default class EventsPresenter {
     this.#onNewEventClose();
   };
 
-  #onEventChange = (actionType, updateType, event) => {
+  #onEventChange = async (actionType, updateType, event) => {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#activeEventPresenter.setSaving(); // this.#eventPresenters.get(event.id)
-        this.#eventsModel.updateEvent(updateType, event);
+        this.#eventPresenters.get(event.id).setSaving();
+        try {
+          await this.#eventsModel.updateEvent(updateType, event);
+        } catch (err) {
+          this.#eventPresenters.get(event.id).setAborting();
+        }
         break;
       case UserAction.ADD_EVENT:
         this.#newEventPresenter.setSaving();
-        this.#eventsModel.addEvent(updateType, event);
+        try {
+          await this.#eventsModel.addEvent(updateType, event);
+        } catch (err) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_EVENT:
         this.#activeEventPresenter.setDeleting(); // this.#eventPresenters.get(event.id)
-        this.#eventsModel.deleteEvent(updateType, event);
+        try {
+          await this.#eventsModel.deleteEvent(updateType, event);
+        } catch (err) {
+          this.#activeEventPresenter.setAborting(); // this.#eventPresenters.get(event.id)
+        }
         break;
     }
   };

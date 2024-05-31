@@ -51,6 +51,12 @@ export default class NewEventPresenter {
     this.#formComponent.updateElement({ isSaving: true });
   }
 
+  setAborting() {
+    this.#formComponent.shake(() => {
+      this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
+    });
+  }
+
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.ADD_EVENT, UpdateType.MINOR, event);
   };
