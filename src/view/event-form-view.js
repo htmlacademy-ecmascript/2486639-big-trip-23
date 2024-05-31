@@ -58,9 +58,9 @@ export default class EventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
-    const destanationInputElement = this.element.querySelector('.event__input--destination');
-    destanationInputElement.addEventListener('change', this.#onDestanationInputElementChange);
-    destanationInputElement.addEventListener('input', this.#onDestanationInputElementInput);
+    const destinationInputElement = this.element.querySelector('.event__input--destination');
+    destinationInputElement.addEventListener('change', this.#onDestinationInputElementChange);
+    destinationInputElement.addEventListener('input', this.#onDestinationInputElementInput);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
@@ -115,7 +115,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.updateElement({ type, typeOffers, eventOfferIds });
   };
 
-  #onDestanationInputElementChange = (evt) => {
+  #onDestinationInputElementChange = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -127,7 +127,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.updateElement({ destination, destinationInfo });
   };
 
-  #onDestanationInputElementInput = (evt) => {
+  #onDestinationInputElementInput = (evt) => {
     const inputValue = he.encode(evt.target.value.trim().toLowerCase());
 
     //! возможно будут ошибки на автотестах
@@ -205,6 +205,8 @@ export default class EventFormView extends AbstractStatefulView {
       destinationInfo: getDestinationById(destinations, destination),
       eventOfferIds: new Set(eventOffers),
       typeOffers: offers.get(type),
+      isSaving: false,
+      isDeleting: false
     };
   }
 
@@ -221,6 +223,8 @@ export default class EventFormView extends AbstractStatefulView {
     delete event.destinationInfo;
     delete event.eventOfferIds;
     delete event.typeOffers;
+    delete event.isSaving;
+    delete event.isDeleting;
 
     return event;
   }

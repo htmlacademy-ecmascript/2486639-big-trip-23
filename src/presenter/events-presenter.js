@@ -1,7 +1,8 @@
 import { render } from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { UserAction } from '../const.js';
+import { UserAction, UiBlockerLimit } from '../const.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
@@ -15,6 +16,11 @@ export default class EventsPresenter {
   #newEventPresenter = null;
 
   #eventsListComponent = new EventsListView();
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: UiBlockerLimit.LOWER,
+    upperLimit: UiBlockerLimit.UPPER
+  });
 
   #onNewEventClose = null;
 
@@ -119,17 +125,36 @@ export default class EventsPresenter {
     this.#onNewEventClose();
   };
 
-  #onEventChange = (actionType, updateType, event) => {
+  #onEventChange = async (actionType, updateType, event) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#eventsModel.updateEvent(updateType, event);
+        this.#eventPresenters.get(event.id).setSaving();
+        try {
+          await this.#eventsModel.updateEvent(updateType, event);
+        } catch (err) {
+          this.#eventPresenters.get(event.id).setAborting();
+        }
         break;
       case UserAction.ADD_EVENT:
-        this.#eventsModel.addEvent(updateType, event);
+        this.#newEventPresenter.setSaving();
+        try {
+          await this.#eventsModel.addEvent(updateType, event);
+        } catch (err) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_EVENT:
-        this.#eventsModel.deleteEvent(updateType, event);
+        this.#activeEventPresenter.setDeleting(); // this.#eventPresenters.get(event.id)
+        try {
+          await this.#eventsModel.deleteEvent(updateType, event);
+        } catch (err) {
+          this.#activeEventPresenter.setAborting(); // this.#eventPresenters.get(event.id)
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }

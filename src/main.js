@@ -55,7 +55,7 @@ eventsModel.init();
  *   9. проверить сортировату и фильтрацию дабавленного события
  *   11. перепроверить методы _ # и обычные их сортировку и вызов
  *   12. сменить название EventFormView-> EventEditView и имя файла
- *   13. если вопрос 6, то попробовать объеденить логику this.#onDestanationInputElementChange и this.#onDestanationInputElementInput
+ *   13. если вопрос 6, то попробовать объеденить логику this.#onDestinationInputElementChange и this.#onDestinationInputElementInput
  *   14. если вопрос 5, то доступность кнопки добавить событие перепроверить.
  *         при ошибке загрузки данных this.#addEventButtonComponent.enable() при render INIT поизойдет в любом случае
  *         либо в презентере сделать метод и выполнить его в eventsModel.init().finaly(....)
