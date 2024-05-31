@@ -58,10 +58,22 @@ const createSectionDetailsTemplate = (typeOffers, offers, destination) => (!isEm
   ${(destination) ? createSectionDestinationTemplate(destination) : ''}
 </section>` : '';
 
+const getResetButtonCaption = (isAddingNewEvent, isDeleting) => {
+  if (isAddingNewEvent) {
+    return 'Cancel';
+  }
+
+  if (isDeleting) {
+    return 'Deleting...';
+  }
+
+  return 'Delete';
+};
+
 const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
-  const { type, basePrice, dateFrom, dateTo, eventOfferIds, destinationInfo, typeOffers } = event;
+  const { type, basePrice, dateFrom, dateTo, eventOfferIds, destinationInfo, typeOffers, isSaving, isDeleting } = event;
   const destinationName = destinationInfo?.name || '';
-  const resetButtonCaption = (isAddingNewEvent) ? 'Cancel' : 'Delete';
+  const resetButtonCaption = getResetButtonCaption(isAddingNewEvent, isDeleting);
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -99,7 +111,7 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${(basePrice === null) ? '' : basePrice}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit">${(isSaving) ? 'Saving...' : 'Save'}</button>
       <button class="event__reset-btn" type="reset">${resetButtonCaption}</button>
       ${(isAddingNewEvent) ? '' : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
     </header>

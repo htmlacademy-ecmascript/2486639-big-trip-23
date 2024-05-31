@@ -205,6 +205,8 @@ export default class EventFormView extends AbstractStatefulView {
       destinationInfo: getDestinationById(destinations, destination),
       eventOfferIds: new Set(eventOffers),
       typeOffers: offers.get(type),
+      isSaving: false,
+      isDeleting: false
     };
   }
 
@@ -221,6 +223,8 @@ export default class EventFormView extends AbstractStatefulView {
     delete event.destinationInfo;
     delete event.eventOfferIds;
     delete event.typeOffers;
+    delete event.isSaving;
+    delete event.isDeleting;
 
     return event;
   }

@@ -47,6 +47,10 @@ export default class NewEventPresenter {
     this.#onNewEventFormClose();
   }
 
+  setSaving() {
+    this.#formComponent.updateElement({ isSaving: true });
+  }
+
   #onFormSubmit = (event) => {
     this.#onEventChange(UserAction.ADD_EVENT, UpdateType.MINOR, event);
   };

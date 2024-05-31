@@ -70,6 +70,14 @@ export default class EventPresenter {
     this.#onEventFormClose();
   }
 
+  setSaving() {
+    this.#formComponent.updateElement({ isSaving: true });
+  }
+
+  setDeleting() {
+    this.#formComponent.updateElement({ isDeleting: true });
+  }
+
   #openForm() {
     this.#replaceItemToForm();
     this.#onEventFormOpen(this);
