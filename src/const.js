@@ -83,7 +83,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  INIT: 'INIT'
+  INIT: 'INIT',
+  INIT_ERROR: 'INIT_ERROR'
 };
 
 const BASE_URL = 'https://23.objects.htmlacademy.pro/big-trip';

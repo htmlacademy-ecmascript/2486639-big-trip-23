@@ -149,6 +149,11 @@ export default class TripPresenter {
         this.#removeLoading();
         this.#render();
         break;
+      case UpdateType.INIT_ERROR:
+        this.#isLoading = false;
+        this.#removeLoading();
+        render(new MessageView({ message: MessageType.FAILEAD }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. только возможно нажать обновить страницу
+        break;
     }
   };
 
@@ -162,7 +167,7 @@ export default class TripPresenter {
   };
 
   #onAddEventClick = () => {
-    this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE; //! там проверка на незменность фильтра и не сработатывает UpdateType.MAJOR
     if (!this.#events.length) {
       this.#removeEmptyEventsMessage();
       this.#renderSorting();

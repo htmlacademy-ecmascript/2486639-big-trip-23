@@ -37,9 +37,11 @@ export default class FilterPresenter {
   }
 
   #onEventsModelChange = (updateType) => {
-    if (updateType !== UpdateType.PATCH) {
-      this.init();
+    if ([UpdateType.PATCH, UpdateType.INIT_ERROR].includes(updateType)) {
+      return;
     }
+
+    this.init();
   };
 
   #onFilterChange = (filterType) => {
