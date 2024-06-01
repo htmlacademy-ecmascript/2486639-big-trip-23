@@ -1,12 +1,12 @@
 import Observable from '../framework/observable.js';
 import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
-import { UpdateType } from '../const.js';
+import { MessageType, UpdateType } from '../const.js';
 
 export default class EventsModel extends Observable {
   #eventsApiService = null;
-  #destinations = []; //? Set/Map? нужны методы доступа по id и name
+  #destinations = [];
   #offers = new Map();
-  #events = []; //? Set/Map? нужны методы доступа по id
+  #events = [];
 
   constructor({ eventsApiService }) {
     super();
@@ -27,10 +27,7 @@ export default class EventsModel extends Observable {
       this.#events = events.map(this.#adaptToClient);
       this._notify(UpdateType.INIT);
     } catch (error) {
-      this.#destinations = [];
-      this.#offers = [];
-      this.#events = [];
-      this._notify(UpdateType.INIT_ERROR);
+      throw new Error(MessageType.FAILEAD);
     }
   }
 

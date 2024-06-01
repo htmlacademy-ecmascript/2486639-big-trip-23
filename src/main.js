@@ -22,7 +22,9 @@ const tripPresenter = new TripPresenter({
 });
 
 tripPresenter.init();
-eventsModel.init();
+eventsModel.init().catch((error) => {
+  tripPresenter.renderMessage(error);
+});
 
 /*
  * Вопросы:

@@ -66,6 +66,11 @@ export default class TripPresenter {
     this.#render();
   }
 
+  renderMessage(message) {
+    this.#removeLoading();
+    render(new MessageView({ message: message }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. возможно только нажать обновить страницу
+  }
+
   #clear() {
     this.#removeSorting();
     this.#removeLoading();
@@ -148,11 +153,6 @@ export default class TripPresenter {
         this.#isLoading = false;
         this.#removeLoading();
         this.#render();
-        break;
-      case UpdateType.INIT_ERROR:
-        this.#isLoading = false;
-        this.#removeLoading();
-        render(new MessageView({ message: MessageType.FAILEAD }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. только возможно нажать обновить страницу
         break;
     }
   };

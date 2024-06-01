@@ -32,7 +32,7 @@ const filterEmptyMessage = {
   [FilterType.PAST]: 'There are no past events now',
 };
 
-const SortingType = { //? columns + canSort или что то другое
+const SortingType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -40,7 +40,7 @@ const SortingType = { //? columns + canSort или что то другое
   OFFER: 'offer'
 };
 
-const sortingTypeLabelText = { //? columns
+const sortingTypeLabelText = {
   [SortingType.DAY]: SortingType.DAY,
   [SortingType.EVENT]: SortingType.EVENT,
   [SortingType.TIME]: SortingType.TIME,
@@ -82,8 +82,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  INIT: 'INIT',
-  INIT_ERROR: 'INIT_ERROR'
+  INIT: 'INIT'
 };
 
 const BASE_URL = 'https://23.objects.htmlacademy.pro/big-trip';
