@@ -60,7 +60,7 @@ export default class TripPresenter {
   }
 
   init() {
-    this.#filterPresenter.init({ isAllFiltersDisabled: true });
+    this.#filterPresenter.init();
     render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND); // отрисовать один раз
 
     this.#render();
@@ -177,7 +177,10 @@ export default class TripPresenter {
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;
-    this.#removeEvents();
-    this.#renderEvents();
+    this.#clear();
+    this.#render();
+    //! были сломаны сортировка и фильтр, возможно применение сортировки и фитрации перенести.... и не перерисовывать шапку и не фильтровать... только отсортировать и отобразить
+    //this.#removeEvents();
+    //this.#renderEvents();
   };
 }

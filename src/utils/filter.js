@@ -17,8 +17,14 @@ const existFilteredEvents = (events, filter, now) => {
   });
 };
 
-const getEnabledFilters = (events, now) => filterTypes.filter((filter) => existFilteredEvents(events, filter, now));
+const getEnabledFilterTypes = (events, now) => {
+  if (!events.length) {
+    return [];
+  }
+
+  return filterTypes.filter((filter) => existFilteredEvents(events, filter, now));
+};
 
 const filterEvents = (events, filterType, now) => events.filter(({ dateFrom, dateTo }) => filterTypeEvents[filterType](dateFrom, dateTo, now));
 
-export { filterEvents, getEnabledFilters };
+export { filterEvents, getEnabledFilterTypes };

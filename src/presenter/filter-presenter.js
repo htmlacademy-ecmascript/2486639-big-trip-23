@@ -7,7 +7,7 @@ export default class FilterPresenter {
   #filterModel = null;
   #eventsModel = null;
   #filterComponent = null;
-  #now = Date.now();
+  #now = Date.now(); //! может в модель перенести?
 
   constructor({ containerElement, filterModel, eventsModel }) {
     this.#containerElement = containerElement;
@@ -21,13 +21,13 @@ export default class FilterPresenter {
     return this.#now;
   }
 
-  init({ isAllFiltersDisabled } = { isAllFiltersDisabled: false }) {
+  init() {
     this.#now = Date.now();
+
     remove(this.#filterComponent);
 
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
-      isAllFiltersDisabled,
       events: this.#eventsModel.events,
       now: this.#now,
       onFilterChange: this.#onFilterChange
@@ -37,7 +37,7 @@ export default class FilterPresenter {
   }
 
   #onEventsModelChange = (updateType) => {
-    if ([UpdateType.PATCH, UpdateType.INIT_ERROR].includes(updateType)) {
+    if (updateType === UpdateType.PATCH) {
       return;
     }
 
