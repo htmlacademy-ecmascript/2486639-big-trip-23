@@ -1,7 +1,0 @@
-/*! https://mths.be/he v1.2.0 by @mathias | MIT license */
-
-//! if (isNaN(number) || (number < 0)) { //getNumber->getPositiveNumber
-
-//! возможно будут ошибки на автотестах
-
-//! там проверка на незменность фильтра и не сработатывает UpdateType.MAJOR
