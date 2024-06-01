@@ -47,10 +47,11 @@ export default class EventsPresenter {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
-  addEvent() {
-    this.#closeEventForm();
-    if (!this.#events.length) {
-      render(this.#eventsListComponent, this.#containerElement);
+  addEvent() { //! названия, возможно объедегнить с #removeNewEvent
+    if (this.#events.length) {
+      this.#closeEventForm();
+    } else {
+      render(this.#eventsListComponent, this.#containerElement); //! в отдельную функцию
     }
     this.#renderNewEvent();
   }
