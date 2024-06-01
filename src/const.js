@@ -53,7 +53,7 @@ const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
 const MessageType = {
   LOADING: 'Loading...',
-  FAILEAD: 'Failed to load latest route information' //! И константу надо обновить MessageType.FAILEAD....
+  FAILED: 'Failed to load latest route information'
 };
 
 const DateFormat = {

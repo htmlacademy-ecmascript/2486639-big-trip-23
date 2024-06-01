@@ -66,9 +66,9 @@ export default class TripPresenter {
     this.#render();
   }
 
-  renderMessage(message) {
+  renderFailedMessage() {
     this.#removeLoading();
-    render(new MessageView({ message: message }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. возможно только нажать обновить страницу
+    render(new MessageView({ message: MessageType.FAILED }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. возможно только нажать обновить страницу
   }
 
   #clear() {

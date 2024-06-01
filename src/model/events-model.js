@@ -27,7 +27,7 @@ export default class EventsModel extends Observable {
       this.#events = events.map(this.#adaptToClient);
       this._notify(UpdateType.INIT);
     } catch (error) {
-      throw new Error(MessageType.FAILEAD);
+      throw new Error('Error init events');
     }
   }
 

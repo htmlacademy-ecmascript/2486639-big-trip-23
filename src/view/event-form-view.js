@@ -14,7 +14,6 @@ export default class EventFormView extends AbstractStatefulView {
   #offers = null;
 
   #destinationNames = null;
-  #storedDestinationInputValue = '';
 
   #onFormSubmit = null;
   #onResetButtonClick = null;
@@ -33,8 +32,7 @@ export default class EventFormView extends AbstractStatefulView {
     this.#destinations = destinations;
     this.#offers = offers;
 
-    this.#destinationNames = getDestinationNames(destinations);
-    this.#storedDestinationInputValue = this._state.destinationInfo?.name;
+    this.#destinationNames = getDestinationNames(destinations); //! сделать функцию по совпадению сразу со всем справочником
 
     this.#onFormSubmit = onFormSubmit;
     this.#onResetButtonClick = onResetButtonClick;
@@ -58,9 +56,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
-    const destinationInputElement = this.element.querySelector('.event__input--destination');
-    destinationInputElement.addEventListener('change', this.#onDestinationInputElementChange);
-    destinationInputElement.addEventListener('input', this.#onDestinationInputElementInput);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationInputElementInput);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
@@ -114,34 +110,66 @@ export default class EventFormView extends AbstractStatefulView {
 
     this.updateElement({ type, typeOffers, eventOfferIds });
   };
+  /*
+    #onDestinationInputElementChange = (evt) => {
+      if (!isInputElement(evt.target)) {
+        return;
+      }
 
-  #onDestinationInputElementChange = (evt) => {
-    if (!isInputElement(evt.target)) {
-      return;
-    }
+      evt.preventDefault();
+      const destinationInfo = getDestinationByName(this.#destinations, evt.target.value);
+      const destination = destinationInfo?.id;
 
-    evt.preventDefault();
-    const destinationInfo = getDestinationByName(this.#destinations, evt.target.value);
-    const destination = destinationInfo?.id;
-
-    this.updateElement({ destination, destinationInfo });
-  };
+      this.updateElement({ destination, destinationInfo });
+    };
+  */
 
   #onDestinationInputElementInput = (evt) => {
-    const inputValue = he.encode(evt.target.value.trim().toLowerCase());
+    const inputValue = he.encode(evt.target.value.trim());
 
-    //! возможно будут ошибки на автотестах
+    console.log(inputValue);
+
     if (!inputValue) {
-      this.#storedDestinationInputValue = '';
-      evt.target.value = ' '; // ' ' чтоб отобразился полный список городов
+      //evt.preventDefault();
+      evt.target.value = this._state.destinationInfo?.name || '';
+      console.log('some', evt.target.value);
       return;
     }
 
-    if (this.#destinationNames.some((value) => value.includes(inputValue))) {
-      this.#storedDestinationInputValue = inputValue;
-    } else {
-      evt.target.value = this.#storedDestinationInputValue;
+    if (!this.#destinationNames.some((value) => value.includes(inputValue.toLowerCase()))) {
+      evt.preventDefault();
+      evt.target.value = this._state.destinationInfo?.name || '';
+      console.log('some', evt.target.value);
+      return;
     }
+
+
+    //console.log(inputValue);
+    //console.log(this.#destinationNames);
+
+    const destinationInfo = getDestinationByName(this.#destinations, inputValue); //! сделать для //toLowerCase()
+    if (destinationInfo) {
+      evt.preventDefault();
+      const destination = destinationInfo.id;
+      this.updateElement({ destination, destinationInfo });
+    }
+
+
+
+    /*
+        //! возможно будут ошибки на автотестах
+        if (!inputValue) {
+          this.#storedDestinationInputValue = '';
+          evt.target.value = ' '; // ' ' чтоб отобразился полный список городов
+          return;
+        }
+
+        if (this.#destinationNames.some((value) => value.includes(inputValue))) {
+          this.#storedDestinationInputValue = inputValue;
+        } else {
+          evt.target.value = this.#storedDestinationInputValue;
+        }
+    */
   };
 
   #onDateFromChange = ([dateFrom]) => {
