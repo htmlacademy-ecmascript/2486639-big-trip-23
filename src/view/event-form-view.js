@@ -127,19 +127,19 @@ export default class EventFormView extends AbstractStatefulView {
   #onDestinationInputElementInput = (evt) => {
     const inputValue = he.encode(evt.target.value.trim());
 
-    console.log(inputValue);
+    //console.log(inputValue);
 
     if (!inputValue) {
       //evt.preventDefault();
       evt.target.value = this._state.destinationInfo?.name || '';
-      console.log('some', evt.target.value);
+      //console.log('some', evt.target.value);
       return;
     }
 
     if (!this.#destinationNames.some((value) => value.includes(inputValue.toLowerCase()))) {
       evt.preventDefault();
       evt.target.value = this._state.destinationInfo?.name || '';
-      console.log('some', evt.target.value);
+      //console.log('some', evt.target.value);
       return;
     }
 
@@ -153,8 +153,6 @@ export default class EventFormView extends AbstractStatefulView {
       const destination = destinationInfo.id;
       this.updateElement({ destination, destinationInfo });
     }
-
-
 
     /*
         //! возможно будут ошибки на автотестах

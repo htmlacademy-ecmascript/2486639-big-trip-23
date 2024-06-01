@@ -1,6 +1,6 @@
 import Observable from '../framework/observable.js';
 import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
-import { MessageType, UpdateType } from '../const.js';
+import { UpdateType } from '../const.js';
 
 export default class EventsModel extends Observable {
   #eventsApiService = null;
