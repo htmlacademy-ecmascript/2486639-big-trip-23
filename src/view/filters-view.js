@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { getEnabledFilterTypes } from '../utils/filter.js';
 import { FilterType } from '../const.js';
 
 const createFilterItemTemplate = (filterType, _, activeFilterType, enabledFilterTypes) => {
@@ -19,23 +18,20 @@ const createFiltersTemplate = (activeFilter, enabledFilterTypes) => `<form class
 
 export default class FiltersView extends AbstractView {
   #currentFilterType = null;
-  #events = [];
-  #now;
+  #enabledFilterTypes = [];
   #onFilterChange = null;
 
-  constructor({ currentFilterType, events, now, onFilterChange }) {
+  constructor({ currentFilterType, enabledFilterTypes, onFilterChange }) {
     super();
 
     this.#currentFilterType = currentFilterType;
-    this.#events = events;
-    this.#now = now;
+    this.#enabledFilterTypes = enabledFilterTypes;
     this.#onFilterChange = onFilterChange;
     this.element.addEventListener('change', this.#onFormElementChange);
   }
 
   get template() {
-    //! почему то вызов идет многократный из-за предков, стоит передат сразу разрешенные фильтры из презентора
-    return createFiltersTemplate(this.#currentFilterType, getEnabledFilterTypes(this.#events, this.#now));
+    return createFiltersTemplate(this.#currentFilterType, this.#enabledFilterTypes);
   }
 
   #onFormElementChange = (evt) => {
