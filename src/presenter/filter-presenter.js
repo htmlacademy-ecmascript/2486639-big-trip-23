@@ -1,6 +1,6 @@
 import { render, remove } from '../framework/render.js';
 import FiltersView from '../view/filters-view.js';
-import { getEnabledFilterTypes } from '../utils/filter.js';
+import { getEnabledFilterTypes, filterEvents } from '../utils/filter.js';
 import { UpdateType } from '../const.js';
 
 export default class FilterPresenter {
@@ -8,7 +8,8 @@ export default class FilterPresenter {
   #filterModel = null;
   #eventsModel = null;
   #filterComponent = null;
-  #now = Date.now(); //! может в модель перенести?
+  #enabledFilterTypes = [];
+  #filteredEvents = [];
 
   constructor({ containerElement, filterModel, eventsModel }) {
     this.#containerElement = containerElement;
@@ -16,33 +17,46 @@ export default class FilterPresenter {
     this.#eventsModel = eventsModel;
 
     eventsModel.addObserver(this.#onEventsModelChange);
-    filterModel.addObserver(this.#onEventsModelChange);
-  }
-
-  get now() {
-    return this.#now;
+    filterModel.addObserver(this.#onFilterModelChange);
   }
 
   init() {
-    this.#now = Date.now();
-
     remove(this.#filterComponent);
 
     this.#filterComponent = new FiltersView({
       currentFilterType: this.#filterModel.filterType,
-      enabledFilterTypes: getEnabledFilterTypes(this.#eventsModel.events, this.#now),
+      enabledFilterTypes: this.#enabledFilterTypes,
       onFilterChange: this.#onFilterChange
     });
 
     render(this.#filterComponent, this.#containerElement);
   }
 
-  #onEventsModelChange = (updateType) => {
+  get filteredEvents() {
+    return this.#filteredEvents;
+  }
+
+  #onModelsChange(updateType) {
     if (updateType === UpdateType.PATCH) {
       return;
     }
 
+    const now = Date.now();
+    this.#enabledFilterTypes = getEnabledFilterTypes(this.#eventsModel.events, now);
+    // фильтруем события один раз при изменении моделей (MAJOR и MINOR) в this.#filteredEvents, это позволяет избежать повторных ненужных фильтраций.
+    // Фильтрация и доступные фильтры определяются на одну и ту же дату - now, это позволяет избежать некоректную фильтрацию:
+    // когда доступные фильтры получены на одну дату, а фильтрация будет происходить на другую дату
+    this.#filteredEvents = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, now);
+
     this.init();
+  }
+
+  #onEventsModelChange = (updateType) => {
+    this.#onModelsChange(updateType);
+  };
+
+  #onFilterModelChange = (updateType) => {
+    this.#onModelsChange(updateType);
   };
 
   #onFilterChange = (filterType) => {

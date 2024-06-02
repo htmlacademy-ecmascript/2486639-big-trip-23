@@ -6,7 +6,6 @@ import SortingView from '../view/sorting-view.js';
 import AddNewEventButtonView from '../view/add-new-event-button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
-import { filterEvents } from '../utils/filter.js';
 import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE, MessageType } from '../const.js';
 
 export default class TripPresenter {
@@ -55,8 +54,8 @@ export default class TripPresenter {
 
     this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
 
-    eventsModel.addObserver(this.#onModelsChange);
-    filterModel.addObserver(this.#onModelsChange);
+    eventsModel.addObserver(this.#onEventsModelChange);
+    filterModel.addObserver(this.#onFilterModelChange);
   }
 
   init() {
@@ -88,7 +87,8 @@ export default class TripPresenter {
     }
 
     this.#addEventButtonComponent.enable();
-    this.#events = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, this.#filterPresenter.now);
+
+    this.#events = this.#filterPresenter.filteredEvents;
 
     if (!this.#events.length) {
       this.#renderEmptyEventsMessage();
@@ -155,6 +155,14 @@ export default class TripPresenter {
         this.#render();
         break;
     }
+  };
+
+  #onEventsModelChange = (updateType, data) => {
+    this.#onModelsChange(updateType, data);
+  };
+
+  #onFilterModelChange = (updateType, data) => {
+    this.#onModelsChange(updateType, data);
   };
 
   #onNewEventClose = () => {

@@ -9,7 +9,7 @@ export default class FilterModel extends Observable {
   }
 
   set filterType(newFilterType) {
-    if (this.#filterType === newFilterType) { //! возможно будет мешать автотестам
+    if (this.#filterType === newFilterType) {
       return;
     }
 

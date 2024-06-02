@@ -26,7 +26,7 @@ export default class EventsModel extends Observable {
       this.#destinations = await this.#eventsApiService.destinations;
       //const destinations = await this.#eventsApiService.destinations;
       //this.#destinations = destinations.map((destination) => ({ ...destination, lowerCaseName: destination.name.toLowerCase() }));
-      //! indexName... name-> Caption.... если будет автоподстановка по имени любом регистре
+      //! indexName... name-> Caption.... РµСЃР»Рё Р±СѓРґРµС‚ Р°РІС‚РѕРїРѕРґСЃС‚Р°РЅРѕРІРєР° РїРѕ РёРјРµРЅРё Р»СЋР±РѕРј СЂРµРіРёСЃС‚СЂРµ
 
       const offers = await this.#eventsApiService.offers;
       offers.forEach(({ type, offers: typeOffers }) => {
