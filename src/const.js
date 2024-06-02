@@ -20,8 +20,6 @@ const FilterType = {
   PAST: 'past'
 };
 
-const filterTypes = Object.values(FilterType);
-
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 
 const filterEmptyMessage = {
@@ -48,7 +46,7 @@ const sortingTypeLabelText = {
 };
 
 const DEFAULT_SORTING_TYPE = SortingType.DAY;
-const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
+const DISABLED_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
 const MessageType = {
   LOADING: 'Loading...',
@@ -97,13 +95,12 @@ export {
   EVENT_TYPES,
   NEW_EVENT,
   FilterType,
-  filterTypes,
   DEFAULT_FILTER_TYPE,
   filterEmptyMessage,
   SortingType,
   sortingTypeLabelText,
   DEFAULT_SORTING_TYPE,
-  DISABLE_SORTING_TYPES,
+  DISABLED_SORTING_TYPES,
   MessageType,
   DateFormat,
   DEFAULT_FLATPICKR_CONFIG,
