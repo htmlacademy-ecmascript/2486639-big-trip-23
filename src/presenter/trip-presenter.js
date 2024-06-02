@@ -10,7 +10,6 @@ import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TY
 
 export default class TripPresenter {
   #filterModel = null;
-  #eventsModel = null;
 
   #infoPresenter = null;
   #filterPresenter = null;
@@ -32,7 +31,6 @@ export default class TripPresenter {
 
   constructor({ headerTripMainElement, headerTripFiltersElement, tripEventsElement, eventsModel, filterModel }) {
     this.#filterModel = filterModel;
-    this.#eventsModel = eventsModel;
     this.#headerTripMainElement = headerTripMainElement;
     this.#tripEventsElement = tripEventsElement;
 

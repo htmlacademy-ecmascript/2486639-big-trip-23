@@ -8,7 +8,6 @@ import NewEventPresenter from './new-event-presenter.js';
 export default class EventsPresenter {
   #containerElement = null;
   #eventsModel;
-
   #events = [];
 
   #eventPresenters = new Map();
@@ -47,7 +46,7 @@ export default class EventsPresenter {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
-  addEvent() { //! названия, возможно объедегнить с #removeNewEvent
+  addEvent() { //! названия, возможно объеденить с #removeNewEvent
     if (this.#events.length) {
       this.#closeEventForm();
     } else {
@@ -64,11 +63,9 @@ export default class EventsPresenter {
   }
 
   #renderNewEvent() {
-    const { destinations, offers } = this.#eventsModel;
-
     this.#newEventPresenter = new NewEventPresenter({
-      destinations,
-      offers,
+      destinations: this.#eventsModel.destinations,
+      offers: this.#eventsModel.offers,
       containerElement: this.#eventsListComponent.element,
       onNewEventFormClose: this.#onNewEventFormClose,
       onEventChange: this.#onEventChange
@@ -84,11 +81,9 @@ export default class EventsPresenter {
   }
 
   #renderEventItem(event) {
-    const { destinations, offers } = this.#eventsModel;
-
     const eventPresenter = new EventPresenter({
-      destinations,
-      offers,
+      destinations: this.#eventsModel.destinations,
+      offers: this.#eventsModel.offers,
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
@@ -166,7 +161,7 @@ export default class EventsPresenter {
         try {
           await this.#eventsModel.deleteEvent(updateType, event);
         } catch (err) {
-          //! иногда на автотестах eventPresenter (this.#activeEventPresenter) === null, возможно в других местах добавить...
+          // иногда на автотестах eventPresenter равный this.#activeEventPresenter, уже null, т.е. форма уже закрыта..., возможно в других местах добавить...
           eventPresenter?.setAborting();
         }
         break;

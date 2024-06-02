@@ -6,9 +6,9 @@ import { NEW_EVENT, UserAction, UpdateType, } from '../const.js';
 export default class NewEventPresenter {
   #containerElement = null;
 
-  #destinations = null;
+  #destinations = [];
   #offers = null;
-  #event = null;
+  #event = [];
 
   #formComponent = null;
 

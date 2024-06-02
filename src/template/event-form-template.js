@@ -1,3 +1,4 @@
+import he from 'he';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
@@ -90,7 +91,7 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getDestinationName(destinationInfo)}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(getDestinationName(destinationInfo))}" list="destination-list-1">
           ${createDestinationDatalistTemplate(destinations)}
       </div>
 

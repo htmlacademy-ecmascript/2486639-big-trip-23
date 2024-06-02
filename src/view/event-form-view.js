@@ -1,5 +1,4 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
@@ -124,7 +123,7 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onDestinationInputElementInput = (evt) => {
-    const inputValue = he.encode(evt.target.value.trim());
+    const inputValue = evt.target.value.trim();
 
     if (!inputValue) {
       evt.target.value = ' '; // ' ' чтоб бы отобразился полный список городов
@@ -156,7 +155,7 @@ export default class EventFormView extends AbstractStatefulView {
 
   #onPriceInputElementInput = (evt) => {
     //! возможно будут ошибки на автотестах
-    const basePrice = getPositiveNumber(he.encode(evt.target.value));
+    const basePrice = getPositiveNumber(evt.target.value);
     evt.target.value = basePrice;
 
     this._setState({ basePrice });

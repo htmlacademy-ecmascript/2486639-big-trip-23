@@ -7,9 +7,9 @@ import { UserAction, UpdateType } from '../const.js';
 export default class EventPresenter {
   #containerElement = null;
 
-  #destinations = null;
+  #destinations = [];
   #offers = null;
-  #event = null;
+  #event = [];
 
   #isEditingMode = false;
 

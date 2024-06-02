@@ -4,7 +4,7 @@ import { FilterType } from '../const.js';
 
 const createFilterItemTemplate = (filterType, _, activeFilterType, enabledFilterTypes) => {
   const checked = (filterType === activeFilterType) ? 'checked' : '';
-  const disabled = (!enabledFilterTypes.includes(filterType)) ? 'disabled' : '';
+  const disabled = (enabledFilterTypes.includes(filterType)) ? '' : 'disabled';
 
   return `<div class="trip-filters__filter">
   <input id="filter-${filterType}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filterType}" ${checked} ${disabled}>
