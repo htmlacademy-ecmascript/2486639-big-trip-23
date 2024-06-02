@@ -2,6 +2,13 @@ import Observable from '../framework/observable.js';
 import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
 import { UpdateType } from '../const.js';
 
+const ErrorMessage = {
+  INIT: 'Error init events',
+  UPDATE: 'Can\'t update event',
+  ADD: 'Can\'t add event',
+  DELETE: 'Can\'t delete event'
+};
+
 export default class EventsModel extends Observable {
   #eventsApiService = null;
   #destinations = [];
@@ -17,6 +24,9 @@ export default class EventsModel extends Observable {
   async init() {
     try {
       this.#destinations = await this.#eventsApiService.destinations;
+      //const destinations = await this.#eventsApiService.destinations;
+      //this.#destinations = destinations.map((destination) => ({ ...destination, lowerCaseName: destination.name.toLowerCase() }));
+      //! indexName... name-> Caption.... если будет автоподстановка по имени любом регистре
 
       const offers = await this.#eventsApiService.offers;
       offers.forEach(({ type, offers: typeOffers }) => {
@@ -27,7 +37,7 @@ export default class EventsModel extends Observable {
       this.#events = events.map(this.#adaptToClient);
       this._notify(UpdateType.INIT);
     } catch (error) {
-      throw new Error('Error init events');
+      throw new Error(ErrorMessage.INIT);
     }
   }
 
@@ -52,7 +62,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType, updatedEvent);
     } catch (error) {
-      throw new Error('Can\'t update event');
+      throw new Error(ErrorMessage.UPDATE);
     }
   }
 
@@ -65,7 +75,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType, newEvent);
     } catch (err) {
-      throw new Error('Can\'t add event');
+      throw new Error(ErrorMessage.ADD);
     }
   }
 
@@ -77,7 +87,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType);
     } catch (err) {
-      throw new Error('Can\'t delete event');
+      throw new Error(ErrorMessage.DELETE);
     }
   }
 

@@ -2,7 +2,7 @@ import { render } from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { UserAction, UiBlockerLimit } from '../const.js';
+import { UserAction, UpdateType, UiBlockerLimit } from '../const.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
@@ -111,6 +111,18 @@ export default class EventsPresenter {
     }
   }
 
+  #getEventPresenter(userAction, updateType, event) {
+    if (userAction === UserAction.ADD_EVENT) {
+      return this.#newEventPresenter;
+    }
+
+    if ((userAction === UserAction.UPDATE_EVENT) && (updateType === UpdateType.PATCH)) {
+      return this.#eventPresenters.get(event.id);
+    }
+
+    return this.#activeEventPresenter;
+  }
+
   #onEventFormOpen = (eventPresenter) => {
     this.#closeEventForm();
     this.#closeNewEventForm();
@@ -129,29 +141,33 @@ export default class EventsPresenter {
   #onEventChange = async (actionType, updateType, event) => {
     this.#uiBlocker.block();
 
+    const eventPresenter = this.#getEventPresenter(actionType, updateType, event);
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#eventPresenters.get(event.id).setSaving();
+
+        eventPresenter.setSaving();
         try {
           await this.#eventsModel.updateEvent(updateType, event);
         } catch (err) {
-          this.#eventPresenters.get(event.id).setAborting();
+          eventPresenter.setAborting();
         }
         break;
       case UserAction.ADD_EVENT:
-        this.#newEventPresenter.setSaving();
+        eventPresenter.setSaving();
         try {
           await this.#eventsModel.addEvent(updateType, event);
         } catch (err) {
-          this.#newEventPresenter.setAborting();
+          eventPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_EVENT:
-        this.#activeEventPresenter.setDeleting(); // this.#eventPresenters.get(event.id)
+        eventPresenter.setDeleting();
         try {
           await this.#eventsModel.deleteEvent(updateType, event);
         } catch (err) {
-          this.#activeEventPresenter.setAborting(); // this.#eventPresenters.get(event.id)
+          //! иногда на автотестах eventPresenter (this.#activeEventPresenter) === null, возможно в других местах добавить...
+          eventPresenter?.setAborting();
         }
         break;
     }

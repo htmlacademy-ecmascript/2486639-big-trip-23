@@ -3,6 +3,7 @@ import { createElementsTemplate } from '../utils/dom.js';
 import { isEmptyArray } from '../utils/utils.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
 import { EVENT_TYPES, DateFormat } from '../const.js';
+import { getDestinationName } from '../utils/event.js';
 
 const createTypeItemTemplate = (type, currentType) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${(type === currentType) ? 'checked' : ''}>
@@ -71,7 +72,6 @@ const getResetButtonCaption = (isAddingNewEvent, isDeleting) => {
 
 const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
   const { type, basePrice, dateFrom, dateTo, eventOfferIds, destinationInfo, typeOffers, isSaving, isDeleting } = event;
-  const destinationName = destinationInfo?.name || '';
   const resetButtonCaption = getResetButtonCaption(isAddingNewEvent, isDeleting);
 
   return `<li class="trip-events__item">
@@ -90,7 +90,7 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getDestinationName(destinationInfo)}" list="destination-list-1">
           ${createDestinationDatalistTemplate(destinations)}
       </div>
 

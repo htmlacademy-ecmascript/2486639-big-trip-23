@@ -1,7 +1,7 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { isEscapeKey } from '../utils/utils.js';
 import EventFormView from '../view/event-form-view.js';
-import { DEFAULT_NEW_EVENT, UserAction, UpdateType, } from '../const.js';
+import { NEW_EVENT, UserAction, UpdateType, } from '../const.js';
 
 export default class NewEventPresenter {
   #containerElement = null;
@@ -28,7 +28,7 @@ export default class NewEventPresenter {
   }
 
   init() {
-    this.#event = DEFAULT_NEW_EVENT;
+    this.#event = NEW_EVENT;
 
     this.#formComponent = new EventFormView({
       event: this.#event,
