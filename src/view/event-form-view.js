@@ -216,7 +216,7 @@ export default class EventFormView extends AbstractStatefulView {
     const event = {
       ...state,
       offers: [...eventOfferIds],
-      // по описанию API нужен ISO, но без преобразования сервер не выдает ошибки и обновление проходит успешно
+      // по описанию API нужен ISO, но без преобразования даты сервер не выдает ошибки и обновление проходит успешно
       dateFrom: getISOString(dateFrom),
       dateTo: getISOString(dateTo)
     };

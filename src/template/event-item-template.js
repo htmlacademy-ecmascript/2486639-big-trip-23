@@ -1,7 +1,6 @@
 import { getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
-import { getEventOffers } from '../utils/event.js';
 import { DateFormat } from '../const.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">
@@ -15,9 +14,8 @@ const createOffersTemplate = (offers) => `<h4 class="visually-hidden">Offers:</h
     ${createElementsTemplate(offers, createOfferTemplate)}
 </ul>`;
 
-const createEventItemTemplate = (event, destinationName, typeOffers) => {
-  const { type, basePrice, dateFrom, dateTo, isFavorite, offers } = event;
-  const eventOffers = getEventOffers(typeOffers, offers);
+const createEventItemTemplate = (event, destinationName, eventOffers) => {
+  const { type, basePrice, dateFrom, dateTo, isFavorite } = event;
 
   const eventDateValue = getStringDate(dateFrom, DateFormat.DATE);
   const eventDate = getStringDate(dateFrom, DateFormat.MONTH_DAY);

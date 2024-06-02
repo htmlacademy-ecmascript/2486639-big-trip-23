@@ -98,7 +98,7 @@ export default class EventPresenter {
     }
 
     this.#formComponent.shake(() => {
-      if (this.#isEditingMode) { // без услови не работал feedback / Если запрос не удалось выполнить, форма остаётся открытой, но если убрать условие if (this.#filterType === newFilterType) то то же тест проходит
+      if (this.#isEditingMode) { // без условия не работал feedback / Если запрос не удалось выполнить, форма остаётся открытой, но если убрать условие if (this.#filterType === newFilterType) то то же тест проходит
         this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
       }
     });
