@@ -95,7 +95,7 @@ export default class TripPresenter {
 
     this.#renderSorting();
 
-    this.#events.sort(sortEvents[this.#currentSortingType]);
+    this.#events = sortEvents(this.#events, this.#currentSortingType);
     this.#renderEvents();
   }
 

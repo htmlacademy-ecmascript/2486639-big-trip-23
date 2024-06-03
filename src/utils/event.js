@@ -32,7 +32,7 @@ const getDestinationInfo = (events, destinations) => {
 const getEventOffersCost = (event, offers) => getEventOffers(event, offers).reduce((cost, offer) => (cost + offer.price), 0);
 
 const getTripInfo = (events, destinations, offers) => {
-  const sortedEvents = [...events].sort(sortEvents[SortingType.DAY]);
+  const sortedEvents = sortEvents(events, SortingType.DAY);
 
   return {
     title: getDestinationInfo(sortedEvents, destinations),
