@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { isEscapeKey } from '../utils/common.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import { UserAction, UpdateType } from '../const.js';

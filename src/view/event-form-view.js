@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
-import { isInputElement, getPositiveNumber } from '../utils/utils.js';
+import { isInputElement, getPositiveNumber } from '../utils/common.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
 import { getDestinationById, getDestinationByName, getDestinationName } from '../utils/event.js';
 import { getISOString } from '../utils/date.js';

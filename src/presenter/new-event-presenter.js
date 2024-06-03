@@ -1,5 +1,5 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { isEscapeKey } from '../utils/common.js';
 import EventFormView from '../view/event-form-view.js';
 import { NEW_EVENT, UserAction, UpdateType, } from '../const.js';
 

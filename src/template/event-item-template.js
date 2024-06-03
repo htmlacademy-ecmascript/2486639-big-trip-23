@@ -1,6 +1,6 @@
 import { getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { capitalizeFirstLetter } from '../utils/string.js';
+import { capitalizeFirstLetter } from '../utils/common.js';
 import { DateFormat } from '../const.js';
 
 const createOfferTemplate = ({ title, price }) => `<li class="event__offer">

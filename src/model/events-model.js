@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
+import { updateItemByKey, addItem, deleteItemByKey } from '../utils/common.js';
 import { UpdateType } from '../const.js';
 
 const ErrorMessage = {

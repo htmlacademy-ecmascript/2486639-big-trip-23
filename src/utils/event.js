@@ -1,5 +1,5 @@
 import { sortEvents } from './sorting.js';
-import { findItemByKey } from './utils.js';
+import { findItemByKey } from './common.js';
 import { INFO_DESTINATION_MAX_COUNT, SortingType } from '../const.js';
 
 const getDestinationById = (destinations, id) => findItemByKey(destinations, id);

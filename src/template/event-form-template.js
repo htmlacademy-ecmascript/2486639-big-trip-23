@@ -1,8 +1,7 @@
 import he from 'he';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray } from '../utils/utils.js';
-import { capitalizeFirstLetter } from '../utils/string.js';
+import { capitalizeFirstLetter, isEmptyArray } from '../utils/common.js';
 import { EVENT_TYPES, DateFormat } from '../const.js';
 import { getDestinationName } from '../utils/event.js';
 
