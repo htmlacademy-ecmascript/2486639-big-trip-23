@@ -1,7 +1,7 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { isEscapeKey } from '../utils/common.js';
 import EventFormView from '../view/event-form-view.js';
-import { NEW_EVENT, UserAction, UpdateType, } from '../const.js';
+import { NEW_EVENT, UserAction, UpdateType } from '../const.js';
 
 export default class NewEventPresenter {
   #containerElement = null;
@@ -53,7 +53,7 @@ export default class NewEventPresenter {
 
   setAborting() {
     this.#formComponent.shake(() => {
-      this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
+      this.#formComponent.updateElement({ isSaving: false, isDeleting: false });
     });
   }
 

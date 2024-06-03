@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { remove, render } from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
@@ -32,51 +32,47 @@ export default class EventsPresenter {
   clear() {
     this.#closeEventForm();
     this.#closeNewEventForm();
-    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
-    this.#eventPresenters.clear();
+    this.#removeEventItems();
   }
 
   init(events) {
     this.#events = events;
 
-    this.#renderEventsList();
+    this.#renderEventItems();
   }
 
   updateEvent(updatedEvent) {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
-  addEvent() { //! названия, возможно объеденить с #removeNewEvent
-    if (this.#events.length) {
-      this.#closeEventForm();
-    } else {
-      render(this.#eventsListComponent, this.#containerElement); //! в отдельную функцию
+  addNewEvent() {
+    this.#closeEventForm(); //! перепроверить автотестами, было лишнее условие на то что количество событий не 0
+    if (!this.#events.length) {
+      this.#renderEventsList();
     }
     this.#renderNewEvent();
   }
 
-  #removeNewEvent() {
-    if (this.#newEventPresenter) {
-      this.#newEventPresenter.destroy();
-      this.#newEventPresenter = null;
+  #renderEventsList() {
+    render(this.#eventsListComponent, this.#containerElement);
+  }
+
+  #removeEventsList() {
+    remove(this.#eventsListComponent);
+  }
+
+  #renderEventItems() {
+    if (this.#events.length) {
+      this.#renderEventsList();
+      this.#events.forEach((event) => this.#renderEventItem(event));
     }
   }
 
-  #renderNewEvent() {
-    this.#newEventPresenter = new NewEventPresenter({
-      destinations: this.#eventsModel.destinations,
-      offers: this.#eventsModel.offers,
-      containerElement: this.#eventsListComponent.element,
-      onNewEventFormClose: this.#onNewEventFormClose,
-      onEventChange: this.#onEventChange
-    });
-    this.#newEventPresenter.init();
-  }
-
-  #renderEventsList() {
+  #removeEventItems() {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
     if (this.#events.length) {
-      this.#events.forEach((event) => this.#renderEventItem(event));
-      render(this.#eventsListComponent, this.#containerElement);
+      this.#removeEventsList();
     }
   }
 
@@ -91,6 +87,24 @@ export default class EventsPresenter {
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
+  }
+
+  #renderNewEvent() {
+    this.#newEventPresenter = new NewEventPresenter({
+      destinations: this.#eventsModel.destinations,
+      offers: this.#eventsModel.offers,
+      containerElement: this.#eventsListComponent.element,
+      onNewEventFormClose: this.#onNewEventFormClose,
+      onEventChange: this.#onEventChange
+    });
+    this.#newEventPresenter.init();
+  }
+
+  #removeNewEvent() {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+      this.#newEventPresenter = null;
+    }
   }
 
   #closeEventForm() {
@@ -130,6 +144,9 @@ export default class EventsPresenter {
 
   #onNewEventFormClose = () => {
     this.#removeNewEvent();
+    if (!this.#events.length) {
+      this.#removeEventsList();
+    }
     this.#onNewEventClose();
   };
 
@@ -161,7 +178,7 @@ export default class EventsPresenter {
         try {
           await this.#eventsModel.deleteEvent(updateType, event);
         } catch (err) {
-          // иногда на автотестах eventPresenter равный this.#activeEventPresenter, уже null, т.е. форма уже закрыта..., возможно в других местах добавить...
+          // иногда на автотестах eventPresenter равный this.#activeEventPresenter, уже null, т.е. форма уже закрыта..., возможно в других вызовах добавить...
           eventPresenter?.setAborting();
         }
         break;

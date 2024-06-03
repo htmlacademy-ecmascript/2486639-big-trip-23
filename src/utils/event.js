@@ -26,7 +26,7 @@ const getDestinationInfo = (events, destinations) => {
     return destinationNames.join(' — ');
   }
 
-  return `${destinationNames[0]} — ... — ${destinationNames[eventsCount - 1]}`; //В задании' —... — ', в маркапах не нашел '...';
+  return `${destinationNames[0]} — ... — ${destinationNames[eventsCount - 1]}`; // В задании' —... — ', в маркапах не нашел '— ... —';
 };
 
 const getEventOffersCost = (event, offers) => getEventOffers(event, offers).reduce((cost, offer) => (cost + offer.price), 0);

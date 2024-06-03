@@ -50,7 +50,7 @@ export default class TripPresenter {
     });
     this.#loadingComponent = new MessageView({ message: MessageType.LOADING });
 
-    this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddEventClick });
+    this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddNewEventClick });
 
     eventsModel.addObserver(this.#onEventsModelChange);
     filterModel.addObserver(this.#onFilterModelChange);
@@ -58,14 +58,14 @@ export default class TripPresenter {
 
   init() {
     this.#filterPresenter.init();
-    render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND); // отрисовать один раз
+    render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND);
 
     this.#render();
   }
 
   renderFailedMessage() {
     this.#removeLoading();
-    render(new MessageView({ message: MessageType.FAILED }), this.#tripEventsElement); // удаление и #isFailedLoading нет т.к. возможно только нажать обновить страницу
+    render(new MessageView({ message: MessageType.FAILED }), this.#tripEventsElement);
   }
 
   #clear() {
@@ -163,22 +163,20 @@ export default class TripPresenter {
     this.#onModelsChange(updateType, data);
   };
 
+  #onAddNewEventClick = () => {
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
+    if (!this.#events.length) {
+      this.#removeEmptyEventsMessage();
+    }
+    this.#eventsPresenter.addNewEvent();
+  };
+
   #onNewEventClose = () => {
     this.#addEventButtonComponent.enable();
 
     if (!this.#events.length) {
-      this.#removeSorting();
       this.#renderEmptyEventsMessage();
     }
-  };
-
-  #onAddEventClick = () => {
-    this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
-    if (!this.#events.length) {
-      this.#removeEmptyEventsMessage();
-      this.#renderSorting();
-    }
-    this.#eventsPresenter.addEvent();
   };
 
   #onSortingChange = (sortingType) => {
