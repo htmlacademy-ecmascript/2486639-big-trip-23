@@ -2,6 +2,8 @@ import { sortEvents } from './sorting.js';
 import { findItemByKey } from './common.js';
 import { INFO_DESTINATION_MAX_COUNT, SortingType } from '../const.js';
 
+const delimiter = ' &mdash; ';
+
 const getDestinationById = (destinations, id) => findItemByKey(destinations, id);
 
 const getDestinationName = (destination) => destination?.name || '';
@@ -23,10 +25,10 @@ const getDestinationInfo = (events, destinations) => {
   });
 
   if (eventsCount <= INFO_DESTINATION_MAX_COUNT) {
-    return destinationNames.join(' — ');
+    return destinationNames.join(delimiter);
   }
 
-  return `${destinationNames[0]} — ... — ${destinationNames[eventsCount - 1]}`; // В задании' —... — ', в маркапах не нашел '— ... —';
+  return `${destinationNames[0]}${delimiter}...${delimiter}${destinationNames[eventsCount - 1]}`;
 };
 
 const getEventOffersCost = (event, offers) => getEventOffers(event, offers).reduce((cost, offer) => (cost + offer.price), 0);
