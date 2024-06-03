@@ -1,4 +1,3 @@
-import he from 'he';
 import { getDurationString, getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
 import { capitalizeFirstLetter } from '../utils/string.js';
@@ -32,7 +31,7 @@ const createEventItemTemplate = (event, destinationName, eventOffers) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${capitalizeFirstLetter(type)} ${he.encode(destinationName)}</h3>
+    <h3 class="event__title">${capitalizeFirstLetter(type)} ${destinationName}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${eventDateFromValue}">${eventDateFrom}</time>
@@ -42,7 +41,7 @@ const createEventItemTemplate = (event, destinationName, eventOffers) => {
       <p class="event__duration">${getDurationString(dateFrom, dateTo)}</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">${he.encode(String(basePrice))}</span>
+      €&nbsp;<span class="event__price-value">${basePrice}</span>
     </p>
     ${createOffersTemplate(eventOffers)}
     <button class="event__favorite-btn ${(isFavorite) ? 'event__favorite-btn--active' : ''}" type="button">
