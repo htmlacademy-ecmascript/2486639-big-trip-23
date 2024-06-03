@@ -68,13 +68,6 @@ export default class TripPresenter {
     render(new MessageView({ message: MessageType.FAILED }), this.#tripEventsElement);
   }
 
-  #clear() {
-    this.#removeSorting();
-    this.#removeLoading();
-    this.#removeEmptyEventsMessage();
-    this.#removeEvents();
-  }
-
   #render() {
     this.#infoPresenter.init();
 
@@ -95,20 +88,22 @@ export default class TripPresenter {
 
     this.#renderSorting();
 
-    this.#events = sortEvents(this.#events, this.#currentSortingType);
     this.#renderEvents();
   }
 
-  #removeLoading() {
-    remove(this.#loadingComponent);
+  #clear() {
+    this.#removeSorting();
+    this.#removeLoading();
+    this.#removeEmptyEventsMessage();
+    this.#removeEvents();
   }
 
   #renderLoading() {
     render(this.#loadingComponent, this.#tripEventsElement);
   }
 
-  #removeSorting() {
-    remove(this.#sortingComponent);
+  #removeLoading() {
+    remove(this.#loadingComponent);
   }
 
   #renderSorting() {
@@ -116,12 +111,16 @@ export default class TripPresenter {
     render(this.#sortingComponent, this.#tripEventsElement);
   }
 
-  #removeEvents() {
-    this.#eventsPresenter.clear();
+  #removeSorting() {
+    remove(this.#sortingComponent);
   }
 
   #renderEvents() {
-    this.#eventsPresenter.init(this.#events);
+    this.#eventsPresenter.init(sortEvents(this.#events, this.#currentSortingType));
+  }
+
+  #removeEvents() {
+    this.#eventsPresenter.clear();
   }
 
   #renderEmptyEventsMessage() {
@@ -133,7 +132,7 @@ export default class TripPresenter {
     remove(this.#emptyEventsMessageComponent);
   }
 
-  #onModelsChange = (updateType, data) => {
+  #onModelsChange(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#eventsPresenter.updateEvent(data);
@@ -153,7 +152,7 @@ export default class TripPresenter {
         this.#render();
         break;
     }
-  };
+  }
 
   #onEventsModelChange = (updateType, data) => {
     this.#onModelsChange(updateType, data);
@@ -181,10 +180,7 @@ export default class TripPresenter {
 
   #onSortingChange = (sortingType) => {
     this.#currentSortingType = sortingType;
-    this.#clear();
-    this.#render();
-    //! были сломаны сортировка и фильтр, возможно применение сортировки и фитрации перенести.... и не перерисовывать шапку и не фильтровать... только отсортировать и отобразить
-    //this.#removeEvents();
-    //this.#renderEvents();
+    this.#removeEvents();
+    this.#renderEvents();
   };
 }
