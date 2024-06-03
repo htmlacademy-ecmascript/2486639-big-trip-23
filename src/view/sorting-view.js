@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { SortingType, sortingTypeLabelText, DISABLE_SORTING_TYPES } from '../const.js';
+import { SortingType, sortingTypeLabelText, DISABLED_SORTING_TYPES } from '../const.js';
 
 const createSortingItemTemplate = (sortingType, _, activeSortingType, disableSortingTypes) => {
   const checked = (sortingType === activeSortingType) ? 'checked' : '';
@@ -29,7 +29,7 @@ export default class SortingView extends AbstractView {
   }
 
   get template() {
-    return createSortingTemplate(this.#currentSortingType, DISABLE_SORTING_TYPES);
+    return createSortingTemplate(this.#currentSortingType, DISABLED_SORTING_TYPES);
   }
 
   #onFormElementChange = (evt) => {

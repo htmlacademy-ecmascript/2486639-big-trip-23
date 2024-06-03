@@ -1,8 +1,9 @@
+import he from 'he';
 import { getStringDate } from '../utils/date.js';
 import { createElementsTemplate } from '../utils/dom.js';
-import { isEmptyArray } from '../utils/utils.js';
-import { capitalizeFirstLetter } from '../utils/string.js';
+import { capitalizeFirstLetter, isEmptyArray } from '../utils/common.js';
 import { EVENT_TYPES, DateFormat } from '../const.js';
+import { getDestinationName } from '../utils/event.js';
 
 const createTypeItemTemplate = (type, currentType) => `<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${(type === currentType) ? 'checked' : ''}>
@@ -22,8 +23,8 @@ const createDestinationDatalistTemplate = (destinations) => `<datalist id="desti
     ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
-const createOfferTemplate = ({ id, name, title, price }, offers) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(offers?.has(id)) ? 'checked' : ''}>
+const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.has(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -31,11 +32,10 @@ const createOfferTemplate = ({ id, name, title, price }, offers) => `<div class=
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (typeOffers, offers) => (isEmptyArray(typeOffers)) ? '' : `<div class="event__offer-selector">
-  <section class="event__section  event__section--offers">
+const createSectionOffersTemplate = (typeOffers, eventOfferIds) => (isEmptyArray(typeOffers)) ? '' : `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createElementsTemplate(typeOffers, createOfferTemplate, offers)}
+      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOfferIds)}
     </div>
 </section>`;
 
@@ -53,8 +53,8 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (descrip
   ${createPhotosContainerTemplate(pictures)}
 </section>` : '';
 
-const createSectionDetailsTemplate = (typeOffers, offers, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
-  ${createSectionOffersTemplate(typeOffers, offers)}
+const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
+  ${createSectionOffersTemplate(typeOffers, eventOfferIds)}
   ${(destination) ? createSectionDestinationTemplate(destination) : ''}
 </section>` : '';
 
@@ -72,7 +72,6 @@ const getResetButtonCaption = (isAddingNewEvent, isDeleting) => {
 
 const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
   const { type, basePrice, dateFrom, dateTo, eventOfferIds, destinationInfo, typeOffers, isSaving, isDeleting } = event;
-  const destinationName = destinationInfo?.name || '';
   const resetButtonCaption = getResetButtonCaption(isAddingNewEvent, isDeleting);
 
   return `<li class="trip-events__item">
@@ -91,7 +90,7 @@ const createEventFormTemplate = (event, destinations, isAddingNewEvent) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(getDestinationName(destinationInfo))}" list="destination-list-1">
           ${createDestinationDatalistTemplate(destinations)}
       </div>
 

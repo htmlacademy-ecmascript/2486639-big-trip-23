@@ -1,14 +1,13 @@
-import { render } from '../framework/render.js';
+import { remove, render } from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventsListView from '../view/events-list-view.js';
-import { UserAction, UiBlockerLimit } from '../const.js';
+import { UserAction, UpdateType, UiBlockerLimit } from '../const.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventsPresenter {
   #containerElement = null;
   #eventsModel;
-
   #events = [];
 
   #eventPresenters = new Map();
@@ -30,64 +29,58 @@ export default class EventsPresenter {
     this.#onNewEventClose = onNewEventClose;
   }
 
-  clear() {
-    this.#closeEventForm();
-    this.#closeNewEventForm();
-    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
-    this.#eventPresenters.clear();
-  }
-
   init(events) {
     this.#events = events;
 
-    this.#renderEventsList();
+    this.#renderEventItems();
+  }
+
+  clear() {
+    this.#closeEventForm();
+    this.#closeNewEventForm();
+    this.#removeEventItems();
   }
 
   updateEvent(updatedEvent) {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
-  addEvent() {
+  addNewEvent() {
     this.#closeEventForm();
     if (!this.#events.length) {
-      render(this.#eventsListComponent, this.#containerElement);
+      this.#renderEventsList();
     }
     this.#renderNewEvent();
   }
 
-  #removeNewEvent() {
-    if (this.#newEventPresenter) {
-      this.#newEventPresenter.destroy();
-      this.#newEventPresenter = null;
+  #renderEventsList() {
+    // можно всегда добавлять ul в TripPresenter и не удалять, но будет не соответсвие с markup-и
+    render(this.#eventsListComponent, this.#containerElement);
+  }
+
+  #removeEventsList() {
+    remove(this.#eventsListComponent);
+  }
+
+  #renderEventItems() {
+    if (this.#events.length) {
+      this.#renderEventsList();
+      this.#events.forEach((event) => this.#renderEventItem(event));
     }
   }
 
-  #renderNewEvent() {
-    const { destinations, offers } = this.#eventsModel;
-
-    this.#newEventPresenter = new NewEventPresenter({
-      destinations,
-      offers,
-      containerElement: this.#eventsListComponent.element,
-      onNewEventFormClose: this.#onNewEventFormClose,
-      onEventChange: this.#onEventChange
-    });
-    this.#newEventPresenter.init();
-  }
-
-  #renderEventsList() {
+  #removeEventItems() {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
     if (this.#events.length) {
-      this.#events.forEach((event) => this.#renderEventItem(event));
-      render(this.#eventsListComponent, this.#containerElement);
+      this.#removeEventsList();
     }
   }
 
   #renderEventItem(event) {
-    const { destinations, offers } = this.#eventsModel;
-
     const eventPresenter = new EventPresenter({
-      destinations,
-      offers,
+      destinations: this.#eventsModel.destinations,
+      offers: this.#eventsModel.offers,
       containerElement: this.#eventsListComponent.element,
       onEventFormOpen: this.#onEventFormOpen,
       onEventFormClose: this.#onEventFormClose,
@@ -95,6 +88,24 @@ export default class EventsPresenter {
     });
     eventPresenter.init(event);
     this.#eventPresenters.set(event.id, eventPresenter);
+  }
+
+  #renderNewEvent() {
+    this.#newEventPresenter = new NewEventPresenter({
+      destinations: this.#eventsModel.destinations,
+      offers: this.#eventsModel.offers,
+      containerElement: this.#eventsListComponent.element,
+      onNewEventFormClose: this.#onNewEventFormClose,
+      onEventChange: this.#onEventChange
+    });
+    this.#newEventPresenter.init();
+  }
+
+  #removeNewEvent() {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+      this.#newEventPresenter = null;
+    }
   }
 
   #closeEventForm() {
@@ -110,6 +121,18 @@ export default class EventsPresenter {
     }
   }
 
+  #getEventPresenter(userAction, updateType, event) {
+    if (userAction === UserAction.ADD_EVENT) {
+      return this.#newEventPresenter;
+    }
+
+    if ((userAction === UserAction.UPDATE_EVENT) && (updateType === UpdateType.PATCH)) {
+      return this.#eventPresenters.get(event.id);
+    }
+
+    return this.#activeEventPresenter;
+  }
+
   #onEventFormOpen = (eventPresenter) => {
     this.#closeEventForm();
     this.#closeNewEventForm();
@@ -122,35 +145,42 @@ export default class EventsPresenter {
 
   #onNewEventFormClose = () => {
     this.#removeNewEvent();
+    if (!this.#events.length) {
+      this.#removeEventsList();
+    }
     this.#onNewEventClose();
   };
 
   #onEventChange = async (actionType, updateType, event) => {
     this.#uiBlocker.block();
 
+    const eventPresenter = this.#getEventPresenter(actionType, updateType, event);
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#eventPresenters.get(event.id).setSaving();
+
+        eventPresenter.setSaving();
         try {
           await this.#eventsModel.updateEvent(updateType, event);
         } catch (err) {
-          this.#eventPresenters.get(event.id).setAborting();
+          eventPresenter.setAborting();
         }
         break;
       case UserAction.ADD_EVENT:
-        this.#newEventPresenter.setSaving();
+        eventPresenter.setSaving();
         try {
           await this.#eventsModel.addEvent(updateType, event);
         } catch (err) {
-          this.#newEventPresenter.setAborting();
+          eventPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_EVENT:
-        this.#activeEventPresenter.setDeleting(); // this.#eventPresenters.get(event.id)
+        eventPresenter.setDeleting();
         try {
           await this.#eventsModel.deleteEvent(updateType, event);
         } catch (err) {
-          this.#activeEventPresenter.setAborting(); // this.#eventPresenters.get(event.id)
+          // иногда на автотестах eventPresenter равный this.#activeEventPresenter, уже null, т.е. форма уже закрыта..., возможно в других вызовах добавить...
+          eventPresenter?.setAborting();
         }
         break;
     }

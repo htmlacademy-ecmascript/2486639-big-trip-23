@@ -1,11 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { createEventFormTemplate } from '../template/event-form-template.js';
-import { isInputElement, getNumber } from '../utils/utils.js';
+import { isInputElement, getPositiveNumber } from '../utils/common.js';
 import { DEFAULT_FLATPICKR_CONFIG } from '../const.js';
-import { getDestinationById, getDestinationByName, getDestinationNames } from '../utils/event.js';
+import { getDestinationById, getDestinationByName, getDestinationName } from '../utils/event.js';
 import { getISOString } from '../utils/date.js';
 
 export default class EventFormView extends AbstractStatefulView {
@@ -13,15 +12,12 @@ export default class EventFormView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
 
-  #destinationNames = null;
-  #storedDestinationInputValue = '';
-
   #onFormSubmit = null;
   #onResetButtonClick = null;
   #onFormClose = null;
 
-  #dateFrom = null;
-  #dateTo = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
@@ -32,9 +28,6 @@ export default class EventFormView extends AbstractStatefulView {
 
     this.#destinations = destinations;
     this.#offers = offers;
-
-    this.#destinationNames = getDestinationNames(destinations);
-    this.#storedDestinationInputValue = this._state.destinationInfo?.name;
 
     this.#onFormSubmit = onFormSubmit;
     this.#onResetButtonClick = onResetButtonClick;
@@ -50,23 +43,23 @@ export default class EventFormView extends AbstractStatefulView {
   removeElement() {
     super.removeElement();
 
-    [this.#dateFrom, this.#dateTo].forEach((dateFlatpickr) => {
-      dateFlatpickr.destroy();
-      dateFlatpickr = null;
+    [this.#datepickerFrom, this.#datepickerTo].forEach((datepicker) => {
+      datepicker.destroy();
+      datepicker = null;
     });
   }
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
     const destinationInputElement = this.element.querySelector('.event__input--destination');
-    destinationInputElement.addEventListener('change', this.#onDestinationInputElementChange);
     destinationInputElement.addEventListener('input', this.#onDestinationInputElementInput);
+    destinationInputElement.addEventListener('change', this.#onDestinationInputElementChange);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOffersDivElementChange);
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onAvailableOffersDivElementChange);
     }
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onFormElementSubmit);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditFormElementSubmit);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onResetButtonElementClick);
     if (!this.#isAddingNewEvent) { // кнопка будет скрыта и событие не добавляю
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onRollupButtonElementClick);
@@ -84,21 +77,21 @@ export default class EventFormView extends AbstractStatefulView {
   #prepareDates() {
     const { dateFrom, dateTo } = this._state;
 
-    this.#dateFrom = flatpickr(
+    this.#datepickerFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateFrom,
-        onChange: this.#onDateFromChange
+        onChange: this.#onDatepickerFromChange
       });
 
-    this.#dateTo = flatpickr(
+    this.#datepickerTo = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateTo,
         minDate: dateFrom,
-        onChange: this.#onDateToChange
+        onChange: this.#onDatepickerToChange
       });
   }
 
@@ -116,52 +109,49 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onDestinationInputElementChange = (evt) => {
-    if (!isInputElement(evt.target)) {
-      return;
+    const inputValue = evt.target.value.trim();
+    if (!inputValue) {
+      evt.target.value = getDestinationName(this._state.destinationInfo);
     }
-
-    evt.preventDefault();
-    const destinationInfo = getDestinationByName(this.#destinations, evt.target.value);
-    const destination = destinationInfo?.id;
-
-    this.updateElement({ destination, destinationInfo });
   };
 
   #onDestinationInputElementInput = (evt) => {
-    const inputValue = he.encode(evt.target.value.trim().toLowerCase());
+    const inputValue = evt.target.value.trim();
 
-    //! возможно будут ошибки на автотестах
     if (!inputValue) {
-      this.#storedDestinationInputValue = '';
-      evt.target.value = ' '; // ' ' чтоб отобразился полный список городов
+      evt.target.value = ' '; // пробел нужен для отображения всего списока городов
       return;
     }
 
-    if (this.#destinationNames.some((value) => value.includes(inputValue))) {
-      this.#storedDestinationInputValue = inputValue;
-    } else {
-      evt.target.value = this.#storedDestinationInputValue;
+    const destinationInfo = getDestinationByName(this.#destinations, inputValue);
+    if (destinationInfo) {
+      const destination = destinationInfo.id;
+      this.updateElement({ destination, destinationInfo });
+      return;
+    }
+
+    if (!this.#destinations.find(({ name }) => name.toLowerCase().includes(inputValue.toLowerCase()))) {
+      evt.target.value = getDestinationName(this._state.destinationInfo);
     }
   };
 
-  #onDateFromChange = ([dateFrom]) => {
-    this.#dateTo.config.minDate = dateFrom;
+  #onDatepickerFromChange = ([dateFrom]) => {
+    this.#datepickerTo.config.minDate = dateFrom;
     this._setState({ dateFrom });
   };
 
-  #onDateToChange = ([dateTo]) => {
+  #onDatepickerToChange = ([dateTo]) => {
     this._setState({ dateTo });
   };
 
   #onPriceInputElementInput = (evt) => {
-    //! возможно будут ошибки на автотестах
-    const basePrice = getNumber(he.encode(evt.target.value));
+    const basePrice = getPositiveNumber(evt.target.value);
     evt.target.value = basePrice;
 
     this._setState({ basePrice });
   };
 
-  #onOffersDivElementChange = (evt) => {
+  #onAvailableOffersDivElementChange = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -178,7 +168,7 @@ export default class EventFormView extends AbstractStatefulView {
     this._setState({ eventOfferIds });
   };
 
-  #onFormElementSubmit = (evt) => {
+  #onEditFormElementSubmit = (evt) => {
     evt.preventDefault();
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };
@@ -215,7 +205,7 @@ export default class EventFormView extends AbstractStatefulView {
     const event = {
       ...state,
       offers: [...eventOfferIds],
-      // по описанию API нужен ISO, но без преобразования сервер не выдает ошибки и обновление проходит успешно
+      // по описанию API нужен ISO, но без преобразования даты сервер не выдает ошибки и обновление проходит успешно
       dateFrom: getISOString(dateFrom),
       dateTo: getISOString(dateTo)
     };
