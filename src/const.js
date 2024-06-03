@@ -1,17 +1,16 @@
-const INFO_DESTINATION_COUNT = 3;
+const INFO_DESTINATION_MAX_COUNT = 3;
 
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const DEFAULT_NEW_EVENT = {
-  type: EVENT_TYPES[5],
+const NEW_EVENT_TYPE_INDEX = 5;
+
+const NEW_EVENT = {
+  type: EVENT_TYPES[NEW_EVENT_TYPE_INDEX],
   basePrice: 0,
   dateFrom: null,
   dateTo: null,
   isFavorite: false,
-  offers: null,
-  destination: null,
-  destinationInfo: null,
-  typeOffers: []
+  offers: []
 };
 
 const FilterType = {
@@ -21,10 +20,7 @@ const FilterType = {
   PAST: 'past'
 };
 
-const filterTypes = Object.values(FilterType);
-
 const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
-const DEFAULT_ENABLED_FILTER_TYPES = [FilterType.EVERYTHING, FilterType.PRESENT];
 
 const filterEmptyMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
@@ -50,11 +46,11 @@ const sortingTypeLabelText = {
 };
 
 const DEFAULT_SORTING_TYPE = SortingType.DAY;
-const DISABLE_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
+const DISABLED_SORTING_TYPES = [SortingType.EVENT, SortingType.OFFER];
 
 const MessageType = {
   LOADING: 'Loading...',
-  FAILEAD: 'Failed to load latest route information'
+  FAILED: 'Failed to load latest route information'
 };
 
 const DateFormat = {
@@ -95,18 +91,16 @@ const UiBlockerLimit = {
 };
 
 export {
-  INFO_DESTINATION_COUNT,
+  INFO_DESTINATION_MAX_COUNT,
   EVENT_TYPES,
-  DEFAULT_NEW_EVENT,
+  NEW_EVENT,
   FilterType,
-  filterTypes,
   DEFAULT_FILTER_TYPE,
-  DEFAULT_ENABLED_FILTER_TYPES,
   filterEmptyMessage,
   SortingType,
   sortingTypeLabelText,
   DEFAULT_SORTING_TYPE,
-  DISABLE_SORTING_TYPES,
+  DISABLED_SORTING_TYPES,
   MessageType,
   DateFormat,
   DEFAULT_FLATPICKR_CONFIG,

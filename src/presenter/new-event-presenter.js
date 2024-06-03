@@ -1,14 +1,14 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { isEscapeKey } from '../utils/common.js';
 import EventFormView from '../view/event-form-view.js';
-import { DEFAULT_NEW_EVENT, UserAction, UpdateType, } from '../const.js';
+import { NEW_EVENT, UserAction, UpdateType } from '../const.js';
 
 export default class NewEventPresenter {
   #containerElement = null;
 
-  #destinations = null;
+  #destinations = [];
   #offers = null;
-  #event = null;
+  #event = [];
 
   #formComponent = null;
 
@@ -28,7 +28,7 @@ export default class NewEventPresenter {
   }
 
   init() {
-    this.#event = DEFAULT_NEW_EVENT;
+    this.#event = NEW_EVENT;
 
     this.#formComponent = new EventFormView({
       event: this.#event,
@@ -39,11 +39,11 @@ export default class NewEventPresenter {
     });
 
     render(this.#formComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    document.addEventListener('keydown', this.#onDocumentKeydown);
   }
 
   closeNewEventForm() {
-    document.removeEventListener('keydown', this.#onDocumentKeyDown);
+    document.removeEventListener('keydown', this.#onDocumentKeydown);
     this.#onNewEventFormClose();
   }
 
@@ -53,7 +53,7 @@ export default class NewEventPresenter {
 
   setAborting() {
     this.#formComponent.shake(() => {
-      this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
+      this.#formComponent.updateElement({ isSaving: false, isDeleting: false });
     });
   }
 
@@ -65,7 +65,7 @@ export default class NewEventPresenter {
     this.closeNewEventForm();
   };
 
-  #onDocumentKeyDown = (evt) => {
+  #onDocumentKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.closeNewEventForm();

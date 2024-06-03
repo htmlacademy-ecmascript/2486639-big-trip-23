@@ -1,6 +1,13 @@
 import Observable from '../framework/observable.js';
-import { updateItemByKey, addItem, deleteItemByKey } from '../utils/utils.js';
+import { updateItemByKey, addItem, deleteItemByKey } from '../utils/common.js';
 import { UpdateType } from '../const.js';
+
+const ErrorMessage = {
+  INIT: 'Error init events',
+  UPDATE: 'Can\'t update event',
+  ADD: 'Can\'t add event',
+  DELETE: 'Can\'t delete event'
+};
 
 export default class EventsModel extends Observable {
   #eventsApiService = null;
@@ -12,26 +19,6 @@ export default class EventsModel extends Observable {
     super();
 
     this.#eventsApiService = eventsApiService;
-  }
-
-  async init() {
-    try {
-      this.#destinations = await this.#eventsApiService.destinations;
-
-      const offers = await this.#eventsApiService.offers;
-      offers.forEach(({ type, offers: typeOffers }) => {
-        this.#offers.set(type, typeOffers);
-      });
-
-      const events = await this.#eventsApiService.events;
-      this.#events = events.map(this.#adaptToClient);
-    } catch (error) {
-      this.#destinations = [];
-      this.#offers = [];
-      this.#events = [];
-    }
-
-    this._notify(UpdateType.INIT);
   }
 
   get destinations() {
@@ -46,6 +33,23 @@ export default class EventsModel extends Observable {
     return this.#events;
   }
 
+  async init() {
+    try {
+      this.#destinations = await this.#eventsApiService.destinations;
+
+      const offers = await this.#eventsApiService.offers;
+      offers.forEach(({ type, offers: typeOffers }) => {
+        this.#offers.set(type, typeOffers);
+      });
+
+      const events = await this.#eventsApiService.events;
+      this.#events = events.map(this.#adaptToClient);
+      this._notify(UpdateType.INIT);
+    } catch (error) {
+      throw new Error(ErrorMessage.INIT);
+    }
+  }
+
   async updateEvent(updateType, event) {
     try {
       const response = await this.#eventsApiService.updateEvent(this.#adaptToServer(event));
@@ -55,7 +59,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType, updatedEvent);
     } catch (error) {
-      throw new Error('Can\'t update event');
+      throw new Error(ErrorMessage.UPDATE);
     }
   }
 
@@ -68,7 +72,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType, newEvent);
     } catch (err) {
-      throw new Error('Can\'t add event');
+      throw new Error(ErrorMessage.ADD);
     }
   }
 
@@ -80,7 +84,7 @@ export default class EventsModel extends Observable {
 
       this._notify(updateType);
     } catch (err) {
-      throw new Error('Can\'t delete event');
+      throw new Error(ErrorMessage.DELETE);
     }
   }
 

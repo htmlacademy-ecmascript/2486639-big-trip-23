@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getTwoDigitString } from '../utils/string.js';
+import { getTwoDigitString } from '../utils/common.js';
 
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;

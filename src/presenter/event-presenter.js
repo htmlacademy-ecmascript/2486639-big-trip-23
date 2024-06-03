@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { isEscapeKey } from '../utils/common.js';
 import EventItemView from '../view/event-item-view.js';
 import EventFormView from '../view/event-form-view.js';
 import { UserAction, UpdateType } from '../const.js';
@@ -7,9 +7,9 @@ import { UserAction, UpdateType } from '../const.js';
 export default class EventPresenter {
   #containerElement = null;
 
-  #destinations = null;
+  #destinations = [];
   #offers = null;
-  #event = null;
+  #event = [];
 
   #isEditingMode = false;
 
@@ -98,7 +98,9 @@ export default class EventPresenter {
     }
 
     this.#formComponent.shake(() => {
-      this.#formComponent.updateElement({ isSaving: false, isDeleting: false, });
+      if (this.#isEditingMode) {
+        this.#formComponent.updateElement({ isSaving: false, isDeleting: false });
+      }
     });
   }
 
@@ -109,13 +111,13 @@ export default class EventPresenter {
 
   #replaceItemToForm() {
     replace(this.#formComponent, this.#itemComponent);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    document.addEventListener('keydown', this.#onDocumentKeydown);
     this.#isEditingMode = true;
   }
 
   #replaceFormToItem() {
     replace(this.#itemComponent, this.#formComponent);
-    document.removeEventListener('keydown', this.#onDocumentKeyDown);
+    document.removeEventListener('keydown', this.#onDocumentKeydown);
     this.#isEditingMode = false;
   }
 
@@ -140,7 +142,7 @@ export default class EventPresenter {
     this.closeEventForm();
   };
 
-  #onDocumentKeyDown = (evt) => {
+  #onDocumentKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.closeEventForm();
