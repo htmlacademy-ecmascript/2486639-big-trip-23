@@ -54,6 +54,7 @@ export default class EventsPresenter {
   }
 
   #renderEventsList() {
+    // можно всегда добавлять ul в TripPresenter и не удалять, но будет не соответсвие с markup-и
     render(this.#eventsListComponent, this.#containerElement);
   }
 
