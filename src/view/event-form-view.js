@@ -16,8 +16,8 @@ export default class EventFormView extends AbstractStatefulView {
   #onResetButtonClick = null;
   #onFormClose = null;
 
-  #dateFrom = null;
-  #dateTo = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({ event, destinations, offers, onFormSubmit, onResetButtonClick, onFormClose }) {
     super();
@@ -43,9 +43,9 @@ export default class EventFormView extends AbstractStatefulView {
   removeElement() {
     super.removeElement();
 
-    [this.#dateFrom, this.#dateTo].forEach((dateFlatpickr) => {
-      dateFlatpickr.destroy();
-      dateFlatpickr = null;
+    [this.#datepickerFrom, this.#datepickerTo].forEach((datepicker) => {
+      datepicker.destroy();
+      datepicker = null;
     });
   }
 
@@ -77,21 +77,21 @@ export default class EventFormView extends AbstractStatefulView {
   #prepareDates() {
     const { dateFrom, dateTo } = this._state;
 
-    this.#dateFrom = flatpickr(
+    this.#datepickerFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateFrom,
-        onChange: this.#onDateFromChange
+        onChange: this.#onDatepickerFromChange
       });
 
-    this.#dateTo = flatpickr(
+    this.#datepickerTo = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         ...DEFAULT_FLATPICKR_CONFIG,
         defaultDate: dateTo,
         minDate: dateFrom,
-        onChange: this.#onDateToChange
+        onChange: this.#onDatepickerToChange
       });
   }
 
@@ -135,12 +135,12 @@ export default class EventFormView extends AbstractStatefulView {
     }
   };
 
-  #onDateFromChange = ([dateFrom]) => {
-    this.#dateTo.config.minDate = dateFrom;
+  #onDatepickerFromChange = ([dateFrom]) => {
+    this.#datepickerTo.config.minDate = dateFrom;
     this._setState({ dateFrom });
   };
 
-  #onDateToChange = ([dateTo]) => {
+  #onDatepickerToChange = ([dateTo]) => {
     this._setState({ dateTo });
   };
 
