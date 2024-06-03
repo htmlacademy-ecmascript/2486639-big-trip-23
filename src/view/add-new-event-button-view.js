@@ -8,7 +8,7 @@ export default class AddNewEventButtonView extends AbstractView {
 
     this.#onClick = onClick;
 
-    this.element.addEventListener('click', this.#onButtonElementClick);
+    this.element.addEventListener('click', this.#onButtonElementClick); //? onButtonElementClick -> onElementClick ?
   }
 
   get template() {

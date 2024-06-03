@@ -51,14 +51,15 @@ export default class EventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#onTypeListElementClick);
-    this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationInputElementInput);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#onDestinationInputElementChange);//!
+    const destinationInputElement = this.element.querySelector('.event__input--destination');
+    destinationInputElement.addEventListener('input', this.#onDestinationInputElementInput);
+    destinationInputElement.addEventListener('change', this.#onDestinationInputElementChange);
     this.#prepareDates();
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInputElementInput);
     if (this._state.typeOffers.length) { // нет данных и событие не добавляю
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOffersDivElementChange);
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#onAvailableOffersDivElementChange);
     }
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onFormElementSubmit);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditFormElementSubmit);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onResetButtonElementClick);
     if (!this.#isAddingNewEvent) { // кнопка будет скрыта и событие не добавляю
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onRollupButtonElementClick);
@@ -161,7 +162,7 @@ export default class EventFormView extends AbstractStatefulView {
     this._setState({ basePrice });
   };
 
-  #onOffersDivElementChange = (evt) => {
+  #onAvailableOffersDivElementChange = (evt) => {
     if (!isInputElement(evt.target)) {
       return;
     }
@@ -178,7 +179,7 @@ export default class EventFormView extends AbstractStatefulView {
     this._setState({ eventOfferIds });
   };
 
-  #onFormElementSubmit = (evt) => {
+  #onEditFormElementSubmit = (evt) => {
     evt.preventDefault();
     this.#onFormSubmit(EventFormView.parseStateToEvent(this._state));
   };

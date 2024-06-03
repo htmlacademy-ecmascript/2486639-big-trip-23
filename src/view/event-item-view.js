@@ -21,7 +21,7 @@ export default class EventItemView extends AbstractView {
     this.#onEditClick = onEditClick;
 
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonElementClick);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditButtonElementClick);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onRollupButtonElementClick);
   }
 
   get template() {
@@ -32,7 +32,7 @@ export default class EventItemView extends AbstractView {
     this.#onFavoriteClick();
   };
 
-  #onEditButtonElementClick = () => {
+  #onRollupButtonElementClick = () => {
     this.#onEditClick();
   };
 }

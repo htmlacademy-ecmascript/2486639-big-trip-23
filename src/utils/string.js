@@ -1,5 +1,5 @@
-const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+const capitalizeFirstLetter = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 
-const getTwoDigitString = (number) => (number < 10) ? `0${number}` : number.toString();
+const getTwoDigitString = (value) => (value < 10) ? `0${value}` : value.toString();
 
 export { capitalizeFirstLetter, getTwoDigitString };

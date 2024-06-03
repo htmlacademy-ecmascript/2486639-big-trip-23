@@ -39,11 +39,11 @@ export default class NewEventPresenter {
     });
 
     render(this.#formComponent, this.#containerElement, RenderPosition.AFTERBEGIN);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    document.addEventListener('keydown', this.#onDocumentKeydown);
   }
 
   closeNewEventForm() {
-    document.removeEventListener('keydown', this.#onDocumentKeyDown);
+    document.removeEventListener('keydown', this.#onDocumentKeydown);
     this.#onNewEventFormClose();
   }
 
@@ -65,7 +65,7 @@ export default class NewEventPresenter {
     this.closeNewEventForm();
   };
 
-  #onDocumentKeyDown = (evt) => {
+  #onDocumentKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.closeNewEventForm();

@@ -4,17 +4,17 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const isInputElement = (element) => element.tagName === 'INPUT';
 
-const getPositiveNumber = (string) => {
-  if (!string) {
+const getPositiveNumber = (value) => {
+  if (!value) {
     return null;
   }
 
-  const number = parseInt(string, 10);
-  if (isNaN(number) || (number <= 0)) {
+  const result = parseInt(value, 10);
+  if (isNaN(result) || (result <= 0)) {
     return null;
   }
 
-  return number;
+  return result;
 };
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);

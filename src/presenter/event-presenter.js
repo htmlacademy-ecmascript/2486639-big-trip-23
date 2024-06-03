@@ -111,13 +111,13 @@ export default class EventPresenter {
 
   #replaceItemToForm() {
     replace(this.#formComponent, this.#itemComponent);
-    document.addEventListener('keydown', this.#onDocumentKeyDown);
+    document.addEventListener('keydown', this.#onDocumentKeydown);
     this.#isEditingMode = true;
   }
 
   #replaceFormToItem() {
     replace(this.#itemComponent, this.#formComponent);
-    document.removeEventListener('keydown', this.#onDocumentKeyDown);
+    document.removeEventListener('keydown', this.#onDocumentKeydown);
     this.#isEditingMode = false;
   }
 
@@ -142,7 +142,7 @@ export default class EventPresenter {
     this.closeEventForm();
   };
 
-  #onDocumentKeyDown = (evt) => {
+  #onDocumentKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.closeEventForm();
