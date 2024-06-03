@@ -29,16 +29,16 @@ export default class EventsPresenter {
     this.#onNewEventClose = onNewEventClose;
   }
 
-  clear() {
-    this.#closeEventForm();
-    this.#closeNewEventForm();
-    this.#removeEventItems();
-  }
-
   init(events) {
     this.#events = events;
 
     this.#renderEventItems();
+  }
+
+  clear() {
+    this.#closeEventForm();
+    this.#closeNewEventForm();
+    this.#removeEventItems();
   }
 
   updateEvent(updatedEvent) {
@@ -46,7 +46,7 @@ export default class EventsPresenter {
   }
 
   addNewEvent() {
-    this.#closeEventForm(); //! перепроверить автотестами, было лишнее условие на то что количество событий не 0
+    this.#closeEventForm();
     if (!this.#events.length) {
       this.#renderEventsList();
     }

@@ -21,6 +21,18 @@ export default class EventsModel extends Observable {
     this.#eventsApiService = eventsApiService;
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
+  get events() {
+    return this.#events;
+  }
+
   async init() {
     try {
       this.#destinations = await this.#eventsApiService.destinations;
@@ -36,18 +48,6 @@ export default class EventsModel extends Observable {
     } catch (error) {
       throw new Error(ErrorMessage.INIT);
     }
-  }
-
-  get destinations() {
-    return this.#destinations;
-  }
-
-  get offers() {
-    return this.#offers;
-  }
-
-  get events() {
-    return this.#events;
   }
 
   async updateEvent(updateType, event) {

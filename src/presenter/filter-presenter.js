@@ -20,6 +20,10 @@ export default class FilterPresenter {
     filterModel.addObserver(this.#onFilterModelChange);
   }
 
+  get filteredEvents() {
+    return this.#filteredEvents;
+  }
+
   init() {
     remove(this.#filterComponent);
 
@@ -32,10 +36,6 @@ export default class FilterPresenter {
     render(this.#filterComponent, this.#containerElement);
   }
 
-  get filteredEvents() {
-    return this.#filteredEvents;
-  }
-
   #onModelsChange(updateType) {
     if (updateType === UpdateType.PATCH) {
       return;
@@ -43,8 +43,8 @@ export default class FilterPresenter {
 
     const now = Date.now();
     this.#enabledFilterTypes = getEnabledFilterTypes(this.#eventsModel.events, now);
-    // фильтруем события один раз при изменении моделей (MAJOR и MINOR) в this.#filteredEvents, это позволяет избежать повторных ненужных фильтраций.
-    // Фильтрация и доступные фильтры определяются на одну и ту же дату - now, это позволяет избежать некоректную фильтрацию:
+    // фильтруем события один раз при изменении моделей (MAJOR и MINOR) в #filteredEvents, это позволяет избежать повторных ненужных фильтраций.
+    // Фильтрация событий и доступные фильтры определяются на одну и ту же дату - now, это позволяет избежать некоректную фильтрацию -
     // когда доступные фильтры получены на одну дату, а фильтрация будет происходить на другую дату
     this.#filteredEvents = filterEvents(this.#eventsModel.events, this.#filterModel.filterType, now);
 
