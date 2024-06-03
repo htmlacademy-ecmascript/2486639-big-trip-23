@@ -173,7 +173,7 @@ export default class TripPresenter {
   };
 
   #onAddEventClick = () => {
-    this.#filterModel.filterType = DEFAULT_FILTER_TYPE; //! там проверка на незменность фильтра и не сработатывает UpdateType.MAJOR
+    this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
     if (!this.#events.length) {
       this.#removeEmptyEventsMessage();
       this.#renderSorting();

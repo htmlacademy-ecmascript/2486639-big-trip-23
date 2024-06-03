@@ -23,8 +23,8 @@ const createDestinationDatalistTemplate = (destinations) => `<datalist id="desti
     ${createElementsTemplate(destinations, createDestinationOptionTemplate)}
 </datalist>`;
 
-const createOfferTemplate = ({ id, name, title, price }, offers) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(offers?.has(id)) ? 'checked' : ''}>
+const createOfferTemplate = ({ id, name, title, price }, eventOfferIds) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="${name}" data-offer-id="${id}" ${(eventOfferIds.has(id)) ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${id}">
     <span class="event__offer-title">${title}</span>
     +€&nbsp;
@@ -32,10 +32,10 @@ const createOfferTemplate = ({ id, name, title, price }, offers) => `<div class=
   </label>
 </div>`;
 
-const createSectionOffersTemplate = (typeOffers, offers) => (isEmptyArray(typeOffers)) ? '' : `<section class="event__section  event__section--offers">
+const createSectionOffersTemplate = (typeOffers, eventOfferIds) => (isEmptyArray(typeOffers)) ? '' : `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createElementsTemplate(typeOffers, createOfferTemplate, offers)}
+      ${createElementsTemplate(typeOffers, createOfferTemplate, eventOfferIds)}
     </div>
 </section>`;
 
@@ -53,8 +53,8 @@ const createSectionDestinationTemplate = ({ description, pictures }) => (descrip
   ${createPhotosContainerTemplate(pictures)}
 </section>` : '';
 
-const createSectionDetailsTemplate = (typeOffers, offers, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
-  ${createSectionOffersTemplate(typeOffers, offers)}
+const createSectionDetailsTemplate = (typeOffers, eventOfferIds, destination) => (!isEmptyArray(typeOffers) || (destination?.description)) ? `<section class="event__details">
+  ${createSectionOffersTemplate(typeOffers, eventOfferIds)}
   ${(destination) ? createSectionDestinationTemplate(destination) : ''}
 </section>` : '';
 

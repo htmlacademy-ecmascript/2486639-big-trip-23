@@ -112,37 +112,27 @@ export default class EventFormView extends AbstractStatefulView {
     const inputValue = evt.target.value.trim();
     if (!inputValue) {
       evt.target.value = getDestinationName(this._state.destinationInfo);
-      //return;//! связаны
     }
-
-    /* //! связаны
-    const destinationInfo = getDestinationByName(this.#destinations, inputValue);
-    if (!destinationInfo) {
-      evt.target.value = getDestinationName(this._state.destinationInfo);
-    }
-    */
   };
 
   #onDestinationInputElementInput = (evt) => {
     const inputValue = evt.target.value.trim();
 
     if (!inputValue) {
-      evt.target.value = ' '; // ' ' чтоб бы отобразился полный список городов
+      evt.target.value = ' '; // пробел нужен для отображения всего списока городов
       return;
     }
 
-    const destinationInfo = getDestinationByName(this.#destinations, inputValue); //! добавить ли автоподстановку, если вводить мелкими буквами, нужно добавить доп поле в destinations
+    const destinationInfo = getDestinationByName(this.#destinations, inputValue);
     if (destinationInfo) {
       const destination = destinationInfo.id;
       this.updateElement({ destination, destinationInfo });
-      return; //! связаны
+      return;
     }
 
-    /**/ //! связаны
     if (!this.#destinations.find(({ name }) => name.toLowerCase().includes(inputValue.toLowerCase()))) {
       evt.target.value = getDestinationName(this._state.destinationInfo);
     }
-    /**/
   };
 
   #onDateFromChange = ([dateFrom]) => {
@@ -155,7 +145,6 @@ export default class EventFormView extends AbstractStatefulView {
   };
 
   #onPriceInputElementInput = (evt) => {
-    //! возможно будут ошибки на автотестах
     const basePrice = getPositiveNumber(evt.target.value);
     evt.target.value = basePrice;
 
