@@ -23,7 +23,7 @@ export default class TripPresenter {
   #loadingComponent = null;
   #sortingComponent = null;
   #emptyEventsMessageComponent = null;
-  #addEventButtonComponent = null;
+  #newEventButtonComponent = null;
 
   #events = [];
 
@@ -50,7 +50,7 @@ export default class TripPresenter {
     });
     this.#loadingComponent = new MessageView({ message: MessageType.LOADING });
 
-    this.#addEventButtonComponent = new NewEventButtonView({ onClick: this.#onAddNewEventClick });
+    this.#newEventButtonComponent = new NewEventButtonView({ onClick: this.#onNewEventClick });
 
     eventsModel.addObserver(this.#onEventsModelChange);
     filterModel.addObserver(this.#onFilterModelChange);
@@ -58,7 +58,7 @@ export default class TripPresenter {
 
   init() {
     this.#filterPresenter.init();
-    render(this.#addEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND);
+    render(this.#newEventButtonComponent, this.#headerTripMainElement, RenderPosition.BEFOREEND);
 
     this.#render();
   }
@@ -72,12 +72,12 @@ export default class TripPresenter {
     this.#infoPresenter.init();
 
     if (this.#isLoading) {
-      this.#addEventButtonComponent.disable();
+      this.#newEventButtonComponent.disable();
       this.#renderLoading();
       return;
     }
 
-    this.#addEventButtonComponent.enable();
+    this.#newEventButtonComponent.enable();
 
     this.#events = this.#filterPresenter.filteredEvents;
 
@@ -162,7 +162,7 @@ export default class TripPresenter {
     this.#onModelsChange(updateType, data);
   };
 
-  #onAddNewEventClick = () => {
+  #onNewEventClick = () => {
     this.#filterModel.filterType = DEFAULT_FILTER_TYPE;
     if (!this.#events.length) {
       this.#removeEmptyEventsMessage();
@@ -171,7 +171,7 @@ export default class TripPresenter {
   };
 
   #onNewEventClose = () => {
-    this.#addEventButtonComponent.enable();
+    this.#newEventButtonComponent.enable();
 
     if (!this.#events.length) {
       this.#renderEmptyEventsMessage();
