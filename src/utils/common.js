@@ -13,12 +13,12 @@ const getPositiveNumber = (string) => {
     return null;
   }
 
-  const number = parseInt(string, 10);
-  if (isNaN(number) || (number <= 0)) {
+  const value = parseInt(string, 10);
+  if (isNaN(value) || (value <= 0)) {
     return null;
   }
 
-  return number;
+  return value;
 };
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
