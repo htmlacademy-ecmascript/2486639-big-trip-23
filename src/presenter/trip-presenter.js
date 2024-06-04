@@ -3,7 +3,7 @@ import InfoPresenter from './info-presenter.js';
 import FilterPresenter from './filter-presenter.js';
 import EventsPresenter from './events-presenter.js';
 import SortingView from '../view/sorting-view.js';
-import AddNewEventButtonView from '../view/new-event-button-view.js';
+import NewEventButtonView from '../view/new-event-button-view.js';
 import MessageView from '../view/message-view.js';
 import { sortEvents } from '../utils/sorting.js';
 import { filterEmptyMessage, DEFAULT_SORTING_TYPE, UpdateType, DEFAULT_FILTER_TYPE, MessageType } from '../const.js';
@@ -50,7 +50,7 @@ export default class TripPresenter {
     });
     this.#loadingComponent = new MessageView({ message: MessageType.LOADING });
 
-    this.#addEventButtonComponent = new AddNewEventButtonView({ onClick: this.#onAddNewEventClick });
+    this.#addEventButtonComponent = new NewEventButtonView({ onClick: this.#onAddNewEventClick });
 
     eventsModel.addObserver(this.#onEventsModelChange);
     filterModel.addObserver(this.#onFilterModelChange);
