@@ -4,13 +4,13 @@ const createElementsTemplate = (elements, createElementTemplate, ...rest) => {
   }
 
   if (elements instanceof Map) {
-    const strings = [];
+    const items = [];
 
     elements.forEach((value, key) => {
-      strings.push(createElementTemplate(value, key, ...rest));
+      items.push(createElementTemplate(value, key, ...rest));
     });
 
-    return strings.join('');
+    return items.join('');
   }
 
   if (elements instanceof Object) {

@@ -25,9 +25,3 @@ tripPresenter.init();
 eventsModel.init().catch((error) => {
   tripPresenter.renderFailedMessage(error);
 });
-
-/*
- * Вопросы:
- *   1. Б9. В названии переменных не используется тип данных.
- *       использую: date, dateFrom, dateTo, string, number...
- */
