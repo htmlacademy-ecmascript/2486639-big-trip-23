@@ -9,7 +9,7 @@ export default class EventPresenter {
 
   #destinations = [];
   #offers = null;
-  #event = [];
+  #event = null;
 
   #isEditingMode = false;
 

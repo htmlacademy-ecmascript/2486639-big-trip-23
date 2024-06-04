@@ -8,7 +8,7 @@ export default class NewEventPresenter {
 
   #destinations = [];
   #offers = null;
-  #event = [];
+  #event = null;
 
   #formComponent = null;
 
