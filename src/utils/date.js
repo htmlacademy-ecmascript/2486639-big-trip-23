@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
-import { getTwoDigitString } from '../utils/common.js';
 
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;
+
+const getTwoDigitString = (number) => (number < 10) ? `0${number}` : number.toString();
 
 const getStringDate = (date, format) => (!date) ? '' : dayjs(date).format(format);
 

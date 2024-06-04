@@ -1,7 +1,5 @@
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const getTwoDigitString = (number) => (number < 10) ? `0${number}` : number.toString();
-
 const isEmptyArray = (items) => (!Array.isArray(items) || !items.length);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -45,7 +43,6 @@ const deleteItemByKey = (items, item, keyName = 'id') => {
 
 export {
   capitalizeFirstLetter,
-  getTwoDigitString,
   isEmptyArray,
   isEscapeKey,
   isInputElement,
