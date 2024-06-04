@@ -1,7 +1,5 @@
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const getTwoDigitString = (number) => (number < 10) ? `0${number}` : number.toString();
-
 const isEmptyArray = (items) => (!Array.isArray(items) || !items.length);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -13,12 +11,12 @@ const getPositiveNumber = (string) => {
     return null;
   }
 
-  const number = parseInt(string, 10);
-  if (isNaN(number) || (number <= 0)) {
+  const value = parseInt(string, 10);
+  if (isNaN(value) || (value <= 0)) {
     return null;
   }
 
-  return number;
+  return value;
 };
 
 const findItemIndexByKey = (items, keyValue, keyName = 'id') => items.findIndex((item) => item[keyName] === keyValue);
@@ -45,7 +43,6 @@ const deleteItemByKey = (items, item, keyName = 'id') => {
 
 export {
   capitalizeFirstLetter,
-  getTwoDigitString,
   isEmptyArray,
   isEscapeKey,
   isInputElement,

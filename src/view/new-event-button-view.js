@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-export default class AddNewEventButtonView extends AbstractView {
+export default class NewEventButtonView extends AbstractView {
   #onClick = null;
 
   constructor({ onClick }) {

@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
-import { getTwoDigitString } from '../utils/common.js';
 
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;
+
+const getTwoDigitString = (number) => (number < 10) ? `0${number}` : number.toString();
 
 const getStringDate = (date, format) => (!date) ? '' : dayjs(date).format(format);
 
@@ -15,17 +16,17 @@ const getDurationString = (dateStart, dateEnd) => {
   const hours = durationHours % HOURS_IN_DAY;
   const days = (durationHours - hours) / HOURS_IN_DAY;
 
-  const strings = [];
+  const items = [];
 
   if (days > 0) {
-    strings.push(getTwoDigitString(days), 'D ');
+    items.push(getTwoDigitString(days), 'D ');
   }
   if (hours > 0 || days > 0) {
-    strings.push(getTwoDigitString(hours), 'H ');
+    items.push(getTwoDigitString(hours), 'H ');
   }
-  strings.push(getTwoDigitString(minutes), 'M');
+  items.push(getTwoDigitString(minutes), 'M');
 
-  return strings.join('');
+  return items.join('');
 };
 
 const getISOString = (date) => (date instanceof Date) ? date.toISOString() : date;
